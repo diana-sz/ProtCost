@@ -1,0 +1,76 @@
+rm(list=ls(all=TRUE))
+
+library(viridis)
+library(here)
+library(rstudioapi) 
+library(readODS)
+library(nloptr)
+library(lpSolve)
+library(RColorBrewer)
+library(Matrix)
+
+directory <- paste0(here(), "/code")
+setwd(directory) 
+
+is.reversible <- 0
+predict.parameters <- 0
+modelname <- "A9fuel_efflux"
+phis_to_test <- c(seq(0, 0.8, 0.005), seq(0.8, 0, -0.005))
+fuel_kcat <- 5
+fuel_ki <- 10
+efflux_kcats <- c(0.1, 1, 10, 100, 1000)
+
+
+source("initialize_model.R")
+n_conditions <- 1
+
+q0_wt <- q0
+last_feasible_q0 <- q0
+
+results_list <- list()
+
+fuel <- which(reaction == "FUEL")
+efflux <- which(reaction == "EFFLUX")
+KI["F", "r"] <- fuel_ki
+kcatf[fuel] <- fuel_kcat
+kcatb[fuel] <- is.reversible*fuel_kcat/5
+
+for(efflux_kcat in efflux_kcats){
+  kcatf[efflux] <- efflux_kcat
+  kcatb[efflux] <- is.reversible*efflux_kcat/5
+  
+  for (fuel_phi in phis_to_test){
+    min_phi[fuel] <- fuel_phi
+    max_phi[fuel] <- fuel_phi+1e-5
+    
+    source("solver_loop.R")
+
+    fs <- q_opt[1, ]
+    results_list[[length(results_list) + 1]] <- data.frame(
+      kcat = efflux_kcat,
+      KI = fuel_ki,
+      fuel_phi = fuel_phi,
+      mu = mu_opt,
+      convergence = res$convergence,
+      shape = ifelse(res$convergence == -1, 21, 19),
+      t(c(
+        setNames(fs, paste0("f.", reaction)),
+        setNames(v(fs), paste0("v.", reaction)),
+        setNames(prot(fs), paste0("p.", reaction)),
+        setNames(c(a, ci(fs)), paste0("c.", reactant))
+      ))
+    )
+  }
+  
+  # reset phis
+  min_phi[] <- 0
+  max_phi[] <- 1
+}
+
+results <- do.call(rbind, results_list)
+
+write.csv(results, paste0("../data/", modelname, "_tradeoff_test3.csv"))
+
+
+
+

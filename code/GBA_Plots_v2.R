@@ -1,0 +1,446 @@
+library(gplots)
+# plot results #######################################################################################################
+
+setwd("../data")
+
+pdf(paste0(modelname, "_GBA.pdf",sep=""),
+    title="Optimization results",   width=7.5,height=5)
+par(mfrow=c(2,3))
+
+maxmu <- max(mu_opt)*1.1
+
+# graphic
+coloraxis <- "darkgrey"
+colorlab <- "black"
+
+lowmu  <-  max(mu_opt)/4 # min(mu_opt) 
+
+highmu <- max(mu_opt) #  4*max(mu_opt)/5
+
+mediummu <- lowmu < mu_opt & mu_opt < highmu
+
+p_opt <- opt_state[,paste("p",reaction)]
+
+phi_opt <- p_opt/c_opt[,p]
+
+cm_opt <- c_opt[,-p]
+
+v_opt <- opt_state[,paste("v",reaction)]
+
+tau_opt <- opt_state[,paste("tau",reaction)]
+
+colorj <- 1:r
+
+if (r ==3) colorj <- c("green","blue","red")
+
+#colorj <- c("green4","green2","blue",2)
+
+if (r > 8) colorj <- c(1:8, rainbow(r-8))
+
+# Predicting growth laws #####################################################
+
+# average v at medium mu
+av <- rep(0,r)
+for (j in 1:r) av[j] <- mean(v_opt[mediummu,j])
+
+# estimate dtau/d ln mu
+dtaudlnmu <- rep(0,r)
+for (j in 1:r) dtaudlnmu[j] <- lm(tau_opt[mediummu,j] ~ log(mu_opt[mediummu]) )$coefficients[2]
+
+# acp = average cp at medium growth
+
+acp <- mean(c_opt[mediummu,p])
+
+
+# estimation phi0
+ephi0 <- - signif(av*dtaudlnmu/acp, digits=3)
+
+
+# Individual phi ###############################################################
+
+phi0 <- 0
+slope <- 0
+
+# Growth rate vs. log10(first external concentration) ##############################################################
+
+cx1    <- opt_state[,reactant[1]]
+
+minx1 <- 0
+#maxx1 <- ceiling(max(cx1)*1.1)
+maxx1 <- max(cx1)*1.1
+
+plot(cx1,mu_opt,pch=16, mgp=c(2, 0.5, 0), col.lab = colorlab, frame.plot=F, col= 1,xlim=c(minx1,maxx1),ylim=c(0,maxmu), xaxt = "n",
+     yaxt = "n", ylab=bquote("Growth rate"~ mu ~ (h^-1)), xlab=paste("Concentration",reactant[1],"(g/L)"), yaxs="i", xaxs="i")
+axis(1, mgp=c(3, 0.4, 0), col=coloraxis, col.ticks=coloraxis, col.axis=coloraxis, tck=0.02,las=1)
+axis(1, mgp=c(3, 0.4, 0), col=coloraxis, col.ticks=coloraxis, col.axis=coloraxis, tck=-0.02,las=1)
+axis(2, mgp=c(3, 0.4, 0), col=coloraxis, col.ticks=coloraxis, col.axis=coloraxis, tck=0.02,las=1)
+axis(2, mgp=c(3, 0.4, 0), col=coloraxis, col.ticks=coloraxis, col.axis=coloraxis, tck=-0.02,las=1)
+
+# Internal reactant concentrations vs.mu #############################################################################
+
+colori <- rainbow(p)
+
+if (p > 8) colori <- c(1:8, rainbow(p-8))
+
+if (p==3) colori <- c("gray","darkgrey","yellow3")
+
+maxci <- 1.05*max(c_opt) 
+
+matplot(mu_opt,c_opt,pch=16, mgp=c(2, 0.5, 0), col.lab = colorlab, frame.plot=F, col= colori,xlim=c(0,maxmu),ylim=c(0,maxci), xaxt = "n",
+        yaxt = "n", xlab=bquote("Growth rate"~ mu ~ (h^-1)), ylab=bquote("Internal concentrations " ~ c^i ~ " (g/L)"), yaxs="i", xaxs="i")
+axis(1, mgp=c(3, 0.4, 0), col=coloraxis, col.ticks=coloraxis, col.axis=coloraxis, tck=0.02,las=1)
+axis(1, mgp=c(3, 0.4, 0), col=coloraxis, col.ticks=coloraxis, col.axis=coloraxis, tck=-0.02,las=1)
+axis(2, mgp=c(3, 0.4, 0), col=coloraxis, col.ticks=coloraxis, col.axis=coloraxis, tck=0.02,las=1)
+axis(2, mgp=c(3, 0.4, 0), col=coloraxis, col.ticks=coloraxis, col.axis=coloraxis, tck=-0.02,las=1)
+legend("topright",i_reactant,col=colori,pch=16,cex=0.7)
+
+
+
+# Fluxes vs. mu ######################################################################################################
+
+maxv <- ceiling(max(v_opt)*1.1)
+
+matplot(mu_opt,v_opt,pch=16, mgp=c(2, 0.5, 0), col.lab = colorlab, frame.plot=F, col= colorj,xlim=c(0,maxmu),ylim=c(0,maxv), xaxt = "n",
+        yaxt = "n", xlab=bquote("Growth rate"~ mu ~ (h^-1)), ylab=bquote("Fluxes " ~  v ~ " (g/L/h)"), yaxs="i", xaxs="i")
+axis(1, mgp=c(3, 0.4, 0), col=coloraxis, col.ticks=coloraxis, col.axis=coloraxis, tck=0.02,las=1)
+axis(1, mgp=c(3, 0.4, 0), col=coloraxis, col.ticks=coloraxis, col.axis=coloraxis, tck=-0.02,las=1)
+axis(2, mgp=c(3, 0.4, 0), col=coloraxis, col.ticks=coloraxis, col.axis=coloraxis, tck=0.02,las=1)
+axis(2, mgp=c(3, 0.4, 0), col=coloraxis, col.ticks=coloraxis, col.axis=coloraxis, tck=-0.02,las=1)
+legend("topleft",reaction,col=colorj,pch=16,cex=0.7)
+
+# estimation 1/kcat
+
+#ekcat <-  
+
+for (j in 1:r) {
+  
+  maxphi <- 1.1*(max(phi_opt[,j]))
+  
+  philm <- lm(phi_opt[mediummu,j] ~ mu_opt[mediummu] )
+  
+  phi0[j] <- signif(philm$coefficients[1],3)
+  
+  slope[j] <- signif(philm$coefficients[2],3)
+  
+  
+  
+  # plot #######################################################################
+  
+  maxmu <- max(mu_opt)*1.1
+  
+  maxphi <- 1.1*max(phi_opt[,j])
+  
+  #, main=paste(reaction[j],": offset =",phi0[j],", slope = ",slope[j])
+  matplot(mu_opt,phi_opt[,j],pch=16, mgp=c(2, 0.5, 0), col.lab = colorlab, frame.plot=F, 
+          main=reaction[j], col= colorj[j],xlim=c(0,maxmu),ylim=c(0,maxphi), xaxt = "n", yaxt = "n", 
+          xlab=bquote("Growth rate"~ mu ~ (h^-1)), ylab=bquote("Proteome fraction " ~  phi ), 
+          yaxs="i", xaxs="i")
+  axis(1, mgp=c(3, 0.4, 0), col=coloraxis, col.ticks=coloraxis, col.axis=coloraxis, tck=0.02,las=1)
+  axis(1, mgp=c(3, 0.4, 0), col=coloraxis, col.ticks=coloraxis, col.axis=coloraxis, tck=-0.02,las=1)
+  axis(2, mgp=c(3, 0.4, 0), col=coloraxis, col.ticks=coloraxis, col.axis=coloraxis, tck=0.02,las=1)
+  axis(2, mgp=c(3, 0.4, 0), col=coloraxis, col.ticks=coloraxis, col.axis=coloraxis, tck=-0.02,las=1)
+  #legend("top",reaction,col=colorj,pch=16,cex=0.7)
+  abline(philm)
+  #abline(v=lowmu,lty=2)
+  #text(0.5*lowmu,0.95*maxphi,labels=bquote(0.2*mu[max]))
+  #abline(v=highmu,lty=2)
+  #text(1.13*highmu,0.95*maxphi,labels=bquote(0.8*mu[max]))
+  #abline(a=ephi0[j],b=0,lty=2,col=3)
+  #text(1.13*highmu,1.1*ephi0[j],labels=ephi0[j])
+  
+}
+
+
+# # Growth rate vs. log10(first external concentration) ################################################################
+# 
+# mu_opt <- opt_state[,"mu"]
+# cx1    <- log10(opt_state[,reactant[1]])
+# 
+# minx1 <- floor(min(cx1))
+# maxx1 <- ceiling(max(cx1)*1.1)
+# maxmu <- max(mu_opt)*1.1
+# 
+# plot(cx1,mu_opt,pch=16, mgp=c(2, 0.5, 0), col.lab = colorlab, frame.plot=F, col= 1,xlim=c(minx1,maxx1),ylim=c(0,maxmu), xaxt = "n",
+#      yaxt = "n", ylab=bquote("Growth rate"~ mu ~ (h^-1)), xlab=paste("Concentration",reactant[1],"log10(g/L)"), yaxs="i", xaxs="i")
+# axis(1, at=seq(minx1,maxx1,1), mgp=c(3, 0.4, 0), col=coloraxis, col.ticks=coloraxis, col.axis=coloraxis, tck=0.02,las=1)
+# axis(1, at=seq(minx1,maxx1,1), mgp=c(3, 0.4, 0), col=coloraxis, col.ticks=coloraxis, col.axis=coloraxis, tck=-0.02,las=1)
+# axis(2, mgp=c(3, 0.4, 0), col=coloraxis, col.ticks=coloraxis, col.axis=coloraxis, tck=0.02,las=1)
+# axis(2, mgp=c(3, 0.4, 0), col=coloraxis, col.ticks=coloraxis, col.axis=coloraxis, tck=-0.02,las=1)
+# 
+# if (nx > 1) {
+#   # Growth rate vs. second external concentration ####################################################################
+#   
+#   cx2    <- log10(opt_state[,reactant[2]])
+#   
+#   minx2 <- floor(min(cx2))
+#   maxx2 <- ceiling(max(cx2)*1.1)
+#   
+#   plot(cx2,mu_opt,pch=16, mgp=c(2, 0.5, 0), col.lab = colorlab, frame.plot=F, col= 1,ylim=c(0,maxmu), xaxt = "n",
+#        yaxt = "n", ylab=bquote("Growth rate"~ mu ~ (h^-1)), xlab=paste("Concentration",reactant[2],"log10(g/L)"), yaxs="i", xaxs="i")
+#   axis(1, mgp=c(3, 0.4, 0), col=coloraxis, col.ticks=coloraxis, col.axis=coloraxis, tck=0.02,las=1)
+#   axis(1, mgp=c(3, 0.4, 0), col=coloraxis, col.ticks=coloraxis, col.axis=coloraxis, tck=-0.02,las=1)
+#   axis(2, mgp=c(3, 0.4, 0), col=coloraxis, col.ticks=coloraxis, col.axis=coloraxis, tck=0.02,las=1)
+#   axis(2, mgp=c(3, 0.4, 0), col=coloraxis, col.ticks=coloraxis, col.axis=coloraxis, tck=-0.02,las=1)
+#   
+# } else { 
+  
+  
+#}
+
+
+# Metabolite concentrations vs. mu ###################################################################################
+
+maxcm <- ceiling(max(cm_opt))
+
+matplot(mu_opt,cm_opt,pch=16, mgp=c(2, 0.5, 0), col.lab = colorlab, frame.plot=F, col= colori,xlim=c(0,maxmu),ylim=c(0,maxcm), xaxt = "n",
+        yaxt = "n", xlab=bquote("Growth rate"~ mu ~ (h^-1)), ylab=bquote("Metabolite concentrations " ~ c^m ~ " (g/L)"), yaxs="i", xaxs="i")
+axis(1, mgp=c(3, 0.4, 0), col=coloraxis, col.ticks=coloraxis, col.axis=coloraxis, tck=0.02,las=1)
+axis(1, mgp=c(3, 0.4, 0), col=coloraxis, col.ticks=coloraxis, col.axis=coloraxis, tck=-0.02,las=1)
+axis(2, mgp=c(3, 0.4, 0), col=coloraxis, col.ticks=coloraxis, col.axis=coloraxis, tck=0.02,las=1)
+axis(2, mgp=c(3, 0.4, 0), col=coloraxis, col.ticks=coloraxis, col.axis=coloraxis, tck=-0.02,las=1)
+legend("topleft",i_reactant[-p],col=colori,pch=16,cex=0.7)
+
+# Protein concentrations #############################################################################################
+
+
+maxp <- ceiling(max(p_opt)*1.1)
+
+matplot(mu_opt,p_opt,pch=16, mgp=c(2, 0.5, 0), col.lab = colorlab, frame.plot=F, col= colorj,xlim=c(0,maxmu),ylim=c(0,maxp), xaxt = "n",
+        yaxt = "n", xlab=bquote("Growth rate"~ mu ~ (h^-1)), ylab=bquote("Protein concentrations " ~  p ~ " (g/L)"), yaxs="i", xaxs="i")
+axis(1, mgp=c(3, 0.4, 0), col=coloraxis, col.ticks=coloraxis, col.axis=coloraxis, tck=0.02,las=1)
+axis(1, mgp=c(3, 0.4, 0), col=coloraxis, col.ticks=coloraxis, col.axis=coloraxis, tck=-0.02,las=1)
+axis(2, mgp=c(3, 0.4, 0), col=coloraxis, col.ticks=coloraxis, col.axis=coloraxis, tck=0.02,las=1)
+axis(2, mgp=c(3, 0.4, 0), col=coloraxis, col.ticks=coloraxis, col.axis=coloraxis, tck=-0.02,las=1)
+legend("topright",reaction,col=colorj,pch=16,cex=0.7)
+
+
+# Whole ribosome concentration #############################################################################################
+
+rP <-  p_opt[, "p R"]
+RNA <- cm_opt[,which(i_reactant == "RNA")]
+rib <- rP + RNA
+maxp <- ceiling(max(rib)*1.1)
+
+plot(mu_opt,rib,pch=16, mgp=c(2, 0.5, 0), col.lab = colorlab, frame.plot=F, col= colorj[1],xlim=c(0,maxmu),ylim=c(0,maxp), xaxt = "n",
+    yaxt = "n", xlab=bquote("Growth rate"~ mu ~ (h^-1)), ylab=bquote("Ribosome concentrations " ~  p ~ " (g/L)"), yaxs="i", xaxs="i")
+axis(1, mgp=c(3, 0.4, 0), col=coloraxis, col.ticks=coloraxis, col.axis=coloraxis, tck=0.02,las=1)
+axis(1, mgp=c(3, 0.4, 0), col=coloraxis, col.ticks=coloraxis, col.axis=coloraxis, tck=-0.02,las=1)
+axis(2, mgp=c(3, 0.4, 0), col=coloraxis, col.ticks=coloraxis, col.axis=coloraxis, tck=0.02,las=1)
+axis(2, mgp=c(3, 0.4, 0), col=coloraxis, col.ticks=coloraxis, col.axis=coloraxis, tck=-0.02,las=1)
+legend("bottomright", "Whole r" ,col=colorj[1],pch=16,cex=0.7)
+
+
+# RNA/rP ratios #############################################################################################
+rr_ratio <- RNA/rP
+#rp_ratio <- RNA/c_opt[,which(i_reactant == "p")]
+#r_data <- matrix(c(rr_ratio, rp_ratio), ncol=2)
+
+maxp <- max(rr_ratio)*1.1
+
+plot(mu_opt,rr_ratio,pch=16, mgp=c(2, 0.5, 0), col.lab = colorlab, frame.plot=F, col= colorj[1],xlim=c(0,maxmu),ylim=c(0,maxp), xaxt = "n",
+        yaxt = "n", xlab=bquote("Growth rate"~ mu ~ (h^-1)), ylab=bquote("RNA:rP ratio"), yaxs="i", xaxs="i")
+axis(1, mgp=c(3, 0.4, 0), col=coloraxis, col.ticks=coloraxis, col.axis=coloraxis, tck=0.02,las=1)
+axis(1, mgp=c(3, 0.4, 0), col=coloraxis, col.ticks=coloraxis, col.axis=coloraxis, tck=-0.02,las=1)
+axis(2, mgp=c(3, 0.4, 0), col=coloraxis, col.ticks=coloraxis, col.axis=coloraxis, tck=0.02,las=1)
+axis(2, mgp=c(3, 0.4, 0), col=coloraxis, col.ticks=coloraxis, col.axis=coloraxis, tck=-0.02,las=1)
+legend("bottomright", c("RNA:rP") ,col=colorj[1],pch=16,cex=0.7)
+
+
+
+# RP ratios #############################################################################################
+#rr_ratio <- RNA/rP
+rp_ratio <- RNA/c_opt[,which(i_reactant == "P")]
+#r_data <- matrix(c(rr_ratio, rp_ratio), ncol=2)
+
+maxp <- max(rp_ratio)*1.1
+
+plot(mu_opt,rp_ratio,pch=16, mgp=c(2, 0.5, 0), col.lab = colorlab, frame.plot=F, col= colorj[1],xlim=c(0,maxmu),ylim=c(0,maxp), xaxt = "n",
+        yaxt = "n", xlab=bquote("Growth rate"~ mu ~ (h^-1)), ylab="RNA:protein ratio", yaxs="i", xaxs="i")
+axis(1, mgp=c(3, 0.4, 0), col=coloraxis, col.ticks=coloraxis, col.axis=coloraxis, tck=0.02,las=1)
+axis(1, mgp=c(3, 0.4, 0), col=coloraxis, col.ticks=coloraxis, col.axis=coloraxis, tck=-0.02,las=1)
+axis(2, mgp=c(3, 0.4, 0), col=coloraxis, col.ticks=coloraxis, col.axis=coloraxis, tck=0.02,las=1)
+axis(2, mgp=c(3, 0.4, 0), col=coloraxis, col.ticks=coloraxis, col.axis=coloraxis, tck=-0.02,las=1)
+legend("bottomright", c("RNA:Protein") ,col=colorj[1],pch=16,cex=0.7)
+
+
+
+
+
+# Relative composition #########################################################
+rel_comp <- c_opt/rowSums(c_opt)
+rel_comp <- rel_comp[, ncol(c_opt):1]
+cum_comp <- t(apply(rel_comp, 1, cumsum))
+plot(NA, xlim = c(0, max(mu_opt)), ylim=c(0,1),
+     yaxs="i", xaxs="i", 
+     xaxt = "n", yaxt = "n",
+     xlab=bquote("Growth rate"~ mu ~ (h^-1)), 
+     ylab="Relative biomass composition")
+for(i in ncol(rel_comp):1){
+  col <- rev(colori)[i]
+  polygon(c(mu_opt, rev(mu_opt)), c(rep(0, nrow(cum_comp)), rev(cum_comp[,i])),
+          col=col, border=col)
+  par(new=TRUE)
+}
+par(new=FALSE)
+axis(1, mgp=c(3, 0.4, 0), col=coloraxis, col.ticks=coloraxis, col.axis=coloraxis, tck=0.02,las=1)
+axis(1, mgp=c(3, 0.4, 0), col=coloraxis, col.ticks=coloraxis, col.axis=coloraxis, tck=-0.02,las=1)
+axis(2, mgp=c(3, 0.4, 0), col=coloraxis, col.ticks=coloraxis, col.axis=coloraxis, tck=0.02,las=1)
+axis(2, mgp=c(3, 0.4, 0), col=coloraxis, col.ticks=coloraxis, col.axis=coloraxis, tck=-0.02,las=1)
+legend('bottomleft', i_reactant, col = colori, pch = 15)
+
+
+# Absolute composition #########################################################
+cum_comp2 <- t(apply(c_opt[,ncol(c_opt):1], 1, cumsum))
+plot(NA, xlim = c(0, max(mu_opt)), ylim=c(0, max(cum_comp2)),
+     yaxs="i", xaxs="i",
+     xaxt = "n", yaxt = "n",
+     xlab=bquote("Growth rate"~ mu ~ (h^-1)), 
+     ylab="Absolute biomass composition")
+for(i in ncol(cum_comp2):1){
+  col <- rev(colori)[i]
+  polygon(c(mu_opt, rev(mu_opt)), c(rep(0, nrow(cum_comp2)), rev(cum_comp2[,i])),
+          col=col, border=col)
+  par(new=TRUE)
+}
+par(new=FALSE)
+axis(1, mgp=c(3, 0.4, 0), col=coloraxis, col.ticks=coloraxis, col.axis=coloraxis, tck=0.02,las=1)
+axis(1, mgp=c(3, 0.4, 0), col=coloraxis, col.ticks=coloraxis, col.axis=coloraxis, tck=-0.02,las=1)
+axis(2, mgp=c(3, 0.4, 0), col=coloraxis, col.ticks=coloraxis, col.axis=coloraxis, tck=0.02,las=1)
+axis(2, mgp=c(3, 0.4, 0), col=coloraxis, col.ticks=coloraxis, col.axis=coloraxis, tck=-0.02,las=1)
+legend('bottomleft', i_reactant, col = colori, pch = 15)
+
+
+
+
+
+
+
+
+
+# Protein fractions ##################################################################################################
+
+maxphi <- max(phi_opt)*1.1
+
+matplot(mu_opt,phi_opt,pch=16, mgp=c(2, 0.5, 0), col.lab = colorlab, frame.plot=F, col= colorj,xlim=c(0,maxmu),ylim=c(0,maxphi), xaxt = "n",
+        yaxt = "n", xlab=bquote("Growth rate"~ mu ~ (h^-1)), ylab=bquote("Proteome fractions " ~  phi ), yaxs="i", xaxs="i")
+axis(1, mgp=c(3, 0.4, 0), col=coloraxis, col.ticks=coloraxis, col.axis=coloraxis, tck=0.02,las=1)
+axis(1, mgp=c(3, 0.4, 0), col=coloraxis, col.ticks=coloraxis, col.axis=coloraxis, tck=-0.02,las=1)
+axis(2, mgp=c(3, 0.4, 0), col=coloraxis, col.ticks=coloraxis, col.axis=coloraxis, tck=0.02,las=1)
+axis(2, mgp=c(3, 0.4, 0), col=coloraxis, col.ticks=coloraxis, col.axis=coloraxis, tck=-0.02,las=1)
+#legend("top",reaction,col=colorj,pch=16,cex=0.7)
+
+
+
+
+
+# flux fractions vs. mu ##############################################################################################
+
+#q_opt <- v_opt/(mu_opt*rho_cond)
+
+maxw <- ceiling(max(q_opt))
+
+matplot(mu_opt,q_opt,pch=16, mgp=c(2, 0.5, 0), col.lab = colorlab, frame.plot=F, col= colorj,xlim=c(0,maxmu),ylim=c(0,maxw), xaxt = "n",
+        yaxt = "n", xlab=bquote("Growth rate"~ mu ~ (h^-1)), ylab=bquote("Flux fractions " ~  f), yaxs="i", xaxs="i")
+axis(1, mgp=c(3, 0.4, 0), col=coloraxis, col.ticks=coloraxis, col.axis=coloraxis, tck=0.02,las=1)
+axis(1, mgp=c(3, 0.4, 0), col=coloraxis, col.ticks=coloraxis, col.axis=coloraxis, tck=-0.02,las=1)
+axis(2, mgp=c(3, 0.4, 0), col=coloraxis, col.ticks=coloraxis, col.axis=coloraxis, tck=0.02,las=1)
+axis(2, mgp=c(3, 0.4, 0), col=coloraxis, col.ticks=coloraxis, col.axis=coloraxis, tck=-0.02,las=1)
+#legend("topright",reaction,col=colorj,pch=16,cex=0.7)
+
+# Turnover times ####################################################################################################
+
+maxtau <- 5
+
+matplot(mu_opt,tau_opt,pch=16, mgp=c(2, 0.5, 0), col.lab = colorlab, frame.plot=F, col= colorj,xlim=c(0,maxmu),ylim=c(0,maxtau), xaxt = "n",
+        yaxt = "n", xlab=bquote("Growth rate"~ mu ~ (h^-1)), ylab=bquote("Turnover times " ~  tau ~ (h)), yaxs="i", xaxs="i")
+axis(1, mgp=c(3, 0.4, 0), col=coloraxis, col.ticks=coloraxis, col.axis=coloraxis, tck=0.02,las=1)
+axis(1, mgp=c(3, 0.4, 0), col=coloraxis, col.ticks=coloraxis, col.axis=coloraxis, tck=-0.02,las=1)
+axis(2, mgp=c(3, 0.4, 0), col=coloraxis, col.ticks=coloraxis, col.axis=coloraxis, tck=0.02,las=1)
+axis(2, mgp=c(3, 0.4, 0), col=coloraxis, col.ticks=coloraxis, col.axis=coloraxis, tck=-0.02,las=1)
+legend("topright",reaction,col=colorj,pch=16,cex=0.7)
+
+# Turnover frequencies ##############################################################################################
+
+k_opt <- 1/tau_opt
+
+maxf <- ceiling(max(k_opt))
+
+matplot(mu_opt,k_opt,pch=16, mgp=c(2, 0.5, 0), col.lab = colorlab, frame.plot=F, col= colorj,xlim=c(0,maxmu),ylim=c(0,maxf), xaxt = "n",
+        yaxt = "n", xlab=bquote("Growth rate"~ mu ~ (h^-1)), ylab=bquote("Apparent turnover numbers " ~  k[app] ~ (h^-1)), yaxs="i", xaxs="i")
+axis(1, mgp=c(3, 0.4, 0), col=coloraxis, col.ticks=coloraxis, col.axis=coloraxis, tck=0.02,las=1)
+axis(1, mgp=c(3, 0.4, 0), col=coloraxis, col.ticks=coloraxis, col.axis=coloraxis, tck=-0.02,las=1)
+axis(2, mgp=c(3, 0.4, 0), col=coloraxis, col.ticks=coloraxis, col.axis=coloraxis, tck=0.02,las=1)
+axis(2, mgp=c(3, 0.4, 0), col=coloraxis, col.ticks=coloraxis, col.axis=coloraxis, tck=-0.02,las=1)
+#legend("topleft",reaction,col=colorj,pch=16,cex=0.7)
+
+# if the model has tRNA, mRNA in it:
+if ("tRNA" %in% i_reactant ) {
+
+# RNA/P ########################################################################
+
+
+RNA <- c_opt[,i_reactant =="RNA"] #+ c_opt[,i_reactant =="mRNA"]
+
+RNAP <- RNA/c_opt[,p]
+
+RNAPr <- RNA/p_opt[,r]
+
+
+RNAPlm <- lm(RNAP[mediummu] ~ mu_opt[mediummu] )
+
+slopeRNAP <- signif(RNAPlm$coefficients[2],3)
+
+
+
+#, main=paste(reaction[j],": offset =",phi0[j],", slope = ",slope[j])
+matplot(mu_opt,RNAP,pch=16, mgp=c(2, 0.5, 0), col.lab = colorlab, frame.plot=F, 
+        main=paste("1/slope:",signif(1/slopeRNAP,digits=3)),
+        col= 1,xlim=c(0,maxmu),ylim=c(0,1.1*max(RNAP)), xaxt = "n", yaxt = "n", 
+        xlab=bquote("Growth rate"~ mu ~ (h^-1)), ylab="RNA/P", 
+        yaxs="i", xaxs="i")
+axis(1, mgp=c(3, 0.4, 0), col=coloraxis, col.ticks=coloraxis, col.axis=coloraxis, tck=0.02,las=1)
+axis(1, mgp=c(3, 0.4, 0), col=coloraxis, col.ticks=coloraxis, col.axis=coloraxis, tck=-0.02,las=1)
+axis(2, mgp=c(3, 0.4, 0), col=coloraxis, col.ticks=coloraxis, col.axis=coloraxis, tck=0.02,las=1)
+axis(2, mgp=c(3, 0.4, 0), col=coloraxis, col.ticks=coloraxis, col.axis=coloraxis, tck=-0.02,las=1)
+#legend("top",reaction,col=colorj,pch=16,cex=0.7)
+abline(RNAPlm)
+
+
+
+
+
+
+
+# Elongation rate ##############################################################
+
+}
+
+# Plots Model ##################################################################
+
+par(mfrow=c(1,1))
+
+size <- 5/r
+
+textplot(M,cex=size)
+title("M")
+
+textplot(K,cex=size)
+title("K")
+
+textplot(KA,cex=size)
+title("KA")
+
+textplot(rbind(kcatf,kcatb),cex=size)
+title("kcat")
+
+# Calculates the corresponding equilibrium constants Keq
+Keq <- 0
+for (j in 1:r) Keq[j] <- kcatf[j]*prod(KP[KP[,j] < Inf,j])/(kcatb[j]*prod(KS[KS[,j] < Inf,j]))
+
+textplot(Keq,cex=size)
+title("Keq")
+
+
+dev.off()
+
+setwd(directory)

@@ -1,0 +1,35 @@
+rm(list=ls(all=TRUE))
+
+library(here)
+library(xtable)
+
+directory <- paste0(here(), "/code")
+setwd(directory)
+
+modelname <- "A7simple"
+rescale_kcats <- TRUE
+predict.parameters <- 3
+is.reversible <- 1
+
+
+source("initialize_model.R")
+
+print("Predicted parameters:")
+print(kcatf)
+print(kcatb)
+print(K)
+
+
+latex_table <- xtable(rbind(kcatf, kcatb), 
+                      caption = "Predicted turnover numbers", 
+                      label = "tab:kcats",
+                      digits = 0)
+print(latex_table)
+
+
+latex_table <- xtable(K, 
+                      caption = "Predicted Km", 
+                      label = "tab:kms",
+                      digits = 0)
+print(latex_table)
+

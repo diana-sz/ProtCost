@@ -1,0 +1,26 @@
+{
+    "id": "82FEF92E",
+    "path": "~/prot_cost/code/test_protein_cost_dekel.R",
+    "project_path": "code/test_protein_cost_dekel.R",
+    "type": "r_source",
+    "hash": "0",
+    "contents": "",
+    "dirty": false,
+    "created": 1761571670658.0,
+    "source_on_save": false,
+    "relative_order": 7,
+    "properties": {
+        "source_window_id": "",
+        "Source": "Source",
+        "cursorPosition": "11,23",
+        "scrollLine": "5"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1761571826,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1761571826992,
+    "read_only": false,
+    "read_only_alternatives": []
+}
