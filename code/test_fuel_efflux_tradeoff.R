@@ -1,22 +1,13 @@
 rm(list=ls(all=TRUE))
 
-#library(viridis)
 library(here)
-# library(rstudioapi) 
-# library(readODS)
-# library(nloptr)
-# library(lpSolve)
-# library(RColorBrewer)
-# library(Matrix)
+
 
 directory <- paste0(here(), "/code")
 setwd(directory) 
 predict.parameters <- 0
-phis_to_test <- c(seq(0, 0.8, 0.005), seq(0.8, 0, -0.005))
+phis_to_test <- c(0.001, seq(0.005, 0.8, 0.005), seq(0.8, 0.005, -0.005))
 efflux_kcats <- c(0.1, 1, 10, 100, 1000)
-
-# fuel_kcat <- 5
-# fuel_ki <- 10
 
 for(is.reversible in c(1,0)){
   
@@ -50,7 +41,7 @@ for(is.reversible in c(1,0)){
       results_list[[length(results_list) + 1]] <- data.frame(
         kcat = efflux_kcat,
         # KI = fuel_ki,
-        # fuel_phi = fuel_phi,
+        fuel_phi = fuel_phi,
         mu = mu_opt,
         convergence = res$convergence,
         t(c(

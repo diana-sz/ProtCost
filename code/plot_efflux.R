@@ -7,13 +7,12 @@ modelnames <- c("A9fuel_efflux", "A9fuel_efflux_rev")
 
 for(modelname in modelnames){
   
-  results <- read.csv(paste0("data/", modelname, "_tradeoff_test3.csv"))
+  results <- read.csv(paste0("data/", modelname, "_tradeoff.csv"))
   results <- results[results$convergence == 4,]  # plot only simulations that converged
-  results$efflux_phi <- results$p.EFFLUX/results$c.p
-  
-  
+  results$efflux_phi <- results$p.EFFLUX/results$c.P
+
   # Set colors based on fuel_phi
-  palette_colors <- brewer.pal(length(unique(results$kcat)), "Dark2")
+  palette_colors <- brewer.pal(length(unique(results$kcat)), "Paired")
   color_map <- setNames(palette_colors, unique(results$kcat))
   point_colors <- color_map[as.character(results$kcat)]
   
@@ -29,7 +28,7 @@ for(modelname in modelnames){
        ylab = bquote("Growth rate" ~ "[" * h^-1 * "]"),
        cex = 1.,
        pch = 19,
-       cex.lab = 1.,
+       cex.lab = 1.1,
        col = point_colors, 
        xlim = c(0,0.8))
   legend("topright", col = palette_colors, 
@@ -41,7 +40,7 @@ for(modelname in modelnames){
        ylim = c(0, max(results$efflux_phi)), xlim = c(0,0.8),
        cex = 1.,
        pch = 19,
-       cex.lab = 1.,
+       cex.lab = 1.1,
        col = point_colors)
 
   

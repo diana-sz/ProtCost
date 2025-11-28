@@ -1,31 +1,33 @@
+rm(list=ls(all=TRUE))
+
 library(here)
-library(readODS)
-library(rstudioapi)
 library(xtable)
 
 directory <- paste0(here(), "/code")
 setwd(directory)
 
 
-modelname="A7simple"
-suppressMessages(source("Readmodelods_v2.R"))
+modelname <- "A7simple"
+is.reversible <- 1
 
-source("GBA_Kinetics.R")
+suppressMessages(source("Readmodelods.R"))
+
+source("Kinetics.R")
 
 
-opt_data <- read.csv("Results GBA/GBA Model A7simple mean time (5.11s) results.csv", row.names = 1)
+opt_data <- read.csv("../data/A7simple_rev_GBA.csv", row.names = 1)
 
 row <- 1
 rho <- rho_cond[1]
-x  <- x_cond[,1]
+a  <- a_cond[,1]
 
 vs <- opt_data[row, grep("v\\.", colnames(opt_data))]
 fs <- opt_data[row, grep("f\\.", colnames(opt_data))]
 
-cint <- opt_data[row, which(colnames(opt_data)=="C"):which(colnames(opt_data)=="p")]
+cint <- opt_data[row, which(colnames(opt_data)=="C"):which(colnames(opt_data)=="P")]
 fint <- cint/rho
-taus <- tau(t(cint))
-dtaus <- dtau(t(cint))
+taus <- tau(a, t(cint))
+dtaus <- dtau(a, t(cint))
 growth_rate <- opt_data[row, "mu"]
 
 results <- data.frame(
@@ -40,7 +42,7 @@ results <- data.frame(
 
 
 for(j in 1:length(vs)){
-  Mjp <- M["p",j]
+  Mjp <- M["P",j]
   local_cost <- growth_rate*taus[j]
   local_benefit <- unlist(vs) %*% (dtaus %*% M[, j])
   transport_benefit <- colSums(M)[j] * unlist(vs) %*% dtaus %*% unlist(fint)

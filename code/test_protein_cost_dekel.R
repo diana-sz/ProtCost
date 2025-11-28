@@ -14,9 +14,10 @@ primary_c_source <- 0.5
 
 alt_concentrations <- c(0.001, 0.01, 0.05, 0.1, 0.2, 1, 10)
 
-results_list <- list()
 
 for(is.reversible in c(1,0)){
+  results_list <- list()
+  
   for (x_C2 in alt_concentrations){
     modelname <- "A8dekel"
     source("initialize_model.R")

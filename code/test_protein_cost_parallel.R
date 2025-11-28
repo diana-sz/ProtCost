@@ -12,7 +12,7 @@ directory <- file.path(here(), "code")
 setwd(directory)
 
 # --- read model and get initial solution --- ####
-is.reversible <- 1
+is.reversible <- 0
 predict.parameters <- 0
 modelname <- "A7simple"
 max_cores <- 7
@@ -46,8 +46,11 @@ process_reaction <- function(reaction_name, opt_phi, q0_initial) {
     opt_phi_nonzero <- FALSE
   }
 
-  #rel_phis_to_test <- c(seq(1, 0.01, -0.01), seq(1, 1/opt_phi, 0.01))
-  phis_to_test <- c(seq(0, 0.8, 0.002), seq(0.8, 0.0, -0.002))
+  # step size below optimum higher than above (the curves are steeper)
+  # go from both directions in case solver does not converge
+  phis_to_test <- c(seq(round(opt_phi,4), 0, -0.0001), seq(0, round(opt_phi,4), 0.0001),
+                    seq(round(opt_phi, 3), 1, 0.001), seq(1, round(opt_phi, 3), -0.001))
+  #phis_to_test <- c(seq(0, 0.8, 0.001), seq(0.8, 0.0, -0.001))
   
   
   for (fraction in phis_to_test) {
@@ -110,9 +113,9 @@ process_reaction <- function(reaction_name, opt_phi, q0_initial) {
     }
     
     # if there is a converged solution, save the latest f0
-    if(res$convergence == 4){
+    #if(res$convergence == 4){
       last_feasible_q0 <- q_initial
-    }
+    #}
     
 # 
 #     # Always update local_f0 regardless of convergence
@@ -159,39 +162,3 @@ results <- do.call(rbind, results_list)
 write.csv(results, paste0("../data/", modelname, is.reversible, "_protein_cost.csv"))
 
 
-# --- Plot results and save as pdf --- ####
-# 
-# MAX_Y <- 1.1
-# 
-# pdf(
-#   file.path("../figures", paste0(modelname, "_conditions_cost_test_", is.reversible, ".pdf")),
-#   title = paste("Protein cost testing", modelname),
-#   width = 10, height = 5
-# )
-# 
-# par(mar = c(5, 5, 5, 1), mfrow = c(1, 2))
-# 
-# for (rxn in unique(results$reaction)) {
-#   one_rxn <- subset(results, reaction == rxn)
-#   colors <- as.factor(one_rxn$x_Glc)
-#   
-#   # Plot normalized growth
-#   with(subset(one_rxn, opt_phi_nonzero == TRUE),
-#        plot(mu_norm ~ rel_phi,
-#             xlab = "Titrated level / opt. level",
-#             ylab = "Normalized growth (mu)",
-#             ylim = c(0, MAX_Y), xlim = c(0, 10),
-#             pch = shape, cex = 1.3, cex.lab = 1.3,
-#             main = rxn, col = colors))
-#   
-#   # Plot absolute growth
-#   with(one_rxn,
-#        plot(mu ~ phi,
-#             xlab = "Proteome fraction",
-#             ylab = expression("Growth rate" ~ "[" * h^-1 * "]"),
-#             ylim = c(0, max(one_rxn$mu)*1.1), xlim = c(0, max(one_rxn$phi)*1.1),
-#             pch = shape, cex = 1.3, cex.lab = 1.3,
-#             main = rxn, col = colors))
-# }
-# 
-# dev.off()
