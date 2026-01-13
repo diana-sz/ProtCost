@@ -7,8 +7,8 @@ setwd(directory)
 
 predict.parameters <- 0
 
-for(is.reversible in c(1,0)){
-  modelname <- "A8alt_trans"
+for(is.reversible in c(0)){
+  modelname <- "M9_alt_trans"
   
   source("initialize_model.R")
   n_conditions <- 1
@@ -24,7 +24,7 @@ for(is.reversible in c(1,0)){
   kcat_tC1 <- kcatf[transporter]
   km_tC1 <- KS[1,transporter]
   
-  phis_to_test <- c(seq(0, 0.5, 0.01), seq(0.5, 0, -0.01))
+  phis_to_test <- seq(0, 0.5, 0.005)
   kms_to_test <- c(km_tC1/10, km_tC1, km_tC1*10)
   kcats_to_test <- c(kcat_tC1*10, kcat_tC1, kcat_tC1/10)
   
@@ -33,7 +33,7 @@ for(is.reversible in c(1,0)){
     
     for (kcat_t in kcats_to_test){
       kcatf[transporter2] <- kcat_t
-      kcatb[transporter2] <- kcat_t/5
+      kcatb[transporter2] <- kcat_t/5*is.reversible
       
       # get optimal phis
       source("solver_loop.R")

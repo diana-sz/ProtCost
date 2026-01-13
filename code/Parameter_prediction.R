@@ -10,7 +10,7 @@ rounding <- 1
 # forces some reactions to be irreversible if kcatb = 0 in the file
 rev <- as.vector(1*(kcatb > 0))
 
-K[(n_a+1):(p+n_a-1),] <- ceiling(diag(cm0/esat)%*%(1*(M[-p,] < 0)) + is.reversible*diag(cm0)%*%(1*(M[-p,] > 0))%*%diag(rev) )
+K[(n_a+1):(p+n_a-1),] <- round(diag(cm0/esat)%*%(1*(M[-p,] < 0)) + is.reversible*diag(cm0)%*%(1*(M[-p,] > 0))%*%diag(rev),1)
 
 
 # Estimates total saturation of each reaction assuming irrev. with cm = esat*Km
@@ -43,7 +43,11 @@ KS <- K*(Mtotal<0)
 KP <- K*(Mtotal>0)
 
 KS[KS == 0] <- Inf
-KP[KP == 0] <- Inf
+if(is.reversible){
+  KP[KP == 0] <- Inf
+}else{
+  KP[] <- Inf
+}
 KI[KI == 0] <- Inf
 
 

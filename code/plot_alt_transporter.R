@@ -3,6 +3,8 @@ library(RColorBrewer)
 
 setwd(here())
 
+cex_all <- 1.05
+
 source("code/uni_colors.R")
 
 experimental <- data.frame(
@@ -30,7 +32,9 @@ experimental <- data.frame(
 
 
 
-modelnames <- c("A8alt_trans", "A8alt_trans_rev")
+modelnames <- c("M9_alt_trans")#, "M9_alt_trans_rev")
+xlim <- c(0, 3)
+ylim <- c(0, 1.1)
 
 for(modelname in modelnames){
   results <- read.csv(paste0("data/", modelname, ".csv"))
@@ -38,17 +42,19 @@ for(modelname in modelnames){
   
   png(paste0("figures/", modelname,".png"),
       type="cairo", units="cm", res = 300,
-      width=16, height=7)
+      width=17, height=7.5)
   
-  par(mar=c(5,4.5,0.5,0.5), mfrow = c(1,2))
+  par(mfrow=c(1,2), oma = c(0,1,0.5,0))
+  par(mar = c(4, 2.5, 1, 1))
 
   # Set factor levels
   results$kcat <- results$kcat
   results$kcat <- factor(results$kcat, levels = unique(results$kcat))
   results$km <- factor(results$km, levels = unique(results$km))
-  opt_phi <- which.max(results[results$kcat == 50.7 & results$km == 1, "mu"])
+  opt_phi <- which.max(results[results$kcat == 50.6 & results$km == 1, "mu"])
   results$rel_phi <- results$phi / results$phi[opt_phi]
   results$mu_rel <- results$mu / results$mu[opt_phi]
+  results <- results[results$rel_phi <= 3,]
   
   # Set colors based on kcat
   palette_colors <- brewer.pal(length(unique(results$kcat)), "Paired")
@@ -63,24 +69,32 @@ for(modelname in modelnames){
   # Create the plot
   plot(
     mu_rel ~ rel_phi, data = results,
-    xlab = "Fixed level / optimal level",
-    ylab = "Relative growth rate",
-    xlim = c(0, 3), ylim = c(0, 1.1),
+    xlab = NA,
+    ylab = NA,
+    xlim = xlim, ylim = ylim,
     pch = point_shapes,
     col = point_colors,
-    cex = 1.05, cex.lab = 1.1, cex.axis = 1.05
+    cex = cex_all, cex.lab = cex_all,
+    axes = FALSE
     #main = "Simulations"
   )
   
+  mtext("Relative growth rate", side = 2, outer = FALSE, line = 2.5, cex = cex_all)
+  mtext("Fixed level / optimal level of TC", side = 1, outer = FALSE, line = 2.5, cex = cex_all)
+  
+  box()
+  axis(1)
+  axis(2, las=2)
+  
   # Add legend
   legend(
-    0.7, 0, yjust = 0,
+    1, 0, yjust = 0,
     legend = unique(results$kcat),
     col = palette_colors,
-    pch = 19,
-    cex = 1.05,
+    pch = 15,
+    cex = 0.9,
     bty = "n",
-    title = expression("k"[ "cat" ])
+    title = expression(k[cat]^"TC2")
   )
   
   # Add legend
@@ -89,29 +103,55 @@ for(modelname in modelnames){
     legend = c(unique(results$km)),
     col = rep("black", length(unique(results$km))),
     pch = shape_list,
-    cex = 1.05,
+    cex = 0.9,
     bty = "n",
-    title = "Km"
+    title = expression(K[TC2]^"Cext")
+  )
+  
+  mtext(
+    paste0("(", letters[1], ")"),
+    side = 3,
+    adj = 0.5,
+    line = 0.35,
+    cex = cex_all,
+    font = 2
   )
   
 
   # experimental data
   #  PTS transporter system (glucose-specific subunit IIA) in Salmonella typhimurium
+  par(mar = c(4, 1, 1, 2.5))
   plot(
     mu_rel ~ titrated_level, data = experimental, 
-    xlab = "Titrated level / WT level",
-    ylab = "Relative growth rate",
-    xlim = c(0, 3), ylim = c(0, 1.1),
+    xlab = NA,
+    ylab = NA,
+    xlim = xlim, ylim = ylim,
     pch = 19,
     col = uni_lila,
-    cex = 1.05, cex.lab = 1.1, cex.axis = 1.05
+    axes = FALSE,
+    cex = cex_all, cex.lab = cex_all
   )
   
   x <- seq(0, 3, length.out = 50)
   y <- 0.15/0.32 + 1.25 * (x / (0.5 + x))^1.2 - 0.22 * x
   lines(x, y, col = uni_lila)
   
+  box()
+  axis(1)
+  axis(2, las=2, labels=FALSE)
+  mtext("Titrated level / WT level of transporter", side = 1, outer = FALSE, line = 2.5, cex = cex_all)
+  
   legend("bottomright", legend = "Maltose", col = uni_lila, pch = 19, bty = "n", cex=1.05)
+  
+  
+  mtext(
+    paste0("(", letters[2], ")"),
+    side = 3,
+    adj = 0.5,
+    line = 0.35,
+    cex = cex_all,
+    font = 2
+  )
   
   dev.off()
 }

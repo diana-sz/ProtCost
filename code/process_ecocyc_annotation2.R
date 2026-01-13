@@ -4,7 +4,7 @@ setwd(here())
 
 ecocyc_annot <- read.table("data/p17_groups_detailed.txt", sep = "\t", header=TRUE)
 
-A7_groups <- c("translation",
+protein_groups <- c("translation",
                 "amino acid biosynthetic process",
                 "nucleobase biosynthetic process",
                 "DNA-templated transcription",
@@ -27,12 +27,13 @@ get_genes <- function(ecocyc_annot, groupname){
  
 # subgroups that will be plotted separately
 ribo_genes <- get_genes(ecocyc_annot, "structural constituent of ribosome")
+adps_genes <- "b0474" # https://ecocyc.org/ECOLI/NEW-IMAGE?type=ECOCYC-CLASS&object=GO:0006172
 
 
 gene_annot <- list()
 for(row in 1:nrow(ecocyc_annot)){
   group <- ecocyc_annot[row,1]
-  if(!group %in% A7_groups){
+  if(!group %in% protein_groups){
     next
   }
   genes <- strsplit(ecocyc_annot[row,2], " // ")[[1]]

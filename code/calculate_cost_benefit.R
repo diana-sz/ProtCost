@@ -7,7 +7,7 @@ directory <- paste0(here(), "/code")
 setwd(directory)
 
 
-modelname <- "A7simple"
+modelname <- "M8"
 is.reversible <- 1
 
 suppressMessages(source("Readmodelods.R"))
@@ -15,7 +15,7 @@ suppressMessages(source("Readmodelods.R"))
 source("Kinetics.R")
 
 
-opt_data <- read.csv("../data/A7simple_rev_GBA.csv", row.names = 1)
+opt_data <- read.csv("../data/M8_rev_GBA.csv", row.names = 1)
 
 row <- 1
 rho <- rho_cond[1]
@@ -50,10 +50,10 @@ for(j in 1:length(vs)){
 
   print(paste(colnames(vs)[j],
               "prot", Mjp,
-              "local cost", round(local_cost, 4),
-              "local benefit", round(local_benefit, 4),
-              "transport benefit", round(transport_benefit, 4),
-              "sum", round(Mjp  - local_cost - local_benefit + transport_benefit, 4)))  
+              "direct cost", round(local_cost, 4),
+              "kinetic value", round(local_benefit, 4),
+              "density value", round(transport_benefit, 4),
+              "marginal value", round(Mjp  - local_cost - local_benefit + transport_benefit, 4)))  
   
   results <- rbind(
     results,
@@ -68,8 +68,11 @@ for(j in 1:length(vs)){
   )
 }
 
-latex_table <- xtable(results, 
+rownames(results) <- gsub("v.", "", results$variable,)
+
+
+latex_table <- xtable(results[,2:ncol(results)], 
                       caption = "GBA Model Results", 
                       label = "tab:GBA_results",
-                      digits = 2)
+                      digits = 3)
 print(latex_table)

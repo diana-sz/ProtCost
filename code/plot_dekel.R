@@ -1,3 +1,11 @@
+#### Plots for Dekel & Alon simulations ####
+# Author: Diana Szeliova
+# Noone:
+# Absolutely noone:
+# Diana: 'base R is so flexible, I can customize every last piece of the plot
+# The code: has 300 lines
+
+
 library(RColorBrewer)
 library(here)
 library(readODS)
@@ -7,6 +15,9 @@ setwd(directory)
 
 predict.parameters <- 0
 plotted_phis <- c(0.04, 0.4)
+phi_xlim <- 0.5
+cex_all <- 1.05
+
 source("uni_colors.R")
 
 
@@ -33,8 +44,12 @@ plot_composition <- function(proteome, target_phi, colors = NULL,
   plot(NA, xlim = xlim, ylim =ylim, xlab = xlab, ylab = ylab, main = main,
        axes = FALSE,
        cex.lab = cex_lab, log = "x")
-  if(yaxis){axis(2)}
-  axis(1)
+  if(yaxis){
+    axis(2, las = 1, at = seq(0,1,0.2), cex.axis=cex_axis) 
+    }
+  axis(1, cex.axis=cex_axis)
+  
+  
   box()
   
   # Bottom line (start from 0)
@@ -57,7 +72,7 @@ plot_composition <- function(proteome, target_phi, colors = NULL,
     leg_text <- gsub("p\\.", "", leg_text)
     par(xpd = NA)
     legend(xlim[1], -0.33,  #"bottomleft", 
-           legend = leg_text, fill = rev(colors), bty = "n", cex = 1.05, ncol = 4)
+           legend = leg_text, fill = rev(colors), bty = "n", cex = cex_lab, ncol = 4)
     par(xpd = FALSE)
     
   }
@@ -66,11 +81,12 @@ plot_composition <- function(proteome, target_phi, colors = NULL,
 
 
 for(is.reversible in c(1,0)){
-  modelname <- "A8dekel"
+  modelname <- "M10_dekel_efflux" # M10_dekel_efflux
   source("initialize_model.R")
   
   opt_data <- read.csv(paste0("../data/", modelname, ".csv"), row.names = 1)
   opt_data <- opt_data[opt_data$convergence == 4, ]
+  opt_data <- opt_data[opt_data$phi <= phi_xlim,]
   
   row <- 1
   rho_cond <- rho_cond[1]
@@ -83,9 +99,9 @@ for(is.reversible in c(1,0)){
     phi = numeric(),
     variable = character(),
     protein_benefit = numeric(),
-    local_cost = numeric(),
-    local_benefit = numeric(),
-    transport_benefit = numeric(),
+    direct_cost = numeric(),
+    kinetic_value = numeric(),
+    density_value = numeric(),
     sum = numeric(),
     stringsAsFactors = FALSE
   )
@@ -97,7 +113,7 @@ for(is.reversible in c(1,0)){
       one_xC2 <- one_phi[one_phi$x_C2 == x_C2,]
       
       a_cond[1,] <- one_xC2$x_C[1]
-      a_cond[2,] <- x_C2
+      a_cond[3,] <- x_C2
       
       vs <- one_xC2[row, grep("v\\.", colnames(one_xC2))]
       fs <- one_xC2[row, grep("f\\.", colnames(one_xC2))]
@@ -110,10 +126,10 @@ for(is.reversible in c(1,0)){
       growth_rate <- one_xC2[row, "mu"]
       
       for(j in 1:length(vs)){
-        Mjp <- M["p",j]
-        local_cost <- growth_rate*taus[j]
-        local_benefit <- unlist(vs) %*% (dtaus %*% M[, j])
-        transport_benefit <- colSums(M)[j] * unlist(vs) %*% dtaus %*% unlist(fint)
+        Mjp <- M[nrow(M),j]  # protein row
+        direct_cost <- growth_rate*taus[j]
+        kinetic_value <- unlist(vs) %*% (dtaus %*% M[, j])
+        density_value <- colSums(M)[j] * unlist(vs) %*% dtaus %*% unlist(fint)
         
         results <- rbind(
           results,
@@ -123,10 +139,10 @@ for(is.reversible in c(1,0)){
             phi = phi,
             variable = colnames(vs)[j],
             protein_benefit = as.numeric(Mjp),
-            local_cost = -as.numeric(local_cost),
-            local_benefit = -as.numeric(local_benefit),
-            transport_benefit = as.numeric(transport_benefit),
-            sum = as.numeric(Mjp - local_cost - local_benefit + transport_benefit)
+            direct_cost = -as.numeric(direct_cost),
+            kinetic_value = -as.numeric(kinetic_value),
+            density_value = as.numeric(density_value),
+            sum = as.numeric(Mjp - direct_cost - kinetic_value + density_value)
           )
         )
       }
@@ -134,10 +150,10 @@ for(is.reversible in c(1,0)){
   }
   
 
-  plots <- c("sum", "local_cost", "local_benefit", "transport_benefit")
-  plot_names <- c("sum", "(marginal) protein investment",
-                  "(marginal) local protein value", "biomass production cost")
-  colors <- c(uni_red, uni_green, uni_lila, uni_blue)
+  plots <- c("sum", "direct_cost", "kinetic_value", "density_value")
+  plot_names <- c("marginal value", "direct cost",
+                  "kinetic value", "density value")
+  colors <- c("black", uni_red, uni_green, uni_lila)
   x_C2_vals <- sort(unique(opt_data$x_C2)) 
   cols <- setNames(rev(brewer.pal(length(x_C2_vals), "Paired")), x_C2_vals) 
   prot_vals <- sort(unique(opt_data$convergence)) 
@@ -148,11 +164,11 @@ for(is.reversible in c(1,0)){
   dekel_rel_mu <- c(-4.79, -4.87, -6.11, -1.31, 0.93, 7.81, 9.66, 10.21, 13.76, 10.98, 12.37)
   dekel_rel_mu <- 1+dekel_rel_mu/100
   
-  
   xlim <- range(c(x_C2_vals, max(dekel_conc)))
   ylim <- c(-3, 1)
-  cex_lab <- 1.05
-  cex_axis <- 1.15
+  cex_lab <- 0.85
+  cex_axis <- 1.1
+  letters_line <- 1.25
   
   opt_data$mu_ref <- opt_data$mu / max(opt_data[opt_data$phi == 0, "mu"])
   
@@ -170,29 +186,37 @@ for(is.reversible in c(1,0)){
   layout(layout_matrix, widths = c(0.8,0.8,0.45,0.45), heights = c(1,1))
   
   # --- Panel 1: Growth rate vs phi ---
-  par(mar = c(4,4,2,1), oma = c(1,0.5,0,0))
+  par(mar = c(4,4,3,1), oma = c(1,0.5,0,0))
   point_cols <- cols[as.character(opt_data$x_C2)] 
   #point_shapes <- shapes[as.character(opt_data$convergence)]
-  plot(mu ~ phi, data = opt_data, 
+  plot(mu_ref ~ phi, data = opt_data, 
        ylab = NA,
        xlab = NA,
        axes = FALSE,
-       ylim = c(0, max(mu)),
+       ylim = c(0, max(mu_ref)),
+       xlim = c(0, phi_xlim),
        cex = 1,
        col = point_cols, pch = 20)
   box()
   axis(1, cex.axis=cex_axis) 
   axis(2, las = 1, cex.axis=cex_axis) 
   mtext(expression("LAC proteome fraction (" * Phi * ")"), side=1, cex = cex_lab, line = 2.8)
-  mtext(expression("Growth rate [h"^-1 * "]"), side=2, cex = cex_lab, line = 2.4)
-  legend("topright", legend = x_C2_vals, col = cols, pch = 16, title = "xL")
-  
-  abline(fit)
-  cols_lines = c("grey20", "grey55")
+  #mtext(expression("Growth rate [h"^-1 * "]"), side=2, cex = cex_lab, line = 2.4)
+  mtext(expression("Growth rate relative to " * Phi["LAC"] * "=0"), side=2, cex = cex_lab, line = 2.4)
+  cols_lines = c("grey15", "grey60")
   abline(v=plotted_phis, col = cols_lines, lty=2)
-  
+  legend("bottomleft", legend = x_C2_vals, col = cols, pch = 16, title = expression("L"["ext"]))
+  mtext(
+    paste0("(", letters[1], ")"),
+    side = 3,
+    adj = 0.5,
+    line = letters_line,
+    cex = cex_all,
+    font = 2
+  )
+
+
   # --- Panel 2: Relative growth rate vs x_C2 for different phi ---
-  #par(mar = c(4,4,2,1))
   plot(NA,
        ylab = NA, xlab = NA,
        log = "x",
@@ -208,26 +232,43 @@ for(is.reversible in c(1,0)){
     lines(mu_ref ~ x_C2, data = one_phi, col = cols_lines[pphi], lty = 2)
     points(mu_ref ~ x_C2, data = one_phi, col = point_cols, pch = 20, cex = 1.3)
     text(min(x_C2_vals), (one_phi[which.min(one_phi$x_C2), "mu_ref"]+0.055), 
-         bquote(Phi * " = " * .(plotted_phis[pphi])), cex = 1.05, adj=0)
+         bquote(Phi * " = " * .(plotted_phis[pphi])), cex = cex_all, adj=0)
   }
   
-  
-  points(dekel_conc, dekel_rel_mu, col = "grey50", pch = 24, cex = 1.1)
+  points(dekel_conc, dekel_rel_mu, col = "grey50", pch = 24, cex = cex_all)
   
   axis(1, cex.axis=cex_axis) 
   axis(2, las = 1, cex.axis=cex_axis) 
   #mtext("xC2 concentration", side=1, cex = cex_lab, line = 2.5)
-  mtext(expression("Growth rate relative to " * Phi["tC2"] * "=0"), side=2, cex = cex_lab, line = 2.4)
+  mtext(expression("Growth rate relative to " * Phi["LAC"] * "=0"), side=2, cex = cex_lab, line = 2.4)
   mtext(expression("L"["ext"] * " concentration"), side = 1, line = 2.8, cex = cex_lab)
-  
-  
+  mtext(
+    paste0("(", letters[2], ")"),
+    side = 3,
+    adj = 0.5,
+    line = letters_line,
+    cex = cex_all,
+    font = 2
+  )
+
   # --- Panel 3: 4 subplots for cost/benefit ---
+  xlim[2] <- max(x_C2_vals)
+  mtext(
+    paste0("(", letters[3], ")"),
+    side = 3,
+    adj = 1.89,
+    line = letters_line,
+    cex = cex_all,
+    font = 2
+  )
+  
+  cex_axis <- cex_axis*0.85
   for (p in seq_along(plotted_phis)) {
     phi <- plotted_phis[p]
     one_phi <- results[results$phi == phi & results$variable == "v.LAC", ]
     
-    ls <- ifelse(p %in% c(2), 1, 3)
-    par(mar = c(2.5, ls, 2, 4-ls))
+    ls <- ifelse(p %in% c(2), 1.4, 3.7)
+    par(mar = c(2.5, ls, 3, 4.2-ls))
     
     plot(NA, xlim = xlim, ylim = ylim, log = "x", axes = FALSE, xlab = NA, ylab = NA)
     box()
@@ -236,14 +277,14 @@ for(is.reversible in c(1,0)){
     for (i in length(plots):1) {
       lines(one_phi$x_C2, one_phi[[plots[i]]], col = colors[i], lty = i, lwd = 1.5)
     }
-    mtext(bquote(Phi * " = " * .(phi)), side=3, cex = cex_lab*0.85, line = 0.3)
+    mtext(bquote(Phi * " = " * .(phi)), side=3, cex = 0.7, line = 0.3)
     
-    if (p %in% c(1,3)) { 
+    if(p == 1){
       axis(2, las = 1, at = seq(ylim[1], ylim[2], 1), cex.axis=cex_axis) 
-      mtext("Cost / Benefit", side = 2, line = 2.2, cex = cex_lab*0.8)
+      mtext("Cost / Benefit", side = 2, line = 2.4, cex = cex_lab)
       par(xpd = NA) 
-      legend(xlim[1]-0.0008, ylim[1], #inset = c(-0.05,-0.05), 
-             legend = rev(plot_names), col = rev(colors), cex = 0.85, lwd = 2,
+      legend(xlim[1], ylim[1], #inset = c(-0.05,-0.05), 
+             legend = rev(plot_names), col = rev(colors), cex = cex_lab, lwd = 2,
              lty = length(plots):1, bty = "n", horiz=FALSE, ncol=2)
       par(xpd = FALSE)
     }
@@ -263,13 +304,15 @@ for(is.reversible in c(1,0)){
                      cex_lab=cex_lab,
                      legend=plot_legend,
                      yaxis = draw_axis,
-                     xlim = c(min(concs), max(concs)))
+                     xlim = xlim)
     if(p == 1){
-      mtext("Biomass composition", side = 2, line = 2.2, cex = cex_lab*0.8) 
+      mtext("Biomass composition", side = 2, line = 2.4, cex = cex_lab) 
       #mtext("LAC concentration", side = 1, line = 2.8, cex = cex_lab, adj = -70)
     }
   }
   
+
+
   dev.off()
   
 }

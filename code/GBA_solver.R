@@ -102,7 +102,10 @@ for (cond in 1:n_conditions) {
   res <- auglag(q_initial, fn = negative_mu, lower = lower_q, gr = negative_dmu,
                  upper = upper_q, heq = g, hin = h,
                  localsolver = c(solver), localtol = mu_tol,
-                 control = list(maxeval = 100000, xtol_rel = xtol_rel))
+                 control = list(maxeval = 100000, xtol_rel = xtol_rel 
+                                #xtol_abs = xtol_abs
+                                )
+                )
   
   })
   

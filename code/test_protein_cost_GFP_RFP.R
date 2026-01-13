@@ -4,43 +4,38 @@ library(here)
 
 directory <- paste0(here(), "/code")
 setwd(directory) 
+
 predict.parameters <- 0
-phis_to_test <- c(seq(0, 0.5, 0.005))#, seq(0.5, 0, -0.005))
-efflux_kcats <- c(0.001, 1, 10, 1000)
+phis_to_test <- seq(0.1, 0.4, 0.1)
+gfp_fracion <- seq(0, 1, 0.2)
 
 for(is.reversible in c(1,0)){
-  
-  modelname <- "M10fuel_efflux"
+  modelname <- "M10_GFP_RFP"
   
   source("initialize_model.R")
   n_conditions <- 1
+  rho_cond <- rho_cond[1]
   
   q0_wt <- q0
   last_feasible_q0 <- q0
   
   results_list <- list()
-  
-  fuel <- which(reaction == "FUEL")
-  efflux <- which(reaction == "EFFLUX")
-  # KI["F", "r"] <- fuel_ki
-  # kcatf[fuel] <- fuel_kcat
-  # kcatb[fuel] <- is.reversible*fuel_kcat/5
-  
-  for(efflux_kcat in efflux_kcats){
-    kcatf[efflux] <- efflux_kcat
-    kcatb[efflux] <- is.reversible*efflux_kcat/5
+  gfp_ind <- which(reaction == "GFP")
+  rfp_ind <- which(reaction == "RFP")
+  for(fraction in phis_to_test){
     
-    for (fuel_phi in phis_to_test){
-      min_phi[fuel] <- fuel_phi
-      max_phi[fuel] <- fuel_phi+1e-5
+    for (gfp in gfp_fracion){
+      min_phi[gfp_ind] <- gfp*fraction
+      max_phi[gfp_ind] <- gfp*fraction+1e-5
+      min_phi[rfp_ind] <- (1-gfp)*fraction
+      max_phi[rfp_ind] <- (1-gfp)*fraction+1e-5
       
       source("solver_loop.R")
       
       fs <- q_opt[1, ]
       results_list[[length(results_list) + 1]] <- data.frame(
-        kcat = efflux_kcat,
-        # KI = fuel_ki,
-        fuel_phi = fuel_phi,
+        gfp_phi = gfp*fraction,
+        rfp_phi = (1-gfp)*fraction,
         mu = mu_opt,
         convergence = res$convergence,
         t(c(
@@ -51,12 +46,10 @@ for(is.reversible in c(1,0)){
         ))
       )
     }
-    
-    # reset phis
-    min_phi[] <- 0
-    max_phi[] <- 1
   }
-  
   results <- do.call(rbind, results_list)
-  write.csv(results, paste0("../data/", modelname, "_tradeoff.csv"))
+  write.csv(results, paste0("../data/", modelname, ".csv"))
 }
+
+
+

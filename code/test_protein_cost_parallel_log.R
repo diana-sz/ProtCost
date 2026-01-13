@@ -17,7 +17,7 @@ setwd(directory)
 run_solver <- function(q0_value, msg = NULL) {
   if (!is.null(msg)) print(msg)
   assign("q0", q0_value, envir = .GlobalEnv)
-  res_try <- try(source("GBA_solver.R"), silent = TRUE)
+  res_try <- try(source("GBA_solver_log.R"), silent = TRUE)
   inherits(res_try, "try-error")
 }
 
@@ -25,8 +25,8 @@ run_solver <- function(q0_value, msg = NULL) {
 # --- read model and get initial solution --- ####
 is.reversible <- 1
 predict.parameters <- 0
-modelname <- "M9_Q"
-max_cores <- 9
+modelname <- "M8"
+max_cores <- 8
 
 source("initialize_model.R")
 n_conditions <- 1
@@ -50,26 +50,33 @@ process_reaction <- function(reaction_name, opt_phi, q0_initial) {
   last_feasible_q0 <- q0_initial
   last_q0 <- q0_initial
   
-  
+  #print(reaction_name, opt_phi)
+  # opt_phi_nonzero <- TRUE
+  # if (opt_phi < 1e-8) {
+  #   opt_phi <- 0.1
+  #   opt_phi_nonzero <- FALSE
+  # }
+
   # step size below optimum higher than above (the curves are steeper)
   # go from both directions in case solver does not converge
-  below <- seq(round(opt_phi, 4), 0, by = -0.00005) #ceiling(opt_phi/0.001))
+  below <- seq(round(opt_phi, 4), 0, by = -0.0001) #ceiling(opt_phi/0.001))
   
   #problematic <- c("ATPS", "DNAP", "ADPS")
   #interval <- ifelse(reaction_name %in% problematic, 0.0005, 0.005)
-  above <- seq(round(opt_phi, 4), 1, by = 0.0002)
-  
-  phis_to_test <- c(below, above)
+  above <- seq(round(opt_phi, 4), 1, by = 0.0001)
 
+  phis_to_test <- c(below, above)
+  
   for (fraction in phis_to_test) {
     print(paste(reaction_name, "phi =", fraction))
     
     # make local copies of bounds
     local_min_phi <- min_phi
     local_max_phi <- max_phi
-
+    
+    if(fraction*opt_phi >= 1){next}
     local_min_phi[reaction == reaction_name] <- fraction
-    local_max_phi[reaction == reaction_name] <- fraction + 1e-5
+    local_max_phi[reaction == reaction_name] <- fraction + 1e-4
     
     # assign to global env for solver
     assign("min_phi", local_min_phi, envir = .GlobalEnv)
@@ -81,27 +88,17 @@ process_reaction <- function(reaction_name, opt_phi, q0_initial) {
       last_feasible_q0,
       "Solving with last feasible solution"
     )
-    
+      
     # draw Gaussian noise with mean 0, sd = sd_vec
-    noise  <- rnorm(length(last_feasible_q0), mean = 0, sd = last_feasible_q0*0.02)
+    noise  <- rnorm(length(last_feasible_q0), mean = 0, sd = last_feasible_q0*0.05)
     perturbed_q0 <- last_feasible_q0 + noise
     perturbed_q0[perturbed_q0 < 0] <- 0
-    
-    noise  <- rnorm(length(q0_wt), mean = 0, sd = q0_wt*0.02)
-    perturbed_q0_wt <- last_feasible_q0 + noise
-    perturbed_q0_wt[perturbed_q0_wt < 0] <- 0
-    
-    noise  <- rnorm(length(q0_alt), mean = 0, sd = q0_alt*0.02)
-    perturbed_q0_alt <- q0_alt + noise
-    perturbed_q0_alt[perturbed_q0_alt < 0] <- 0
-
+      
     candidates <- list(
-      list(q = q0_wt,  msg = "Solver did not converge - trying with initial FBA solution"),
-      list(q = q0_alt, msg = "Solver did not converge - trying with alternative FBA solution"),
+      list(q = perturbed_q0, msg = "Solver did not converge - trying with perturbed last solution"),
       list(q = last_q0, msg = "Solver did not converge - trying with last solution"),
-      list(q = perturbed_q0, msg = "Solver did not converge - trying with perturbed last feasible solution"),
-      list(q = perturbed_q0_wt, msg = "Solver did not converge - trying with perturbed wt solution"),
-      list(q = perturbed_q0_alt, msg = "Solver did not converge - trying with perturbed alt solution")
+      list(q = q0_wt,  msg = "Solver did not converge - trying with initial FBA solution"),
+      list(q = q0_alt, msg = "Solver did not converge - trying with alternative FBA solution")
     )
     
     for (cand in candidates) {
@@ -110,6 +107,7 @@ process_reaction <- function(reaction_name, opt_phi, q0_initial) {
         if(error) print("Solver error")
       }
     }
+
     
     # if there is a converged solution, save the latest f0
     last_q0 <- q_initial
@@ -118,8 +116,6 @@ process_reaction <- function(reaction_name, opt_phi, q0_initial) {
     }
     
     qs <- q_opt[1, ]
-    
-    opt_phi <- ifelse(opt_phi < 1e-8, 1e-8, opt_phi)
     
     local_results[[length(local_results) + 1]] <- data.frame(
       x_Glc = a_cond[1, 1],
@@ -157,6 +153,6 @@ for (batch in reaction_batches) {
 
 results <- do.call(rbind, results_list)
 
-write.csv(results, paste0("../data/", modelname, "_protein_cost.csv"))
+write.csv(results, paste0("../data/", modelname, "_protein_cost_log.csv"))
 
 

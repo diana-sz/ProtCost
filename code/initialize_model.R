@@ -16,6 +16,7 @@ verbose <<- F
 # mu_tol
 mu_tol <<- 1e-12
 xtol_rel <<- 1e-8
+#xtol_abs <<- 1e-10
 
 
 # solver 
@@ -37,9 +38,11 @@ best_q0 <<- F
 source("q0_biomass.R")
 q0_alt <- q0
 
+if (predict.parameters == 0){
+  best_q0 <<- T
+  source("q0_biomass.R")
+}
 
-best_q0 <<- T
-source("q0_biomass.R")
 
 
 # Predicts kinetic parameters based on mu and phi data #########################

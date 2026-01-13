@@ -6,7 +6,7 @@ library(xtable)
 directory <- paste0(here(), "/code")
 setwd(directory)
 
-modelname <- "A7simple"
+modelname <- "M8"
 rescale_kcats <- TRUE
 predict.parameters <- 3
 is.reversible <- 1
@@ -30,6 +30,6 @@ print(latex_table)
 latex_table <- xtable(K, 
                       caption = "Predicted Km", 
                       label = "tab:kms",
-                      digits = 0)
+                      digits = 1)
 print(latex_table)
 

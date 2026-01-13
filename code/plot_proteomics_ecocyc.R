@@ -236,9 +236,11 @@ for(dataset in names(proteomics_datasets)){
   # AAs, nts
   aas <- get_sector_fraction(EAA, current_dataset, gene_annot)
   nts <- get_sector_fraction(ENT, current_dataset, gene_annot)
+  adps <- get_sector_fraction_gene_list(adps_genes, current_dataset)
   
   sectors <- list("ENT" = nts,
-                  "EAA" = aas)
+                  "EAA" = aas,
+                  "ADPS" = adps)
   plot_and_fit(sectors, 
                current_growth, 
                ylim = c(0,0.2), 
