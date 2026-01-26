@@ -3,7 +3,7 @@ library(RColorBrewer)
 
 setwd(here())
 
-cex_all <- 1.05
+cex_all <- 1
 
 source("code/uni_colors.R")
 
@@ -32,7 +32,7 @@ experimental <- data.frame(
 
 
 
-modelnames <- c("M9_alt_trans")#, "M9_alt_trans_rev")
+modelnames <- c("M9_alt_trans", "M9_alt_trans_rev")
 xlim <- c(0, 3)
 ylim <- c(0, 1.1)
 
@@ -42,16 +42,16 @@ for(modelname in modelnames){
   
   png(paste0("figures/", modelname,".png"),
       type="cairo", units="cm", res = 300,
-      width=17, height=7.5)
+      width=9, height=7.5)
   
-  par(mfrow=c(1,2), oma = c(0,1,0.5,0))
-  par(mar = c(4, 2.5, 1, 1))
+  par(mfrow=c(1,1), oma = c(0,0,0,0))
+  par(mar = c(3.7, 3.7, 0.5, 1))
 
   # Set factor levels
-  results$kcat <- results$kcat
-  results$kcat <- factor(results$kcat, levels = unique(results$kcat))
-  results$km <- factor(results$km, levels = unique(results$km))
-  opt_phi <- which.max(results[results$kcat == 50.6 & results$km == 1, "mu"])
+  #results$kcat <- results$kcat
+  #results$kcat <- factor(results$kcat, levels = unique(results$kcat))
+  #results$km <- factor(results$km, levels = unique(results$km))
+  opt_phi <- which.max(results$mu[results$kcat == min(results$kcat) & results$km == min(results$km)])
   results$rel_phi <- results$phi / results$phi[opt_phi]
   results$mu_rel <- results$mu / results$mu[opt_phi]
   results <- results[results$rel_phi <= 3,]
@@ -71,16 +71,17 @@ for(modelname in modelnames){
     mu_rel ~ rel_phi, data = results,
     xlab = NA,
     ylab = NA,
-    xlim = xlim, ylim = ylim,
+    xlim = xlim, 
+    ylim = ylim,
     pch = point_shapes,
     col = point_colors,
-    cex = cex_all, cex.lab = cex_all,
+    cex = cex_all,
     axes = FALSE
     #main = "Simulations"
   )
   
-  mtext("Relative growth rate", side = 2, outer = FALSE, line = 2.5, cex = cex_all)
-  mtext("Fixed level / optimal level of TC", side = 1, outer = FALSE, line = 2.5, cex = cex_all)
+  mtext("Relative growth rate", side = 2, outer = FALSE, line = 2.6, cex = cex_all)
+  mtext("Fixed level / optimal level of TS", side = 1, outer = FALSE, line = 2.5, cex = cex_all)
   
   box()
   axis(1)
@@ -88,70 +89,81 @@ for(modelname in modelnames){
   
   # Add legend
   legend(
-    1, 0, yjust = 0,
+    0.9, 0, yjust = 0,
     legend = unique(results$kcat),
     col = palette_colors,
     pch = 15,
-    cex = 0.9,
+    cex = cex_all,
     bty = "n",
-    title = expression(k[cat]^"TC2")
+    title = expression(k[cat]^"TS2")
   )
   
   # Add legend
   legend(
-    2, 0, yjust = 0,
+    1.7, 0, yjust = 0,
     legend = c(unique(results$km)),
     col = rep("black", length(unique(results$km))),
     pch = shape_list,
-    cex = 0.9,
+    cex = cex_all,
     bty = "n",
-    title = expression(K[TC2]^"Cext")
+    title = expression(K[TS2]^"Sext")
   )
   
-  mtext(
-    paste0("(", letters[1], ")"),
-    side = 3,
-    adj = 0.5,
-    line = 0.35,
-    cex = cex_all,
-    font = 2
-  )
-  
-
-  # experimental data
-  #  PTS transporter system (glucose-specific subunit IIA) in Salmonella typhimurium
-  par(mar = c(4, 1, 1, 2.5))
-  plot(
-    mu_rel ~ titrated_level, data = experimental, 
-    xlab = NA,
-    ylab = NA,
-    xlim = xlim, ylim = ylim,
-    pch = 19,
-    col = uni_lila,
-    axes = FALSE,
-    cex = cex_all, cex.lab = cex_all
-  )
-  
-  x <- seq(0, 3, length.out = 50)
-  y <- 0.15/0.32 + 1.25 * (x / (0.5 + x))^1.2 - 0.22 * x
-  lines(x, y, col = uni_lila)
-  
-  box()
-  axis(1)
-  axis(2, las=2, labels=FALSE)
-  mtext("Titrated level / WT level of transporter", side = 1, outer = FALSE, line = 2.5, cex = cex_all)
-  
-  legend("bottomright", legend = "Maltose", col = uni_lila, pch = 19, bty = "n", cex=1.05)
-  
-  
-  mtext(
-    paste0("(", letters[2], ")"),
-    side = 3,
-    adj = 0.5,
-    line = 0.35,
-    cex = cex_all,
-    font = 2
-  )
+  # mtext(
+  #   paste0("(", letters[1], ")"),
+  #   side = 3,
+  #   adj = 0.5,
+  #   line = 0.35,
+  #   cex = cex_all,
+  #   font = 2
+  # )
   
   dev.off()
+  
 }
+
+png("figures/experimental_transporter.png",
+    type="cairo", units="cm", res = 300,
+    width=9, height=7.5)
+
+# experimental data
+#  PTS transporter system (glucose-specific subunit IIA) in Salmonella typhimurium
+
+par(mfrow=c(1,1), oma = c(0,0,0,0))
+par(mar = c(3.7, 3.7, 0.5, 1))
+
+plot(
+  mu_rel ~ titrated_level, data = experimental, 
+  xlab = NA,
+  ylab = NA,
+  xlim = xlim,
+  ylim = ylim,
+  pch = 19,
+  col = "black",
+  axes = FALSE,
+  cex = cex_all
+)
+
+x <- seq(0, 3, length.out = 50)
+y <- 0.15/0.32 + 1.25 * (x / (0.5 + x))^1.2 - 0.22 * x
+lines(x, y, col = "black")
+
+box()
+axis(1)
+axis(2, las=2)
+mtext("Relative growth rate", side = 2, outer = FALSE, line = 2.6, cex = cex_all)
+mtext("Titrated level / WT level of transporter", side = 1, outer = FALSE, line = 2.5, cex = cex_all)
+
+legend("bottomright", legend = "Maltose", col = "black", pch = 19, bty = "n", cex=cex_all)
+
+# mtext(
+#   paste0("(", letters[2], ")"),
+#   side = 3,
+#   adj = 0.5,
+#   line = 0.35,
+#   cex = cex_all,
+#   font = 2
+# )
+
+dev.off()
+

@@ -103,7 +103,7 @@ for(protein in unique(results$tested_protein)){
          col="grey70", lty=2)
   if(prot_idx == 1){
     axis(2, at = c(0, 0.5, 1))
-    mtext("Growth rate", side = 2, line = 2.5, cex = 1)
+    mtext("Growth rate", side = 2, line = 2.5, cex = 0.9)
   }
   box()
 }
@@ -163,8 +163,8 @@ for(reaction in rev(unique(results$variable))){
 }
 
 # Add one common x and y label
-mtext(bquote("Proteome fraction " * Phi * " of under-/overexpressed protein relative to optimum"), side = 1, line = 4.4, outer = TRUE, cex = 1.05)
-mtext("Protein assessed for costs and benefits", side = 2, line = 4.3, outer = TRUE, cex = 1.05)
+mtext(bquote("Proteome fraction " * Phi * " of under-/overexpressed protein relative to optimum"), side = 1, line = 4.4, outer = TRUE, cex = 0.9)
+mtext("Protein assessed for costs and benefits", side = 2, line = 4.3, outer = TRUE, cex = 0.9)
 
 
 dev.off()

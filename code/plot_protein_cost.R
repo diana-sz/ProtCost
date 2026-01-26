@@ -48,14 +48,16 @@ plot_composition <- function(proteome, target_phi, colors = NULL,
     leg_text <- gsub("c\\.", "", colnames(proteome))
     leg_text <- gsub("p\\.", "", leg_text)
     par(xpd=NA)
-    legend(0.45, 1.45, legend = leg_text, fill = rev(colors), bty = "n", 
-           cex = 0.9, ncol = 4, xjust = 0.5)
+    n <- length(leg_text)
+    ncol_legend <- ifelse(n <= 3, n, ceiling(n / 2))
+    legend(0, 1.52, legend = leg_text, fill = rev(colors), bty = "n", 
+           cex = 0.9, ncol = ncol_legend, xjust = 0)
     par(xpd=FALSE)
   }
 }
 
 
-for(modelname in c("M9_Q", "M9_Q_rev", "M8", "M8_rev")){#  c("M8b0", "M8b_rev1")){ #A7simple_rev1
+for(modelname in c("M9_Q", "M9_Q_rev", "M8", "M8_rev", "B", "B_rev")){
   data <- read.csv(paste0("data/", modelname, "_protein_cost.csv"), row.names = 1)
   data <- data[data$convergence == 4, ]
   data <- data[complete.cases(data),]
@@ -83,53 +85,49 @@ for(modelname in c("M9_Q", "M9_Q_rev", "M8", "M8_rev")){#  c("M8b0", "M8b_rev1")
     one_prot$rel_phi <- one_prot$phi/one_prot$phi[which.max(one_prot$mu)]
     
     plotted_phi <- one_prot$phi
+    plotted_phi_mu <- plotted_phi
+    type <- "p"
     if(relative_phi){
+      plotted_phi_mu <- c(0, one_prot$rel_phi) # 0 added for visualisation
       plotted_phi <- one_prot$rel_phi
+      mu <- c(0, mu)
+      type <- "l"
     }
     
-    plot(plotted_phi, mu,
+    plot(plotted_phi_mu, mu,
          xlim = xlim, ylim = c(0, max(mu)),
+         type = type, lwd = 3,
+         cex = 0.6,
          pch=20,
          xlab = NA,
          ylab=NA)
     text(ifelse(relative_phi, 3.2, 0.7), 0.2, rxn, cex=cex_lab*1.5)
     mtext(bquote("Growth rate"), side = 3, cex = cex_lab, line = title_line)
-    # mtext(bquote(Phi * "/" * Phi[opt]), side = 1, 
-    #       cex = cex_lab*1.1, line = xlab_line, padj = 1)
-    
-    # plot(one_prot$phi, mu, xlim = xlim, ylim = c(0, max(mu)),
-    #      pch=20,
-    #      #main = rxn,
-    #      #cex.lab = cex_lab*1.3,
-    #      xlab = NA, # "Proteome fraction", 
-    #      ylab=NA) #bquote("Growth rate" ~ "[" * h^-1 * "]"))
-    # mtext(bquote("Growth rate"), side = 3, cex = cex_lab, line = title_line)
-    # mtext(bquote(Phi), side = 1, 
-    #       cex = cex_lab*1.1, line = xlab_line, padj = 1)
+    abline(v = plotted_phi_mu[which.max(mu)], lty = 2, col = "grey70")
     
     colors <- brewer.pal(ncol(proteome), "PuBu") #PuBU #YlGnBu
-    plot_legend <- ifelse(rxn == "TC", TRUE, FALSE)
+    plot_legend <- ifelse(rxn == "TS", TRUE, FALSE)
     plot_composition(proteome, plotted_phi, colors, main="", 
                      ylab=NA, #"Proteome composition",
                      xlab = NA,
                      cex_lab=cex_lab,
                      legend=plot_legend)
     mtext("Proteome composition", side = 3, cex = cex_lab, line = title_line)
-    # mtext(bquote(Phi), side = 1, 
-    #       cex = cex_lab*1.1, line = xlab_line, padj = 1)
-    
+
     colors <- rev(brewer.pal(ncol(biomass), "RdBu"))
     plot_composition(biomass, plotted_phi, colors, main="", 
-                     ylab = NA, # "Biomass composition",
+                     ylab = NA,
                      xlab = NA,
                      cex_lab=cex_lab,
                      legend=plot_legend)
     mtext("Biomass composition", side = 3, cex = cex_lab, line = title_line)
-    # mtext(bquote(Phi), side = 1, 
-    #       cex = cex_lab*1.1, line = xlab_line, padj = 1)
-    # 
-    # 
-    mtext(bquote("Proteome fraction relative to optimum"), side = 1,
+
+    xlabel <- "Proteome fraction"
+    if(relative_phi){
+      xlabel <- "Proteome fraction relative to optimum"
+    }
+    
+    mtext(xlabel, side = 1,
           outer = TRUE, cex = cex_lab, line = -1.1, adj = 0.52)
     
     

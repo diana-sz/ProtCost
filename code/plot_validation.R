@@ -7,7 +7,7 @@ setwd(paste0(here(), "/data"))
 filelist <- c("M8_GBA.csv",
               "M8_rev_GBA.csv")
 
-cex_all <- 1.05
+cex_all <- 1.1
 colors <- brewer.pal(8, "Dark2")
 
 plot_and_fit <- function(data, growth_rates, ylim, xlim,
@@ -65,7 +65,7 @@ plot_and_fit <- function(data, growth_rates, ylim, xlim,
       col = colors[seq_along(data)],
       pch = 20,
       bty = "n",
-      cex = cex_all
+      cex = cex_all*0.9
     )
   }
 }
@@ -74,12 +74,12 @@ png(
   paste0("../figures/M8_RP_ratio.png"),
   type = "cairo",
   units = "cm",
-  width = 17,
-  height = 7,
+  width = 18,
+  height = 8,
   res = 300
 )
 
-par(mfrow=c(1,2), oma = c(1,1,0.5,0))
+par(mfrow=c(1,2), oma = c(1.5,1.5,0.5,0))
 
 
 for (n in seq_along(filelist)) {
@@ -125,7 +125,7 @@ for (n in seq_along(filelist)) {
   labels <- c("0.0", "", "0.2", "", "0.4", "", "0.6")
   if (n == 2) labels <- FALSE
   axis(1)
-  axis(2, at = c(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6), labels = labels)
+  axis(2, las = 2, at = c(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6), labels = labels)
   box()
   
 }

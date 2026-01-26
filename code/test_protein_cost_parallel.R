@@ -23,9 +23,9 @@ run_solver <- function(q0_value, msg = NULL) {
 
 
 # --- read model and get initial solution --- ####
-is.reversible <- 1
+is.reversible <- 0
 predict.parameters <- 0
-modelname <- "M9_Q"
+modelname <- "B"
 max_cores <- 9
 
 source("initialize_model.R")
@@ -52,12 +52,9 @@ process_reaction <- function(reaction_name, opt_phi, q0_initial) {
   
   
   # step size below optimum higher than above (the curves are steeper)
-  # go from both directions in case solver does not converge
-  below <- seq(round(opt_phi, 4), 0, by = -0.00005) #ceiling(opt_phi/0.001))
+  below <- seq(round(opt_phi, 4), 0, by = -0.001)#length.out = 100) #ceiling(opt_phi/0.001))
   
-  #problematic <- c("ATPS", "DNAP", "ADPS")
-  #interval <- ifelse(reaction_name %in% problematic, 0.0005, 0.005)
-  above <- seq(round(opt_phi, 4), 1, by = 0.0002)
+  above <- seq(round(opt_phi, 4), 1, by = 0.001)
   
   phis_to_test <- c(below, above)
 
@@ -69,7 +66,7 @@ process_reaction <- function(reaction_name, opt_phi, q0_initial) {
     local_max_phi <- max_phi
 
     local_min_phi[reaction == reaction_name] <- fraction
-    local_max_phi[reaction == reaction_name] <- fraction + 1e-5
+    local_max_phi[reaction == reaction_name] <- fraction + 1e-6
     
     # assign to global env for solver
     assign("min_phi", local_min_phi, envir = .GlobalEnv)
@@ -97,11 +94,11 @@ process_reaction <- function(reaction_name, opt_phi, q0_initial) {
 
     candidates <- list(
       list(q = q0_wt,  msg = "Solver did not converge - trying with initial FBA solution"),
-      list(q = q0_alt, msg = "Solver did not converge - trying with alternative FBA solution"),
-      list(q = last_q0, msg = "Solver did not converge - trying with last solution"),
-      list(q = perturbed_q0, msg = "Solver did not converge - trying with perturbed last feasible solution"),
-      list(q = perturbed_q0_wt, msg = "Solver did not converge - trying with perturbed wt solution"),
-      list(q = perturbed_q0_alt, msg = "Solver did not converge - trying with perturbed alt solution")
+      list(q = q0_alt, msg = "Solver did not converge - trying with alternative FBA solution")
+      #list(q = last_q0, msg = "Solver did not converge - trying with last solution")
+      # list(q = perturbed_q0, msg = "Solver did not converge - trying with perturbed last feasible solution"),
+      # list(q = perturbed_q0_wt, msg = "Solver did not converge - trying with perturbed wt solution"),
+      # list(q = perturbed_q0_alt, msg = "Solver did not converge - trying with perturbed alt solution")
     )
     
     for (cand in candidates) {

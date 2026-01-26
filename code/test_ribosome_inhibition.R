@@ -8,8 +8,8 @@ setwd(directory)
 predict.parameters <- 0
 modelname_orig <- "M8_inh" 
 
-inh_conc <- c(0.00001, 10^seq(-0.5, 1, by = 0.3)) # c(0.00001, 0.5, 0.8, 1.2, 2, 4, 10)
-s_conc <- 10^seq(0.7, -1.3, by = -0.4) # c(10, 1, 0.5, 0.2, 0.1, 0.05)
+inh_conc <- c(0.00001, 10^seq(-0.55, 1, by = 0.22)) # c(0.00001, 0.5, 0.8, 1.2, 2, 4, 10)
+s_conc <- 10^seq(0.7, -1.1, by = -0.3) # c(10, 1, 0.5, 0.2, 0.1, 0.05)
 
 for(is.reversible in c(1,0)){
   results_list <- list()

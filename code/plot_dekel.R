@@ -14,9 +14,9 @@ directory <- paste0(here(), "/code")
 setwd(directory)
 
 predict.parameters <- 0
-plotted_phis <- c(0.04, 0.4)
+plotted_phis <- c(0.04, 0.5)
 phi_xlim <- 0.5
-cex_all <- 1.05
+cex_all <- 0.9
 
 source("uni_colors.R")
 
@@ -81,7 +81,8 @@ plot_composition <- function(proteome, target_phi, colors = NULL,
 
 
 for(is.reversible in c(1,0)){
-  modelname <- "M10_dekel_efflux" # M10_dekel_efflux
+  modelname <- "M9_dekel" # M10_dekel_efflux M9_dekel
+  
   source("initialize_model.R")
   
   opt_data <- read.csv(paste0("../data/", modelname, ".csv"), row.names = 1)
@@ -166,7 +167,7 @@ for(is.reversible in c(1,0)){
   
   xlim <- range(c(x_C2_vals, max(dekel_conc)))
   ylim <- c(-3, 1)
-  cex_lab <- 0.85
+  cex_lab <- 0.8
   cex_axis <- 1.1
   letters_line <- 1.25
   
@@ -211,7 +212,7 @@ for(is.reversible in c(1,0)){
     side = 3,
     adj = 0.5,
     line = letters_line,
-    cex = cex_all,
+    cex = cex_lab,
     font = 2
   )
 
@@ -235,7 +236,7 @@ for(is.reversible in c(1,0)){
          bquote(Phi * " = " * .(plotted_phis[pphi])), cex = cex_all, adj=0)
   }
   
-  points(dekel_conc, dekel_rel_mu, col = "grey50", pch = 24, cex = cex_all)
+  points(dekel_conc, dekel_rel_mu, col = "grey50", pch = 24, cex = 1)
   
   axis(1, cex.axis=cex_axis) 
   axis(2, las = 1, cex.axis=cex_axis) 
@@ -247,7 +248,7 @@ for(is.reversible in c(1,0)){
     side = 3,
     adj = 0.5,
     line = letters_line,
-    cex = cex_all,
+    cex = cex_lab,
     font = 2
   )
 
@@ -258,7 +259,7 @@ for(is.reversible in c(1,0)){
     side = 3,
     adj = 1.89,
     line = letters_line,
-    cex = cex_all,
+    cex = cex_lab,
     font = 2
   )
   

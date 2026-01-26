@@ -168,6 +168,7 @@ for(exp in unique(all_data$experiment)){
     
     curve_info <- exp_curves[[conditions[cond]]]
     lines(curve_info$x, curve_info$y, col = colors[cond], lwd = 1.5)
+    abline(v = 1, lty = 2, col = "grey70")
     
     mtext(
       paste0("(", letters[exp], ")"),

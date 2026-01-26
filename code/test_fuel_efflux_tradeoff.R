@@ -5,8 +5,8 @@ library(here)
 directory <- paste0(here(), "/code")
 setwd(directory) 
 predict.parameters <- 0
-phis_to_test <- c(seq(0, 0.5, 0.005))#, seq(0.5, 0, -0.005))
-efflux_kcats <- c(0.001, 1, 10, 1000)
+phis_to_test <- seq(0.0005, 0.5, 0.0005)#, seq(0.5, 0, -0.005))
+efflux_kcats <- c(0.1, 1, 10, 1000)
 
 for(is.reversible in c(1,0)){
   

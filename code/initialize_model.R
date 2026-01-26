@@ -15,8 +15,7 @@ verbose <<- F
 
 # mu_tol
 mu_tol <<- 1e-12
-xtol_rel <<- 1e-8
-#xtol_abs <<- 1e-10
+xtol_rel <<- 1e-9
 
 
 # solver 

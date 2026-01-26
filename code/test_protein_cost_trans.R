@@ -6,6 +6,7 @@ directory <- paste0(here(), "/code")
 setwd(directory) 
 
 predict.parameters <- 0
+phis_to_test <- seq(0.001, 0.5, 0.005)
 
 for(is.reversible in c(0)){
   modelname <- "M9_alt_trans"
@@ -19,12 +20,11 @@ for(is.reversible in c(0)){
   
   results_list <- list()
   
-  transporter <- which(reaction == "TC")
-  transporter2 <- which(reaction == "TC2")
+  transporter <- which(reaction == "TS")
+  transporter2 <- which(reaction == "TS2")
   kcat_tC1 <- kcatf[transporter]
   km_tC1 <- KS[1,transporter]
   
-  phis_to_test <- seq(0, 0.5, 0.005)
   kms_to_test <- c(km_tC1/10, km_tC1, km_tC1*10)
   kcats_to_test <- c(kcat_tC1*10, kcat_tC1, kcat_tC1/10)
   

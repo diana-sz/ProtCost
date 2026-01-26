@@ -45,8 +45,8 @@ plot_composition <- function(proteome, target_phi, colors = NULL,
     leg_text <- gsub("c\\.", "", colnames(proteome))
     leg_text <- gsub("p\\.", "", leg_text)
     par(xpd=NA)
-    legend(0.45, 1.45, legend = leg_text, fill = rev(colors), bty = "n",
-           cex = 0.82, ncol = ceiling(m/2), xjust = 0.5)
+    legend(0.5, 1.52, legend = leg_text, fill = rev(colors), bty = "n", 
+           cex = 0.9, ncol = 5, xjust = 0.5)
     par(xpd=FALSE)
   }
 }
@@ -60,7 +60,7 @@ for(modelname in c("M9_GFP", "M9_GFP_rev")){
   
   png(paste0("figures/", modelname, ".png"), 
       type="cairo", units="cm",
-      width=18, height=6, res=300)
+      width=20, height=5.5, res=300)
   par(mfcol=c(1,3), mar = c(3.7,2,3.8,0.5))
   
   data <- data[order(data$phi), ]
@@ -71,8 +71,10 @@ for(modelname in c("M9_GFP", "M9_GFP_rev")){
   plotted_phi <- data$phi
     
   plot(plotted_phi, mu,
-       xlim = xlim, ylim = c(0, max(mu)),
-       pch=20,
+       xlim = xlim,
+       ylim = c(0, max(mu)),
+       type = "l",
+       lwd = 3,
        xlab = NA,
        ylab=NA)
   mtext(bquote("Growth rate"), side = 3, cex = cex_lab, line = title_line)

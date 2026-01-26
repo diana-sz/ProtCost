@@ -6,7 +6,7 @@ setwd(here())
 xlim <- c(0, 0.45)
 ylim <- c(0, 0.45)
 xlab_line <- 2
-cex_all <- 1.05
+cex_all <- 1
 
 for(modelname in c("M10_GFP_RFP_rev")){
   data <- read.csv(paste0("data/", modelname, ".csv"), row.names = 1)
@@ -15,7 +15,7 @@ for(modelname in c("M10_GFP_RFP_rev")){
   
   png(paste0("figures/", modelname, ".png"), 
       type="cairo", units="cm",
-      width=9, height=7, res=300)
+      width=9, height=7.5, res=300)
   par(mfcol=c(1,1), mar = c(3,3.5,0.1,0.1))
   
   mu <- round(data$mu, 2)
