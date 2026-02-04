@@ -1,3 +1,7 @@
+# Test the effect of secondary carbon source on the cost of the protein metabolizing it
+# in the absence of x_L - LAC proteins have only cost, when x_L increases,
+# the benefit of LAC also increases
+
 rm(list=ls(all=TRUE))
 
 library(here)
@@ -5,7 +9,7 @@ library(here)
 directory <- paste0(here(), "/code")
 setwd(directory) 
 
-phis_to_test <- c(seq(0, 0.5, 0.005))#, seq(0.5, 0, -0.005))
+phis_to_test <- c(seq(0, 0.5, 0.005))
 predict.parameters <- 0
 primary_c_source <- 0.5
 modelname_orig <- "M9_dekel" # "M10_dekel_efflux" M9_dekel
@@ -23,27 +27,19 @@ for(is.reversible in c(1,0)){
     
     alt_ind <- which(reaction == "LAC")
     a_cond[1,1] <- primary_c_source
-    a_cond[3,1] <- x_C2
+    a_cond[3,1] <- x_C2 # alternative carbon source
     n_conditions <- 1
     
     source("GBA_solver.R")
     
     mu_orig <- mu_opt
     p_opt <- prot(q_opt[1,])
-    opt_phis <- (p_opt/rho_cond)/sum(p_opt/rho_cond)
-    opt_phi <- opt_phis[alt_ind]
-    if(opt_phi < 1e-8){
-      opt_phi_nonzero <- FALSE
-      opt_phi <- 0.01
-    }else{
-      opt_phi_nonzero <- TRUE
-    }
     
     for (fraction in phis_to_test){
       print(paste("LAC=", x_C2, "fraction=", fraction))
       
       min_phi[alt_ind] <- fraction
-      max_phi[alt_ind] <- fraction+1e-5
+      max_phi[alt_ind] <- fraction+1e-6
       
       source("solver_loop.R")
       
@@ -53,10 +49,8 @@ for(is.reversible in c(1,0)){
         x_C2 = x_C2,
         protein = "LAC",
         phi = fraction,
-        rel_phi = fraction / opt_phi,
         mu = mu_opt,
         mu_norm = mu_opt / mu_orig,
-        opt_phi_nonzero = opt_phi_nonzero,
         convergence = res$convergence,
         t(c(
           setNames(fs, paste0("f.", reaction)),
@@ -73,7 +67,6 @@ for(is.reversible in c(1,0)){
   }
   
   results <- do.call(rbind, results_list)
-  
   write.csv(results, paste0("../data/", modelname, ".csv"))
   
 }

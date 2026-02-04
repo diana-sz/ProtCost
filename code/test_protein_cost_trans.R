@@ -1,3 +1,6 @@
+# Test the effect of an alternative transporter TS2 on the growth cost of the 
+# primary transporter TS
+
 rm(list=ls(all=TRUE))
 
 library(here)
@@ -44,7 +47,7 @@ for(is.reversible in c(0)){
       
       for (fraction in phis_to_test){
         min_phi[transporter] <- fraction
-        max_phi[transporter] <- fraction+1e-5
+        max_phi[transporter] <- fraction+1e-6
         
         source("solver_loop.R")
         

@@ -1,17 +1,19 @@
+# Test protein cost of each protein in the model
+# run in parallel (one core - one reaction)
+
 rm(list=ls(all=TRUE))
 
 library(parallel)
 library(here)
-library(rstudioapi)
-library(readODS)
-library(nloptr)
-library(lpSolve)
-library(Matrix)
-
-set.seed(1)
 
 directory <- file.path(here(), "code")
 setwd(directory)
+
+# --- read model and get initial solution --- ####
+is.reversible <- 1
+predict.parameters <- 0
+modelname <- "B" # "M8" "M9_Q" "B"
+max_cores <- 9
 
 # Solver function ####
 run_solver <- function(q0_value, msg = NULL) {
@@ -22,14 +24,8 @@ run_solver <- function(q0_value, msg = NULL) {
 }
 
 
-# --- read model and get initial solution --- ####
-is.reversible <- 0
-predict.parameters <- 0
-modelname <- "B"
-max_cores <- 9
-
 source("initialize_model.R")
-n_conditions <- 1
+n_conditions <- 1  # take only the first condition in the .ods model file
 q0_wt <- q0
 
 source("GBA_solver.R")
@@ -52,9 +48,16 @@ process_reaction <- function(reaction_name, opt_phi, q0_initial) {
   
   
   # step size below optimum higher than above (the curves are steeper)
-  below <- seq(round(opt_phi, 4), 0, by = -0.001)#length.out = 100) #ceiling(opt_phi/0.001))
-  
-  above <- seq(round(opt_phi, 4), 1, by = 0.001)
+  stepsize <- 0.0001
+  if(grepl("B", modelname)){
+    stepsize <- 0.005
+  }
+  below <- seq(round(opt_phi, 4), 0, by = -stepsize)
+  if(opt_phi/stepsize < 1000){
+    below <- seq(round(opt_phi, 4), 0, length.out = 1000)
+
+  }
+  above <- seq(round(opt_phi, 4), 1, by = stepsize)
   
   phis_to_test <- c(below, above)
 
@@ -80,25 +83,22 @@ process_reaction <- function(reaction_name, opt_phi, q0_initial) {
     )
     
     # draw Gaussian noise with mean 0, sd = sd_vec
-    noise  <- rnorm(length(last_feasible_q0), mean = 0, sd = last_feasible_q0*0.02)
-    perturbed_q0 <- last_feasible_q0 + noise
-    perturbed_q0[perturbed_q0 < 0] <- 0
-    
-    noise  <- rnorm(length(q0_wt), mean = 0, sd = q0_wt*0.02)
-    perturbed_q0_wt <- last_feasible_q0 + noise
-    perturbed_q0_wt[perturbed_q0_wt < 0] <- 0
-    
-    noise  <- rnorm(length(q0_alt), mean = 0, sd = q0_alt*0.02)
-    perturbed_q0_alt <- q0_alt + noise
-    perturbed_q0_alt[perturbed_q0_alt < 0] <- 0
+    # noise  <- rnorm(length(last_feasible_q0), mean = 0, sd = last_feasible_q0*0.02)
+    # perturbed_q0 <- last_feasible_q0 + noise
+    # perturbed_q0[perturbed_q0 < 0] <- 0
+    # 
+    # noise  <- rnorm(length(q0_wt), mean = 0, sd = q0_wt*0.02)
+    # perturbed_q0_wt <- last_feasible_q0 + noise
+    # perturbed_q0_wt[perturbed_q0_wt < 0] <- 0
+    # 
+    # noise  <- rnorm(length(q0_alt), mean = 0, sd = q0_alt*0.02)
+    # perturbed_q0_alt <- q0_alt + noise
+    # perturbed_q0_alt[perturbed_q0_alt < 0] <- 0
 
     candidates <- list(
       list(q = q0_wt,  msg = "Solver did not converge - trying with initial FBA solution"),
       list(q = q0_alt, msg = "Solver did not converge - trying with alternative FBA solution")
       #list(q = last_q0, msg = "Solver did not converge - trying with last solution")
-      # list(q = perturbed_q0, msg = "Solver did not converge - trying with perturbed last feasible solution"),
-      # list(q = perturbed_q0_wt, msg = "Solver did not converge - trying with perturbed wt solution"),
-      # list(q = perturbed_q0_alt, msg = "Solver did not converge - trying with perturbed alt solution")
     )
     
     for (cand in candidates) {
@@ -114,18 +114,20 @@ process_reaction <- function(reaction_name, opt_phi, q0_initial) {
       last_feasible_q0 <- q_initial
     }
     
-    qs <- q_opt[1, ]
+    # do not save data if it does not converge to reduce final file size
+    if(res$convergence != 4){
+      next
+    }
     
+    qs <- q_opt[1, ]
     opt_phi <- ifelse(opt_phi < 1e-8, 1e-8, opt_phi)
     
     local_results[[length(local_results) + 1]] <- data.frame(
-      x_Glc = a_cond[1, 1],
       reaction = reaction_name,
       phi = fraction,
       rel_phi = fraction/opt_phi,
       mu = mu_opt,
       mu_norm = mu_opt / mu_orig,
-      #opt_phi_nonzero = opt_phi_nonzero,
       convergence = res$convergence,
       t(c(
         setNames(qs, paste0("f.", reaction)),
@@ -153,7 +155,6 @@ for (batch in reaction_batches) {
 }
 
 results <- do.call(rbind, results_list)
-
 write.csv(results, paste0("../data/", modelname, "_protein_cost.csv"))
 
 

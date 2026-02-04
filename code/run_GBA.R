@@ -9,7 +9,7 @@ setwd(directory)
 predict.parameters <- 0
 
 for(is.reversible in c(1,0)){
-  modelname <- "M8_inh"
+  modelname <- "M8"
 
   source("initialize_model.R")
   
@@ -17,7 +17,7 @@ for(is.reversible in c(1,0)){
 
   source("GBA_Exportcsv.R")
   
-  source("GBA_Plots_v2.R")
+  #source("GBA_Plots_v2.R")
 }
 
 

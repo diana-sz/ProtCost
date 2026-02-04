@@ -1,3 +1,6 @@
+# test the effect of toxic fuel production on growth rate and the expression 
+# of an efflux pump
+
 rm(list=ls(all=TRUE))
 
 library(here)
@@ -5,8 +8,8 @@ library(here)
 directory <- paste0(here(), "/code")
 setwd(directory) 
 predict.parameters <- 0
-phis_to_test <- seq(0.0005, 0.5, 0.0005)#, seq(0.5, 0, -0.005))
-efflux_kcats <- c(0.1, 1, 10, 1000)
+phis_to_test <- seq(0, 0.5, 0.001)#, seq(0.5, 0, -0.005))
+efflux_kcats <- c(0.1, 1, 10, 100)
 
 for(is.reversible in c(1,0)){
   
@@ -22,9 +25,6 @@ for(is.reversible in c(1,0)){
   
   fuel <- which(reaction == "FUEL")
   efflux <- which(reaction == "EFFLUX")
-  # KI["F", "r"] <- fuel_ki
-  # kcatf[fuel] <- fuel_kcat
-  # kcatb[fuel] <- is.reversible*fuel_kcat/5
   
   for(efflux_kcat in efflux_kcats){
     kcatf[efflux] <- efflux_kcat
@@ -32,14 +32,13 @@ for(is.reversible in c(1,0)){
     
     for (fuel_phi in phis_to_test){
       min_phi[fuel] <- fuel_phi
-      max_phi[fuel] <- fuel_phi+1e-5
+      max_phi[fuel] <- fuel_phi+1e-6
       
       source("solver_loop.R")
       
       fs <- q_opt[1, ]
       results_list[[length(results_list) + 1]] <- data.frame(
         kcat = efflux_kcat,
-        # KI = fuel_ki,
         fuel_phi = fuel_phi,
         mu = mu_opt,
         convergence = res$convergence,

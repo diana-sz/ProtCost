@@ -1,9 +1,5 @@
 #### Plots for Dekel & Alon simulations ####
 # Author: Diana Szeliova
-# Noone:
-# Absolutely noone:
-# Diana: 'base R is so flexible, I can customize every last piece of the plot
-# The code: has 300 lines
 
 
 library(RColorBrewer)
@@ -132,7 +128,6 @@ for(is.reversible in c(1,0)){
   axis(1, cex.axis=cex_axis) 
   axis(2, las = 1, cex.axis=cex_axis) 
   mtext(expression("LAC proteome fraction (" * Phi * ")"), side=1, cex = cex_lab, line = 2.8)
-  #mtext(expression("Growth rate [h"^-1 * "]"), side=2, cex = cex_lab, line = 2.4)
   mtext(expression("Growth rate relative to " * Phi["LAC"] * "=0"), side=2, cex = cex_lab, line = 2.4)
   cols_lines = c("grey15", "grey60")
   abline(v=plotted_phis, col = cols_lines, lty=2)
@@ -145,7 +140,6 @@ for(is.reversible in c(1,0)){
     cex = cex_lab,
     font = 2
   )
-
 
   # --- Panel 2: Relative growth rate vs x_C2 for different phi ---
   plot(NA,

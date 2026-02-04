@@ -1,3 +1,5 @@
+# Script to predict kinetic parameters
+
 rm(list=ls(all=TRUE))
 
 library(here)
@@ -8,9 +10,8 @@ setwd(directory)
 
 modelname <- "M8"
 rescale_kcats <- TRUE
-predict.parameters <- 3
+predict.parameters <- 3  # saturation parameter used in 'initialize_model.R'
 is.reversible <- 1
-
 
 source("initialize_model.R")
 

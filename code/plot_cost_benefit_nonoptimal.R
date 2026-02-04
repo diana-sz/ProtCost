@@ -4,7 +4,7 @@ library(xtable)
 directory <- paste0(here(), "/code")
 setwd(directory)
 
-modelname="M8"
+modelname <- "M8"
 is.reversible <- 1
 predict.parameters <- 0
 
@@ -52,9 +52,9 @@ for (tested_protein in unique(opt_data$reaction)) {
     
     for(j in 1:length(vs)){
       Mjp <- M["P",j]
-      direct_cost <- growth_rate*taus[j]
-      kinetic_value <- unlist(vs) %*% (dtaus %*% M[, j])
-      density_value <- M_colSums[j] * transport_benefit_term
+      catalytic_cost <- growth_rate*taus[j]
+      saturation_value <- unlist(vs) %*% (dtaus %*% M[, j])
+      crowding_value <- M_colSums[j] * transport_benefit_term
 
       out[[idx]] <- list(
         growth_rate = growth_rate,
@@ -63,10 +63,10 @@ for (tested_protein in unique(opt_data$reaction)) {
         rel_phi = one_phi$rel_phi,
         variable = colnames(vs)[j],
         protein_benefit = as.numeric(Mjp),
-        direct_cost = -as.numeric(direct_cost),
-        kinetic_value = -as.numeric(kinetic_value),
-        density_value = as.numeric(density_value),
-        sum = as.numeric(Mjp - direct_cost - kinetic_value + density_value)
+        catalytic_cost = -as.numeric(catalytic_cost),
+        saturation_value = -as.numeric(saturation_value),
+        crowding_value = as.numeric(crowding_value),
+        sum = as.numeric(Mjp - catalytic_cost - saturation_value + crowding_value)
       )
       idx <- idx + 1
     }
@@ -77,8 +77,8 @@ results <- do.call(rbind, lapply(out, as.data.frame))
 
 xlim <- c(0, 4)
 ylim <- c(-2.1,2.1)
-plots <- c("sum", "direct_cost", "kinetic_value", "density_value")
-plot_names <- c("marginal value", "direct cost", "kinetic value", "density value")
+plots <- c("sum", "catalytic_cost", "saturation_value", "crowding_value")
+plot_names <- c("marginal value", "catalytic cost", "saturation value", "crowding value")
 colors <- c("black", uni_red, uni_green, uni_lila)
 
 n_prot <- length(unique(results$tested_protein))

@@ -18,7 +18,6 @@ sat <- (esat/(esat + 1))^(colSums(1*(M[-p,] < 0)))
 
 
 # assumes transporters are completely saturated
-#sat[s] <- rep(1,ns)
 sat[1] <- 1
 
 # Estimates now kcatf based on ...

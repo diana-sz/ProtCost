@@ -1,3 +1,5 @@
+# Test growth rate with two idle proteins expressed at once
+
 rm(list=ls(all=TRUE))
 
 library(here)
@@ -6,10 +8,11 @@ directory <- paste0(here(), "/code")
 setwd(directory) 
 
 predict.parameters <- 0
-phis_to_test <- seq(0, 1, 0.01)
+phis_to_test <- seq(0.1, 0.4, 0.1)
+idle1_fracions <- seq(0, 1, 0.2)
 
 for(is.reversible in c(1,0)){
-  modelname <- "M9_GFP"
+  modelname <- "M10_IDLE2"
   
   source("initialize_model.R")
   n_conditions <- 1
@@ -19,17 +22,22 @@ for(is.reversible in c(1,0)){
   last_feasible_q0 <- q0
   
   results_list <- list()
-  gfp <- which(reaction == "GFP")
-      
-    for (fraction in phis_to_test){
-      min_phi[gfp] <- fraction
-      max_phi[gfp] <- fraction+1e-5
+  idle1_ind <- which(reaction == "IDLE")
+  idle2_ind <- which(reaction == "IDLE2")
+  for(fraction in phis_to_test){
+    
+    for (f_idle1 in idle1_fracions){
+      min_phi[idle1_ind] <- f_idle1*fraction
+      max_phi[idle1_ind] <- f_idle1*fraction+1e-6
+      min_phi[idle2_ind] <- (1-f_idle1)*fraction
+      max_phi[idle2_ind] <- (1-f_idle1)*fraction+1e-6
       
       source("solver_loop.R")
       
       fs <- q_opt[1, ]
       results_list[[length(results_list) + 1]] <- data.frame(
-        phi = fraction,
+        idle1_phi = f_idle1*fraction,
+        idle2_phi = (1-f_idle1)*fraction,
         mu = mu_opt,
         convergence = res$convergence,
         t(c(
@@ -40,7 +48,7 @@ for(is.reversible in c(1,0)){
         ))
       )
     }
-  
+  }
   results <- do.call(rbind, results_list)
   write.csv(results, paste0("../data/", modelname, ".csv"))
 }
