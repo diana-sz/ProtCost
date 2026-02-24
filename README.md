@@ -14,6 +14,7 @@ We further analyze how these costs depend on environmental conditions, including
 
 ## Repository structure
 
+```text
 ├── code/
 │ └── Models/
 ├── data
@@ -21,7 +22,7 @@ We further analyze how these costs depend on environmental conditions, including
 ├── figures
 ├── README.md
 └── LICENCE
-
+```
 
 ### Main analysis scripts (`code/`)
 
