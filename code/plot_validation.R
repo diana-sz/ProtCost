@@ -2,8 +2,6 @@ library(RColorBrewer)
 library(scales)
 library(here)
 
-setwd(paste0(here(), "/data"))
-
 filelist <- c("M8_GBA.csv",
               "M8_rev_GBA.csv")
 
@@ -71,7 +69,7 @@ plot_and_fit <- function(data, growth_rates, ylim, xlim,
 }
 
 png(
-  paste0("../figures/M8_RP_ratio.png"),
+  here("figures", "M8_RP_ratio.png"),
   type = "cairo",
   units = "cm",
   width = 18,
@@ -89,7 +87,7 @@ for (n in seq_along(filelist)) {
   filename <- filelist[n]
   modelname <- strsplit(filename, "_GBA.csv")[[1]][1]
   
-  opt_data <- read.csv(filename, row.names = 1)
+  opt_data <- read.csv(here("data", filename), row.names = 1)
   
   reactants <- colnames(opt_data)[5:which(colnames(opt_data) == "P")]
   concentrations <- opt_data[, reactants]

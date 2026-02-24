@@ -2,9 +2,7 @@ library(readODS)
 
 # Loads model saved as .ods file ###############################################
 
-setwd(paste(directory,"/Models",sep=""))
-
-odsfile <- paste(modelname,".ods", sep = "")
+odsfile <- here("code", "Models", paste0(modelname,".ods"))
 
 sheets <- list_ods_sheets(odsfile)
 
@@ -190,6 +188,3 @@ if (length(posmaxphi) > 0) {
   
 } else max_phi <- rep(1,r)
 
-
-
-setwd(directory)

@@ -5,9 +5,6 @@ rm(list=ls(all=TRUE))
 
 library(here)
 
-directory <- paste0(here(), "/code")
-setwd(directory) 
-
 predict.parameters <- 0
 modelname_orig <- "M8_inh" 
 
@@ -21,7 +18,7 @@ for(is.reversible in c(1,0)){
     
     for (x_inh in inh_conc){
         modelname <- modelname_orig
-        source("initialize_model.R")
+        source(here("code", "initialize_model.R"))
         q0_wt <- q0
         last_feasible_q0 <- q0
   
@@ -29,7 +26,7 @@ for(is.reversible in c(1,0)){
         a_cond[3,1] <- x_inh
         n_conditions <- 1
     
-        source("solver_loop.R")
+        source(here("code", "solver_loop.R"))
         
         fs <- q_opt[1, ]
         results_list[[length(results_list) + 1]] <- data.frame(
@@ -48,6 +45,6 @@ for(is.reversible in c(1,0)){
   }
   
   results <- do.call(rbind, results_list)
-  write.csv(results, paste0("../data/", modelname, ".csv"))
+  write.csv(results, here("data", paste0(modelname, ".csv")))
 }
 

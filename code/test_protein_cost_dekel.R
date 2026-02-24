@@ -12,7 +12,7 @@ setwd(directory)
 phis_to_test <- c(seq(0, 0.5, 0.005))
 predict.parameters <- 0
 primary_c_source <- 0.5
-modelname_orig <- "M9_dekel" # "M10_dekel_efflux" M9_dekel
+modelname_orig <- "M10_dekel_efflux" # "M10_dekel_efflux" M9_dekel
 
 alt_concentrations <- c(0.001, 0.01, 0.05, 0.1, 0.2, 1, 10)
 
@@ -21,7 +21,7 @@ for(is.reversible in c(1,0)){
   
   for (x_C2 in alt_concentrations){
     modelname <- modelname_orig
-    source("initialize_model.R")
+    source(here("code", "initialize_model.R"))
     q0_wt <- q0
     last_feasible_q0 <- q0
     
@@ -30,7 +30,7 @@ for(is.reversible in c(1,0)){
     a_cond[3,1] <- x_C2 # alternative carbon source
     n_conditions <- 1
     
-    source("GBA_solver.R")
+    source(here("code", "GBA_solver.R"))
     
     mu_orig <- mu_opt
     p_opt <- prot(q_opt[1,])
@@ -67,7 +67,7 @@ for(is.reversible in c(1,0)){
   }
   
   results <- do.call(rbind, results_list)
-  write.csv(results, paste0("../data/", modelname, ".csv"))
+  write.csv(results, here("data", paste0(modelname, ".csv")), row.names = FALSE)
   
 }
 

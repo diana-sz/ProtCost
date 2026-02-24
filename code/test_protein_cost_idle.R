@@ -1,9 +1,8 @@
+# Test cost of an idle protein
+
 rm(list=ls(all=TRUE))
 
 library(here)
-
-directory <- paste0(here(), "/code")
-setwd(directory) 
 
 predict.parameters <- 0
 phis_to_test <- seq(0, 1, 0.01)
@@ -11,7 +10,7 @@ phis_to_test <- seq(0, 1, 0.01)
 for(is.reversible in c(1,0)){
   modelname <- "M9_IDLE"
   
-  source("initialize_model.R")
+  source(here("code", "initialize_model.R"))
   n_conditions <- 1
   rho_cond <- rho_cond[1]
   
@@ -25,7 +24,7 @@ for(is.reversible in c(1,0)){
       min_phi[idle] <- fraction
       max_phi[idle] <- fraction+1e-6
       
-      source("solver_loop.R")
+      source(here("code", "solver_loop.R"))
       
       fs <- q_opt[1, ]
       results_list[[length(results_list) + 1]] <- data.frame(
@@ -42,7 +41,7 @@ for(is.reversible in c(1,0)){
     }
   
   results <- do.call(rbind, results_list)
-  write.csv(results, paste0("../data/", modelname, ".csv"))
+  write.csv(results, here("data", paste0(modelname, ".csv")))
 }
 
 

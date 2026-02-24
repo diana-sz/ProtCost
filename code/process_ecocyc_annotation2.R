@@ -1,8 +1,7 @@
 library(here)
 
-setwd(here())
-
-ecocyc_annot <- read.table("data/p17_groups_detailed.txt", sep = "\t", header=TRUE)
+ecocyc_annot <- read.table(here("data", "proteomics", "ecocyc_groups.txt"), 
+                           sep = "\t", header=TRUE)
 
 protein_groups <- c("translation",
                 "amino acid biosynthetic process",

@@ -12,39 +12,36 @@ is.reversible <<- is.reversible
 # verbose: prints optimization diagnostics
 verbose <<- F
 
-
-# mu_tol
-mu_tol <<- 1e-12
-xtol_rel <<- 1e-9
-
+# tolerances for the solver
+xtol_rel <<- 1e-10
+mu_tol <<- 1e-13
 
 # solver 
 solver <<- "SLSQP" # "SLSQP" # "gradi" LBFGS
 
 
-suppressMessages(source("Readmodelods.R"))
+suppressMessages(source(here("code", "Readmodelods.R")))
 
 if (is.reversible == 1) modelname <- paste(modelname,"_rev",sep="")
 
 
 # kinetics #####################################################################
-source("Kinetics.R")
+source(here("code", "Kinetics.R"))
 
 
 # Finds initial condition ##########################################
 # finds best q0 first by testing different b_p
 best_q0 <<- F
-source("q0_biomass.R")
+source(here("code", "q0_biomass.R"))
 q0_alt <- q0
 
 if (predict.parameters == 0){
   best_q0 <<- T
-  source("q0_biomass.R")
+  source(here("code", "q0_biomass.R"))
 }
-
 
 
 # Predicts kinetic parameters based on mu and phi data #########################
 
-if (predict.parameters > 0 & sum(q0) != 0) source("Parameter_prediction.R")
+if (predict.parameters > 0 & sum(q0) != 0) source(here("code", "Parameter_prediction.R"))
 

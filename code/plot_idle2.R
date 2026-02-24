@@ -1,19 +1,16 @@
 library(here)
 library(RColorBrewer)
 
-setwd(here())
-
 xlim <- c(0, 0.45)
 ylim <- c(0, 0.45)
 xlab_line <- 2
 cex_all <- 1
 
 for(modelname in c("M10_IDLE2_rev")){
-  data <- read.csv(paste0("data/", modelname, ".csv"), row.names = 1)
+  data <- read.csv(here("data", paste0(modelname, ".csv")))
   data <- data[data$convergence == 4, ]
-  data <- data[complete.cases(data),]
-  
-  png(paste0("figures/", modelname, ".png"), 
+
+  png(here("figures", paste0(modelname, ".png")), 
       type="cairo", units="cm",
       width=9, height=7.5, res=300)
   par(mfcol=c(1,1), mar = c(3,3.5,0.1,0.1))
@@ -48,7 +45,4 @@ for(modelname in c("M10_IDLE2_rev")){
     
   dev.off()
 }
-
-
-
 

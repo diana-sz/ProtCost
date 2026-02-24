@@ -5,15 +5,12 @@ rm(list=ls(all=TRUE))
 library(here)
 library(xtable)
 
-directory <- paste0(here(), "/code")
-setwd(directory)
-
 modelname <- "M8"
 rescale_kcats <- TRUE
 predict.parameters <- 3  # saturation parameter used in 'initialize_model.R'
 is.reversible <- 1
 
-source("initialize_model.R")
+source(here("code", "initialize_model.R"))
 
 print("Predicted parameters:")
 print(kcatf)

@@ -4,11 +4,12 @@ require(dplyr)
 
 setwd(here())
 
-metadata <- read.csv("data/proteomics/Schmidt_proteomics_table_s23.csv", skip=2, nrows = 26)
+metadata <- read.csv(here("data", "proteomics", "Schmidt_proteomics_table_s23.csv"), 
+                     skip=2, nrows = 26)
 metadata <- metadata[metadata$Strain == "BW25113",]
 rownames(metadata) <- metadata[,1]
 
-proteomics_raw <- read.csv("data/proteomics/Schmidt_proteomics_table_s6.csv", skip=1)
+proteomics_raw <- read.csv(here("data", "proteomics", "Schmidt_proteomics_table_s6.csv"), skip=1)
 start_index <- grep("Mass", colnames(proteomics_raw))
 end_index <- grep("Coefficient", colnames(proteomics_raw)) - 1 
 colnames(proteomics_raw) <- proteomics_raw[1,]
@@ -40,11 +41,11 @@ schmidt_growth_rates <- metadata[colnames(schmidt_proteomics), "Growth.rate..h.1
 
 
 #### Mori data #################################################################
-metadata <- read.csv("data/proteomics/EV3-Samples-2.csv")
+metadata <- read.csv(here("data", "proteomics", "EV3-Samples-2.csv"))
 c_lim_samples <- metadata[8:22,]
 mori_growth_rates <- c_lim_samples$Growth.rate..1.h.
 
-mori_proteomics <- read.csv("data/proteomics/EV9-AbsoluteMassFractions-2.csv")
+mori_proteomics <- read.csv(here("data", "proteomics", "EV9-AbsoluteMassFractions-2.csv"))
 mori_proteomics <- mori_proteomics[mori_proteomics$Gene.locus != "", ]
 rownames(mori_proteomics) <- mori_proteomics$Gene.locus
 mori_proteomics <- mori_proteomics[, c_lim_samples$Sample.ID]
@@ -52,13 +53,13 @@ mori_proteomics <- mori_proteomics[, c_lim_samples$Sample.ID]
 
 
 #### Mori data #################################################################
-metadata <- read.csv("data/proteomics/EV2-Samples-1.csv")
+metadata <- read.csv(here("data", "proteomics", "EV2-Samples-1.csv"))
 target_rows <- c("Acetate", "Carbon 46", "Carbon 61", "Carbon 37",
                  "Carbon 85", "Carbon 50", "Carbon 54", "Carbon 49")
 min_media_samples <- metadata[metadata$Short.Description %in% target_rows,]
 mori_growth_rates2 <- log(2)/(min_media_samples$Doubling.time..min./60)
 
-mori_proteomics2 <- read.csv("data/proteomics/EV8-AbsoluteMassFractions-1.csv")
+mori_proteomics2 <- read.csv(here("data", "proteomics", "EV8-AbsoluteMassFractions-1.csv"))
 mori_proteomics2 <- mori_proteomics2[mori_proteomics2$Gene.locus != "", ]
 rownames(mori_proteomics2) <- mori_proteomics2$Gene.locus
 sample_ids <- gsub("-", ".", min_media_samples$Sample.ID)

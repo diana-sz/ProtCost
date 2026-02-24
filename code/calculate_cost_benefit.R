@@ -1,23 +1,17 @@
 # Calculate cost and benefit contributions of each reaction to the total growth
 # cost at optimal growth rate
-
 rm(list=ls(all=TRUE))
 
 library(here)
 library(xtable)
 
-directory <- paste0(here(), "/code")
-setwd(directory)
-
 modelname <- "M8"
 is.reversible <- 1
 
-suppressMessages(source("Readmodelods.R"))
+suppressMessages(source(here("code", "Readmodelods.R")))
+source(here("code", "Kinetics.R"))
 
-source("Kinetics.R")
-
-
-opt_data <- read.csv("../data/M8_rev_GBA.csv", row.names = 1)
+opt_data <- read.csv(here("data", "M8_rev_GBA.csv"), row.names = 1)
 
 row <- 1
 rho <- rho_cond[1]

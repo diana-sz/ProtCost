@@ -1,9 +1,7 @@
 library(here)
 library(RColorBrewer)
 
-setwd(here())
-
-source("code/uni_colors.R")
+source(here("code", "uni_colors.R"))
 
 colors <- c(uni_blue)
 colors <- brewer.pal(6, "Paired")[c(2,3,4,5)]
@@ -134,10 +132,9 @@ exp_curves <- list(
 
                    
 
-png(paste0("figures/experimental_costs.png"),
+png(here("figures", paste0("experimental_costs.png")),
     type="cairo", units="cm", res = 300,
     width=17, height=13)
-
 
 par(mfrow=c(2,2), oma = c(1,1,0.5,0))
 
@@ -186,7 +183,6 @@ for(exp in unique(all_data$experiment)){
   }
 
   legend("bottomright", legend = conditions, col = colors[1:length(conditions)], pch = 19, bty = "n", cex=cex_all)
-
 }
 
 mtext("Titrated level/wild type level", side = 1, outer = TRUE, line = -0.3, cex = cex_all)

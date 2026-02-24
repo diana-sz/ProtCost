@@ -1,11 +1,10 @@
 library(here)
 library(RColorBrewer)
 
-setwd(here())
-
 cex_all <- 1
+cex_points <- 0.95
 
-source("code/uni_colors.R")
+source(here("code", "uni_colors.R"))
 
 experimental <- data.frame(
   titrated_level = c(
@@ -30,40 +29,36 @@ experimental <- data.frame(
   )
 )
 
-
-
 modelnames <- c("M9_alt_trans", "M9_alt_trans_rev")
 xlim <- c(0, 3)
 ylim <- c(0, 1.1)
 
 for(modelname in modelnames){
-  results <- read.csv(paste0("data/", modelname, ".csv"))
+  results <- read.csv(here("data", paste0(modelname, ".csv")))
   results <- results[results$convergence == 4,]  # plot only simulations that converged
   
-  png(paste0("figures/", modelname,".png"),
+  png(here("figures", paste0(modelname,".png")),
       type="cairo", units="cm", res = 300,
       width=9, height=7.5)
   
-  par(mfrow=c(1,1), oma = c(0,0,0,0))
-  par(mar = c(3.7, 3.7, 0.5, 1))
+  par(mfrow=c(1,1), oma = c(0,0,0,0), mar = c(3.7, 3.7, 0.5, 1))
 
   # Set factor levels
-  #results$kcat <- results$kcat
-  #results$kcat <- factor(results$kcat, levels = unique(results$kcat))
-  #results$km <- factor(results$km, levels = unique(results$km))
   opt_phi <- which.max(results$mu[results$kcat == min(results$kcat) & results$km == min(results$km)])
   results$rel_phi <- results$phi / results$phi[opt_phi]
   results$mu_rel <- results$mu / results$mu[opt_phi]
   results <- results[results$rel_phi <= 3,]
   
   # Set colors based on kcat
-  palette_colors <- brewer.pal(length(unique(results$kcat)), "Paired")
-  color_map <- setNames(palette_colors, unique(results$kcat))
+  kcat_vals <- sort(unique(results$kcat))
+  palette_colors <- brewer.pal(length(kcat_vals), "Paired")
+  color_map <- setNames(palette_colors, kcat_vals)
   point_colors <- color_map[as.character(results$kcat)]
   
   # Set shapes based on km 
-  shape_list <- 19:(18 - length(unique(results$km)) + 1)
-  shape_map <- setNames(shape_list, unique(results$km))
+  km_vals <- sort(unique(results$km))
+  shape_list <- 19:(20 - length(km_vals))
+  shape_map <- setNames(shape_list, km_vals)
   point_shapes <- shape_map[as.character(results$km)]
   
   # Create the plot
@@ -75,13 +70,13 @@ for(modelname in modelnames){
     ylim = ylim,
     pch = point_shapes,
     col = point_colors,
-    cex = cex_all,
+    cex = cex_points,
     axes = FALSE
     #main = "Simulations"
   )
-  
+
   mtext("Relative growth rate", side = 2, outer = FALSE, line = 2.6, cex = cex_all)
-  mtext("Fixed level / optimal level of TS", side = 1, outer = FALSE, line = 2.5, cex = cex_all)
+  mtext("TS proteome fraction relative to optimum", side = 1, outer = FALSE, line = 2.5, cex = cex_all)
   
   box()
   axis(1)
@@ -90,10 +85,10 @@ for(modelname in modelnames){
   # Add legend
   legend(
     0.9, 0, yjust = 0,
-    legend = unique(results$kcat),
+    legend = kcat_vals,
     col = palette_colors,
     pch = 15,
-    cex = cex_all,
+    cex = cex_points,
     bty = "n",
     title = expression(k[cat]^"TS2")
   )
@@ -101,28 +96,19 @@ for(modelname in modelnames){
   # Add legend
   legend(
     1.7, 0, yjust = 0,
-    legend = c(unique(results$km)),
+    legend = km_vals,
     col = rep("black", length(unique(results$km))),
     pch = shape_list,
-    cex = cex_all,
+    cex = cex_points,
     bty = "n",
     title = expression(K[TS2]^"Sext")
   )
-  
-  # mtext(
-  #   paste0("(", letters[1], ")"),
-  #   side = 3,
-  #   adj = 0.5,
-  #   line = 0.35,
-  #   cex = cex_all,
-  #   font = 2
-  # )
-  
+
   dev.off()
   
 }
 
-png("figures/experimental_transporter.png",
+png(here("figures", "experimental_transporter.png"),
     type="cairo", units="cm", res = 300,
     width=9, height=7.5)
 
@@ -141,7 +127,7 @@ plot(
   pch = 19,
   col = "black",
   axes = FALSE,
-  cex = cex_all
+  cex = cex_points
 )
 
 x <- seq(0, 3, length.out = 50)
@@ -156,14 +142,6 @@ mtext("Titrated level / WT level of transporter", side = 1, outer = FALSE, line 
 
 legend("bottomright", legend = "Maltose", col = "black", pch = 19, bty = "n", cex=cex_all)
 
-# mtext(
-#   paste0("(", letters[2], ")"),
-#   side = 3,
-#   adj = 0.5,
-#   line = 0.35,
-#   cex = cex_all,
-#   font = 2
-# )
 
 dev.off()
 

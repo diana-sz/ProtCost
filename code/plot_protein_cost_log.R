@@ -1,25 +1,19 @@
 library(here)
 library(RColorBrewer)
 
-setwd(here())
-
 relative_phi <- FALSE
-
 cex_lab <- 0.75
 xlim <- c(0.01, ifelse(relative_phi, 5, 1))
 ylim <- c(0, 1)
-xlab_line <- 1.6
 title_line <- 0.4
 
-plot_composition <- function(proteome, target_phi, colors = NULL,
-                             main = "Proteome Composition",
-                             ylab = "Composition",
-                             xlab = "Proteome fraction",
-                             legend=TRUE,
-                             cex_lab=1) {
-  # Dimensions
-  n <- nrow(proteome)
-  m <- ncol(proteome)
+plot_composition <- function(proteome, target_phi, colors,
+                             xlim, ylim,
+                             main = NA,
+                             ylab = NA,
+                             xlab = NA,
+                             legend = TRUE,
+                             cex_lab = 1) {
   
   # Cumulative sum by row (used for stacking)
   proteome <- proteome/rowSums(proteome)
@@ -28,7 +22,7 @@ plot_composition <- function(proteome, target_phi, colors = NULL,
   # Base plot (empty)
   plot(NA, 
        xlim = xlim, 
-       ylim =ylim, 
+       ylim = ylim, 
        xlab = xlab, 
        ylab = ylab, 
        main = main,
@@ -39,7 +33,7 @@ plot_composition <- function(proteome, target_phi, colors = NULL,
   y_prev <- rep(0, length(target_phi))
   
   # Draw polygons for each protein group
-  for (i in m:1) {
+  for (i in ncol(proteome):1) {
     y_top <- y_cum[, i]
     polygon(
       c(target_phi, rev(target_phi)),
@@ -51,8 +45,7 @@ plot_composition <- function(proteome, target_phi, colors = NULL,
   
   # Add legend
   if(legend){
-    leg_text <- gsub("c\\.", "", colnames(proteome))
-    leg_text <- gsub("p\\.", "", leg_text)
+    leg_text <- gsub("c\\.|p\\.", "", colnames(proteome))
     par(xpd=NA)
     legend(0.02, 1.52, legend = leg_text, fill = rev(colors), bty = "n", 
            cex = 0.9, ncol = 4, xjust = 0)
@@ -61,15 +54,13 @@ plot_composition <- function(proteome, target_phi, colors = NULL,
 }
 
 
-for(modelname in c("B", "B_rev")){#  c("M8b0", "M8b_rev1")){ #A7simple_rev1
-  data <- read.csv(paste0("data/", modelname, "_protein_cost.csv"), row.names = 1)
-  data <- data[data$convergence == 4, ]
-  data <- data[complete.cases(data),]
-  data <- data[data$phi > 0.01, ]
+for(modelname in c("B", "B_rev")){
+  data <- read.csv(here("data", paste0(modelname, "_protein_cost.csv")))
+  data <- subset(data, convergence == 4 & phi > 0.01)
   
   for(rxn in unique(data$reaction)){
     suffix <- ifelse(relative_phi, "_rel", "_abs")
-    png(paste0("figures/", modelname, "_", rxn, suffix, "_log.png"), 
+    png(here("figures", paste0(modelname, "_", rxn, suffix, "_log.png")), 
         type="cairo", units="cm",
         width=20, height=5.5, res=300)
     par(mfcol=c(1,3), mar = c(3.7,2,3.8,0.5))
@@ -101,26 +92,26 @@ for(modelname in c("B", "B_rev")){#  c("M8b0", "M8b_rev1")){ #A7simple_rev1
          type = type, lwd = 3,
          log = "x",
          cex = 0.6,
-         pch=20,
+         pch = 20,
          xlab = NA,
-         ylab=NA)
+         ylab = NA)
     text(ifelse(relative_phi, 3.2, 0.6), 0.2, rxn, cex=cex_lab*1.5)
     mtext(bquote("Growth rate"), side = 3, cex = cex_lab, line = title_line)
     abline(v = plotted_phi[which.max(mu)], lty = 2, col = "grey70")
     
-    colors <- brewer.pal(ncol(proteome), "PuBu") #PuBU #YlGnBu
+    colors <- brewer.pal(ncol(proteome), "PuBu")  #YlGnBu
     plot_legend <- ifelse(rxn == "TS", TRUE, FALSE)
-    plot_composition(proteome, plotted_phi, colors, main="", 
-                     ylab=NA, #"Proteome composition",
-                     xlab = NA,
+    plot_composition(proteome, plotted_phi, colors, main="",
+                     ylab = NA, xlab = NA,
+                     xlim = xlim, ylim = ylim,
                      cex_lab=cex_lab,
                      legend=plot_legend)
     mtext("Proteome composition", side = 3, cex = cex_lab, line = title_line)
 
     colors <- rev(brewer.pal(ncol(biomass), "RdBu"))
     plot_composition(biomass, plotted_phi, colors, main="", 
-                     ylab = NA,
-                     xlab = NA,
+                     ylab = NA, xlab = NA,
+                     xlim = xlim, ylim = ylim,
                      cex_lab=cex_lab,
                      legend=plot_legend)
     mtext("Biomass composition", side = 3, cex = cex_lab, line = title_line)
@@ -133,10 +124,8 @@ for(modelname in c("B", "B_rev")){#  c("M8b0", "M8b_rev1")){ #A7simple_rev1
     mtext(xlabel, side = 1,
           outer = TRUE, cex = cex_lab, line = -1.1, adj = 0.52)
     
-    
     dev.off()
   }
 }
-
 
 

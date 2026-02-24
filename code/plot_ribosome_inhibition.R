@@ -2,13 +2,11 @@ library(RColorBrewer)
 library(scales)
 library(here)
 
-setwd(here())
 cex_all <- 1
 
 modelname <- "M8_inh_rev"
-opt_data <- read.csv(paste0("data/", modelname, ".csv"), row.names = 1)
+opt_data <- read.csv(here("data", paste0(modelname, ".csv")), row.names = 1)
 opt_data <- opt_data[opt_data$convergence == 4, ]
-opt_data <- opt_data[complete.cases(opt_data),]
 
 opt_data$phiR <- opt_data$p.R/rowSums(opt_data[, grep("p\\.", colnames(opt_data))])
 palette_colors <- brewer.pal(length(unique(opt_data$x_C)), "Paired")
@@ -16,7 +14,7 @@ color_map <- setNames(palette_colors, unique(opt_data$x_C))
 opt_data$color <- color_map[as.character(opt_data$x_C)]
 
 
-png(paste0("figures/", modelname, "_ribosome_inhibition.png"), 
+png(here("figures", paste0(modelname, "_ribosome_inhibition.png")), 
     type="cairo", units="cm", res = 300,
     width=9, height=7.5)
 
@@ -48,8 +46,6 @@ box()
 
 mtext("Ribosomal proteome fraction", side = 2, outer = FALSE, line = 2.6, cex = cex_all)
 mtext(bquote("Growth rate" ~ "[" * h^-1 * "]"), side = 1, outer = FALSE, line = 2.5, cex = cex_all)
-
-
 
 
 no_inh <- opt_data[opt_data$x_INH== min(opt_data$x_INH),]

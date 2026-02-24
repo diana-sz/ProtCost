@@ -5,17 +5,14 @@ rm(list=ls(all=TRUE))
 
 library(here)
 
-directory <- paste0(here(), "/code")
-setwd(directory) 
 predict.parameters <- 0
-phis_to_test <- seq(0, 0.5, 0.001)#, seq(0.5, 0, -0.005))
+phis_to_test <- seq(0, 0.4, 0.0005)
 efflux_kcats <- c(0.1, 1, 10, 100)
 
-for(is.reversible in c(1,0)){
+for(is.reversible in c(0,1)){
   
   modelname <- "M10fuel_efflux"
-  
-  source("initialize_model.R")
+  source(here("code", "initialize_model.R"))
   n_conditions <- 1
   
   q0_wt <- q0
@@ -34,7 +31,7 @@ for(is.reversible in c(1,0)){
       min_phi[fuel] <- fuel_phi
       max_phi[fuel] <- fuel_phi+1e-6
       
-      source("solver_loop.R")
+      source(here("code", "solver_loop.R"))
       
       fs <- q_opt[1, ]
       results_list[[length(results_list) + 1]] <- data.frame(
@@ -57,5 +54,5 @@ for(is.reversible in c(1,0)){
   }
   
   results <- do.call(rbind, results_list)
-  write.csv(results, paste0("../data/", modelname, "_tradeoff.csv"))
+  write.csv(results, here("data", paste0(modelname, "_tradeoff.csv")))
 }

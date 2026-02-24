@@ -6,29 +6,27 @@ rm(list=ls(all=TRUE))
 library(parallel)
 library(here)
 
-directory <- file.path(here(), "code")
-setwd(directory)
 
 # --- read model and get initial solution --- ####
-is.reversible <- 1
+is.reversible <- 0
 predict.parameters <- 0
-modelname <- "B" # "M8" "M9_Q" "B"
+modelname <- "M9_Q" # "M8" "M9_Q" "B"
 max_cores <- 9
 
 # Solver function ####
 run_solver <- function(q0_value, msg = NULL) {
   if (!is.null(msg)) print(msg)
   assign("q0", q0_value, envir = .GlobalEnv)
-  res_try <- try(source("GBA_solver.R"), silent = TRUE)
+  res_try <- try(source(here("code", "GBA_solver.R")), silent = TRUE)
   inherits(res_try, "try-error")
 }
 
 
-source("initialize_model.R")
+source(here("code", "initialize_model.R"))
 n_conditions <- 1  # take only the first condition in the .ods model file
 q0_wt <- q0
 
-source("GBA_solver.R")
+source(here("code", "GBA_solver.R"))
 
 # --- prepare parameters for phi testing --- ####
 results_list <- list()
@@ -86,14 +84,6 @@ process_reaction <- function(reaction_name, opt_phi, q0_initial) {
     # noise  <- rnorm(length(last_feasible_q0), mean = 0, sd = last_feasible_q0*0.02)
     # perturbed_q0 <- last_feasible_q0 + noise
     # perturbed_q0[perturbed_q0 < 0] <- 0
-    # 
-    # noise  <- rnorm(length(q0_wt), mean = 0, sd = q0_wt*0.02)
-    # perturbed_q0_wt <- last_feasible_q0 + noise
-    # perturbed_q0_wt[perturbed_q0_wt < 0] <- 0
-    # 
-    # noise  <- rnorm(length(q0_alt), mean = 0, sd = q0_alt*0.02)
-    # perturbed_q0_alt <- q0_alt + noise
-    # perturbed_q0_alt[perturbed_q0_alt < 0] <- 0
 
     candidates <- list(
       list(q = q0_wt,  msg = "Solver did not converge - trying with initial FBA solution"),
@@ -155,6 +145,6 @@ for (batch in reaction_batches) {
 }
 
 results <- do.call(rbind, results_list)
-write.csv(results, paste0("../data/", modelname, "_protein_cost.csv"))
+write.csv(results, here("data", paste0(modelname, "_protein_cost.csv")), row.names = FALSE)
 
 

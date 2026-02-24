@@ -5,16 +5,13 @@ rm(list=ls(all=TRUE))
 
 library(here)
 
-directory <- paste0(here(), "/code")
-setwd(directory) 
-
 predict.parameters <- 0
 phis_to_test <- seq(0.001, 0.5, 0.005)
 
-for(is.reversible in c(0)){
+for(is.reversible in c(1,0)){
   modelname <- "M9_alt_trans"
   
-  source("initialize_model.R")
+  source(here("code", "initialize_model.R"))
   n_conditions <- 1
   rho_cond <- rho_cond[1]
   
@@ -39,24 +36,19 @@ for(is.reversible in c(0)){
       kcatb[transporter2] <- kcat_t/5*is.reversible
       
       # get optimal phis
-      source("solver_loop.R")
-      
-      p_opt <- prot(q_opt[1,])
-      opt_phis <- (p_opt/rho_cond)/sum(p_opt/rho_cond)
-      opt_phi <- opt_phis[transporter]
-      
+      source(here("code", "solver_loop.R"))
+
       for (fraction in phis_to_test){
         min_phi[transporter] <- fraction
         max_phi[transporter] <- fraction+1e-6
         
-        source("solver_loop.R")
+        source(here("code", "solver_loop.R"))
         
         fs <- q_opt[1, ]
         results_list[[length(results_list) + 1]] <- data.frame(
           kcat = kcat_t,
           km = km,
           phi = fraction,
-          rel_phi = fraction/opt_phi,
           mu = mu_opt,
           convergence = res$convergence,
           t(c(
@@ -72,12 +64,9 @@ for(is.reversible in c(0)){
       min_phi[] <- 0
       max_phi[] <- 1
     }
-    
   }
   
   results <- do.call(rbind, results_list)
-  write.csv(results, paste0("../data/", modelname, ".csv"))
+  write.csv(results, here("data", paste0(modelname, ".csv")), , row.names = FALSE)
 }
-
-
 

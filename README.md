@@ -13,7 +13,7 @@ We study growth costs associated with:
 We further analyze how these costs depend on environmental conditions, including external substrate concentrations and the availability of alternative metabolic routes.
 
 ## Repository structure
-.
+
 ├── code/
 │ └── Models/
 ├── data
@@ -121,6 +121,7 @@ Proteomics data from *Escherichia coli* from:
 
 Processed versions of these datasets are generated using the scripts in `process_proteomics.R`.
 
+- `ecocyc_groups.txt` - GO annotation from Ecocyc
 
 
 ## Citation

@@ -1,6 +1,5 @@
 # exporting file with the optimal states ci, tau, mu, v, p 
 
-setwd("../data")
 
 opt_state <- matrix(rep(0,(n_a+2+p+r+r+r+r)*n_conditions),nrow = n_conditions)
 for (cond in 1:n_conditions) {
@@ -18,7 +17,5 @@ colnames(opt_state) <- c("convergence","mu",reactant,paste("tau",reaction),
                          paste("v",reaction),paste("p",reaction),paste("q",reaction))
 
 # export results
-write.csv(opt_state, file = paste0(modelname, "_GBA.csv"))
+write.csv(opt_state, file = here("data", paste0(modelname, "_GBA.csv")))
 
-
-setwd(directory)

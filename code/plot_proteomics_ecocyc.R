@@ -2,10 +2,8 @@ library(RColorBrewer)
 library(scales)
 library(here)
 
-setwd(here())
-
-source("code/process_ecocyc_annotation2.R")
-source("code/process_proteomics.R")
+source(here("code", "process_ecocyc_annotation2.R"))
+source(here("code", "process_proteomics.R"))
 
 scaled <- FALSE
 
@@ -129,9 +127,9 @@ plot_and_fit <- function(data, growth_rates, ylim, xlim,
 
 
 #### Make plots ################################################################
-TC <- c("D-glucose transmembrane transport", "glycolytic process")
-EAA <- c("amino acid biosynthetic process")
-ENT <- c("nucleobase biosynthetic process", "NADPH regeneration")
+TS <- c("D-glucose transmembrane transport", "glycolytic process")
+AAS <- c("amino acid biosynthetic process")
+NTS <- c("nucleobase biosynthetic process", "NADPH regeneration")
 ATPS <- c("energy derivation by oxidation of organic compounds")#, 
 DNAP <- c("DNA biosynthetic process")
 RNAP <- c("RNA processing",  "rRNA catabolic process",
@@ -142,52 +140,14 @@ P <- c("translation", "protein maturation")
 xlim <- c(0,1.15)
 
 
-pdf("figures/proteomics_ecocyc.pdf")
+pdf(here("figures", "proteomics_ecocyc.pdf"))
 par(mfrow=c(2, 2), mar = c(5,5,3,1))
-#par(mfcol=c(2,2))
 
 for(dataset in names(proteomics_datasets)){
   legend <- TRUE
   #if(dataset != "Merged"){legend <- FALSE}
   current_dataset <- proteomics_datasets[[dataset]]
   current_growth <- growth_datasets[[dataset]]
-  # 
-  # # big sectors
-  # Metabolism <- get_sector_fraction(met_groups, current_dataset, gene_annot)
-  # Information_processing <- get_sector_fraction(info_group, current_dataset, gene_annot)
-  # sectors <- list("Metabolism" = Metabolism,
-  #                 "Genetic Information Processing" = Information_processing)
-  # plot_and_fit(sectors, 
-  #              current_growth, 
-  #              ylim = c(0,0.5), 
-  #              xlim = xlim,
-  #              legend = legend)
-  # title(dataset)
-  # 
-  # sectors <- data.frame(cbind(Information_processing, Metabolism))
-  # sectors$Other <- 1-rowSums(sectors)
-  # ordered_mu <- current_growth[order(current_growth)]
-  # ordered_phis <- sectors[order(current_growth),]
-  # colors <- brewer.pal(3, name = "Paired")
-  # cum_comp <- t(apply(ordered_phis, 1, cumsum))
-  # plot(NA, xlim = xlim, ylim=c(0,1),
-  #      yaxs="i", xaxs="i", 
-  #      # xaxt = "n", yaxt = "n",
-  #      xlab=bquote("Growth rate"~ mu ~ (h^-1)), 
-  #      ylab="Relative proteome composition",
-  #      cex.lab = 1.3)
-  # for(i in ncol(cum_comp):1){
-  #   col <- colors[i]
-  #   polygon(c(ordered_mu, rev(ordered_mu)), c(rep(0, nrow(cum_comp)), rev(cum_comp[,i])),
-  #           col=col, border=col)
-  #   par(new=TRUE)
-  # }
-  # par(new=FALSE)
-  # # if(legend){
-  # #   legend('bottomleft', rev(colnames(ordered_phis)), bty = "n",
-  # #          col = rev(colors), pch = 15, cex=1.1, border = NA)
-  # # }
-  # title(dataset)
 
   # translation sectors
   translation <- get_sector_fraction(c("translation", "protein maturation"),
@@ -220,9 +180,9 @@ for(dataset in names(proteomics_datasets)){
   
 
   # metabolism
-  tc <- get_sector_fraction(TC, current_dataset, gene_annot)
+  ts <- get_sector_fraction(TS, current_dataset, gene_annot)
   atps <- get_sector_fraction(ATPS, current_dataset, gene_annot)
-  sectors <- list("TC" = tc,
+  sectors <- list("TS" = ts,
                   "ATPS" = atps)
   plot_and_fit(sectors, 
                current_growth, 
@@ -233,13 +193,13 @@ for(dataset in names(proteomics_datasets)){
 
 
   
-  # AAs, nts
-  aas <- get_sector_fraction(EAA, current_dataset, gene_annot)
-  nts <- get_sector_fraction(ENT, current_dataset, gene_annot)
+  # AAS, NTS, ADPS
+  aas <- get_sector_fraction(AAS, current_dataset, gene_annot)
+  nts <- get_sector_fraction(NTS, current_dataset, gene_annot)
   adps <- get_sector_fraction_gene_list(adps_genes, current_dataset)
   
-  sectors <- list("ENT" = nts,
-                  "EAA" = aas,
+  sectors <- list("NTS" = nts,
+                  "AAS" = aas,
                   "ADPS" = adps)
   plot_and_fit(sectors, 
                current_growth, 
@@ -249,7 +209,6 @@ for(dataset in names(proteomics_datasets)){
   title(dataset)
 
 }
-
 
 
 dev.off()

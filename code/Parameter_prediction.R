@@ -53,7 +53,7 @@ KI[KI == 0] <- Inf
 if(rescale_kcats){
   tol <- 0.02
   n_conditions <- 1
-  source("GBA_solver.R") 
+  source(here("code", "GBA_solver.R"))
 
   # scale kcats so that mu=1
   print(paste0("Initial mu = ", mu_opt))
@@ -75,19 +75,16 @@ if(rescale_kcats){
       kcatb <- is.reversible*rev*kcatb
       kcatb[r] <- 0 # ribosome is irreversible
 
-      source("GBA_solver.R") 
+      source(here("code", "GBA_solver.R"))
       print(paste0("mu after ", n, " rounds = ", mu_opt))
       
       if(n > 40){
         break
       }
     }
-    
-
-    
   }
   
-  source("GBA_solver.R") 
+  source(here("code", "GBA_solver.R"))
   print(paste0("final mu after ", n, " rounds = ", mu_opt))
   
   n_conditions <- length(rho_cond)  
