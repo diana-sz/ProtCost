@@ -7,7 +7,7 @@ predict.parameters <- 0
 source(here("code", "uni_colors.R"))
 source(here("code", "initialize_model.R"))
 
-opt_data <- read.csv(here("data", paste0(modelname, "_protein_cost.csv")), row.names = 1)
+opt_data <- read.csv(here("data", paste0(modelname, "_protein_cost.csv")))
 opt_data <- opt_data[opt_data$convergence == 4, ]
 
 row <- 1
@@ -163,10 +163,9 @@ for(reaction in rev(variables)){
 }
 
 # Add one common x and y label
-mtext("Proteome fraction of under-/overexpressed protein relative to optimum",
+mtext(expression("Proteome fraction of under-/overexpressed protein relative to optimum " * Phi * "/" * Phi^"*"),
       side = 1, line = 4.4, outer = TRUE, cex = cex_labels)
 mtext("Protein assessed for costs and benefits",
       side = 2, line = 4.3, outer = TRUE, cex = cex_labels)
-
 
 dev.off()

@@ -3,8 +3,8 @@ library(RColorBrewer)
 
 xlim <- c(0, 0.45)
 ylim <- c(0, 0.45)
-xlab_line <- 2
-cex_all <- 1
+xlab_line <- 2.2
+cex_all <- 0.97
 
 for(modelname in c("M10_IDLE2_rev")){
   data <- read.csv(here("data", paste0(modelname, ".csv")))
@@ -35,10 +35,10 @@ for(modelname in c("M10_IDLE2_rev")){
   }
   
   box()
-  axis(1, cex.axis=0.9)
-  axis(2,las=2, cex.axis=0.9)
-  mtext(bquote("IDLE 1 proteome fraction"), side = 1, cex = cex_all, line = xlab_line, outer = FALSE)
-  mtext(bquote("IDLE 2 proteome fraction"), side = 2, cex = cex_all, line = xlab_line+0.3, outer = FALSE)
+  axis(1, cex.axis=cex_all)
+  axis(2,las=2, cex.axis=cex_all)
+  mtext(bquote("IDLE1 proteome fraction " * Phi["IDLE1"]), side = 1, cex = cex_all, line = xlab_line, outer = FALSE)
+  mtext(bquote("IDLE2 proteome fraction " * Phi["IDLE2"]), side = 2, cex = cex_all, line = xlab_line+0.1, outer = FALSE)
   
   legend("topright", legend = unique(mu), col =  cols, pch = 20,
          title = "Growth rate", cex = 0.9)

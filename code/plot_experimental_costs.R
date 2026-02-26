@@ -186,7 +186,7 @@ for(exp in unique(all_data$experiment)){
 }
 
 mtext("Titrated level/wild type level", side = 1, outer = TRUE, line = -0.3, cex = cex_all)
-mtext("Relative growth rate", side = 2, outer = TRUE, line = -0.3, cex = cex_all)
+mtext("Normalized growth rate", side = 2, outer = TRUE, line = -0.3, cex = cex_all)
 
 dev.off()
 

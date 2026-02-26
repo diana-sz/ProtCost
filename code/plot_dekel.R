@@ -37,7 +37,7 @@ plot_composition <- function(proteome, target_phi,
   
   # Cumulative sum by row (used for stacking)
   proteome <- proteome/rowSums(proteome)
-  y_cum <- t(apply(proteome[m:1], 1, cumsum))
+  y_cum <- t(apply(proteome[ncol(proteome):1], 1, cumsum))
   
   # Base plot (empty)
   plot(NA, xlim = xlim, ylim =ylim, xlab = xlab, ylab = ylab, main = main,
@@ -79,7 +79,7 @@ for(is.reversible in c(1,0)){
     source(here("code", "initialize_model.R"))
     
     opt_data <- read.csv(here("data", paste0(modelname, ".csv")))
-    opt_data <- subset(data, convergence == 4 & phi <= phi_xlim)
+    opt_data <- subset(opt_data, convergence == 4 & phi <= phi_xlim)
     
     row <- 1
     rho_cond <- rho_cond[1]
@@ -164,7 +164,7 @@ for(is.reversible in c(1,0)){
     box()
     axis(1, cex.axis=cex_axis) 
     axis(2, las = 1, cex.axis=cex_axis) 
-    mtext(expression("LAC proteome fraction (" * Phi * ")"), side=1, cex = cex_lab, line = 2.8)
+    mtext(expression("LAC proteome fraction " * Phi["LAC"]), side=1, cex = cex_lab, line = 2.8)
     mtext(expression("Growth rate relative to " * Phi["LAC"] * "=0"), side=2, cex = cex_lab, line = 2.4)
     cols_lines = c("grey15", "grey60")
     abline(v=plotted_phis, col = cols_lines, lty=2)

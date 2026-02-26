@@ -73,10 +73,10 @@ for(is.reversible in c(1,0)){
   modelname <- "M9_dekel"
   source(here("code", "initialize_model.R"))
   
-  opt_data <- read.csv(here("data", paste0(modelname, ".csv")), row.names = 1)
-  opt_data <- opt_data[opt_data$convergence == 4, ]
-  opt_data <- opt_data[opt_data$phi <= phi_xlim,]
-
+  opt_data <- read.csv(here("data", paste0(modelname, ".csv")))
+  opt_data <- subset(opt_data, convergence == 4 & phi <= phi_xlim)
+  
+  
   x_C2_vals <- sort(unique(opt_data$x_C2)) 
   cols <- setNames(rev(brewer.pal(length(x_C2_vals), "Paired")), x_C2_vals) 
   prot_vals <- sort(unique(opt_data$convergence)) 
@@ -112,7 +112,7 @@ for(is.reversible in c(1,0)){
   box()
   axis(1, cex.axis=cex_axis) 
   axis(2, las = 1, cex.axis=cex_axis) 
-  mtext("LAC proteome fraction", side=1, cex = cex_lab, line = 2.8)
+  mtext(expression("LAC proteome fraction " * Phi["LAC"]), side=1, cex = cex_lab, line = 2.8)
   mtext(expression("Growth rate relative to " * Phi["LAC"] * "=0"), side=2, cex = cex_lab, line = 2.4)
   cols_lines = c("grey15", "grey60")
   abline(v=plotted_phis, col = cols_lines, lty=2)

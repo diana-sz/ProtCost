@@ -4,7 +4,7 @@ library(here)
 
 cex_all <- 1
 
-modelname <- "M8_inh_rev"
+modelname <- "M8_inh"
 opt_data <- read.csv(here("data", paste0(modelname, ".csv")), row.names = 1)
 opt_data <- opt_data[opt_data$convergence == 4, ]
 
@@ -18,7 +18,7 @@ png(here("figures", paste0(modelname, "_ribosome_inhibition.png")),
     type="cairo", units="cm", res = 300,
     width=9, height=7.5)
 
-par(mfrow=c(1,1), oma = c(0,0,0,0))
+par(mfrow=c(1,1), oma = c(0,0,0.5,0))
 par(mar = c(3.7, 3.7, 0.5, 1))
 
 for(x_c in unique(opt_data$x_C)){
@@ -44,7 +44,9 @@ axis(1)
 axis(2, las = 2)
 box()
 
-mtext("Ribosomal proteome fraction", side = 2, outer = FALSE, line = 2.6, cex = cex_all)
+
+mtext(expression("Ribosomal proteome fraction " * Phi["R"]), 
+      side = 2, outer = FALSE, line = 2.6, cex = cex_all)
 mtext(bquote("Growth rate" ~ "[" * h^-1 * "]"), side = 1, outer = FALSE, line = 2.5, cex = cex_all)
 
 

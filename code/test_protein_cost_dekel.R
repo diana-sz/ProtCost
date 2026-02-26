@@ -12,7 +12,7 @@ setwd(directory)
 phis_to_test <- c(seq(0, 0.5, 0.005))
 predict.parameters <- 0
 primary_c_source <- 0.5
-modelname_orig <- "M10_dekel_efflux" # "M10_dekel_efflux" M9_dekel
+modelname_orig <- "M9_dekel" # "M10_dekel_efflux" M9_dekel
 
 alt_concentrations <- c(0.001, 0.01, 0.05, 0.1, 0.2, 1, 10)
 

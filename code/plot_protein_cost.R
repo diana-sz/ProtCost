@@ -1,7 +1,7 @@
 library(here)
 library(RColorBrewer)
 
-relative_phi <- TRUE
+relative_phi <- FALSE
 models_to_plot <- c("M8", "M8_rev", "M9_Q", "M9_Q_rev", "B", "B_rev")
 
 cex_lab <- 0.75
@@ -67,7 +67,7 @@ plot_composition <- function(proteome, target_phi,
 
 
 for(modelname in models_to_plot){
-  data <- read.csv(here("data", paste0(modelname, "_protein_cost.csv")), row.names = 1)
+  data <- read.csv(here("data", paste0(modelname, "_protein_cost.csv")))
   data <- data[data$convergence == 4, ]
   print(paste(modelname, max(data$mu)))
 
@@ -139,11 +139,10 @@ for(modelname in models_to_plot){
                      legend = plot_legend)
     mtext("Biomass composition", side = 3, cex = cex_lab, line = title_line)
 
-    xlabel <- "Proteome fraction"
+    xlabel <- expression("Proteome fraction " * Phi)
     if(relative_phi){
-      xlabel <- "Proteome fraction relative to optimum"
+      xlabel <- expression("Proteome fraction relative to optimum " * Phi * "/" * Phi^"*")
     }
-    
     mtext(xlabel, side = 1,
           outer = TRUE, cex = cex_lab, line = -1.2, adj = 0.51)
     

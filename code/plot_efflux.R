@@ -3,7 +3,7 @@ library(RColorBrewer)
 
 setwd(here())
 
-cex_all <- 1
+cex_all <- 0.97
 cex_points <- 0.95
 phi_xlim <- 0.4
 
@@ -41,15 +41,16 @@ for (modelname in modelnames) {
        axes = FALSE)
   
   box()
-  axis(1)
-  axis(2, las=2)
+  axis(1, cex.axis = cex_all)
+  axis(2, las=2, cex.axis = cex_all)
 
   legend("topright", col = rev(palette_colors), 
          legend = rev(unique(results$kcat)), pch=19, cex = cex_points, ncol = 2,
          title = expression("efflux pump " * k["cat"]), bty = "n")
 
   mtext(bquote("Growth rate" ~ "[" * h^-1 * "]"), side = 2, outer = FALSE, line = 2.5, cex = cex_all)
-  mtext("Proteome fraction fuel reaction", side = 1, outer = FALSE, line = 2.3, cex = cex_all)
+  mtext(expression("Proteome fraction fuel reaction " * Phi["FP"]), 
+        side = 1, outer = FALSE, line = 2.3, cex = cex_all)
   
   dev.off()
   
@@ -73,11 +74,11 @@ for (modelname in modelnames) {
        col = point_colors)
   
   box()
-  axis(1)
-  axis(2, las=2) #, at = seq(0, 0.25, 0.05), labels = c(0.0, NA, 0.1, NA, 0.2, NA))
+  axis(1, cex.axis = cex_all)
+  axis(2, las=2, cex.axis = cex_all) #, at = seq(0, 0.25, 0.05), labels = c(0.0, NA, 0.1, NA, 0.2, NA))
 
-  mtext("Proteome fraction pump", side = 2, outer = FALSE, line = 2.8, cex = cex_all)
-  mtext("Proteome fraction fuel reaction", side = 1, outer = FALSE, line = 2.3, cex = cex_all)
+  mtext(expression("Proteome fraction pump " * Phi["EP"]), side = 2, outer = FALSE, line = 2.7, cex = cex_all)
+  mtext(expression("Proteome fraction fuel reaction " * Phi["FP"]), side = 1, outer = FALSE, line = 2.3, cex = cex_all)
   
   dev.off()
   

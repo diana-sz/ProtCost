@@ -116,9 +116,9 @@ for(modelname in c("B", "B_rev")){
                      legend=plot_legend)
     mtext("Biomass composition", side = 3, cex = cex_lab, line = title_line)
 
-    xlabel <- "Proteome fraction"
+    xlabel <- expression("Proteome fraction " * Phi)
     if(relative_phi){
-      xlabel <- "Proteome fraction relative to optimum"
+      xlabel <- expression("Proteome fraction relative to optimum " * Phi * "/" * Phi^"*")
     }
     
     mtext(xlabel, side = 1,

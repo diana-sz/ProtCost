@@ -102,7 +102,7 @@ for(modelname in c("M9_IDLE", "M9_IDLE_rev")){
                    legend=TRUE)
   mtext("Biomass composition", side = 3, cex = cex_lab, line = title_line)
 
-  mtext(bquote("Idle protein proteome fraction"), side = 1,
+  mtext(bquote("Idle protein proteome fraction " * Phi["IDLE"]), side = 1,
         outer = TRUE, cex = cex_lab, line = -1.1, adj = 0.52)
     
   dev.off()

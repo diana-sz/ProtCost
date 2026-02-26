@@ -1,7 +1,7 @@
 library(here)
 library(RColorBrewer)
 
-cex_all <- 1
+cex_all <- 0.97
 cex_points <- 0.95
 
 source(here("code", "uni_colors.R"))
@@ -76,11 +76,12 @@ for(modelname in modelnames){
   )
 
   mtext("Relative growth rate", side = 2, outer = FALSE, line = 2.6, cex = cex_all)
-  mtext("TS proteome fraction relative to optimum", side = 1, outer = FALSE, line = 2.5, cex = cex_all)
+  mtext(expression("TS proteome fraction relative to optimum " * Phi * "/" * Phi^"*"), 
+                   side = 1, outer = FALSE, line = 2.5, cex = cex_all, adj = 0.7)
   
   box()
-  axis(1)
-  axis(2, las=2)
+  axis(1, cex.axis = cex_all)
+  axis(2, las=2, cex.axis = cex_all)
   
   # Add legend
   legend(
@@ -135,8 +136,8 @@ y <- 0.15/0.32 + 1.25 * (x / (0.5 + x))^1.2 - 0.22 * x
 lines(x, y, col = "black")
 
 box()
-axis(1)
-axis(2, las=2)
+axis(1, cex.axis = cex_all)
+axis(2, las=2, cex.axis = cex_all)
 mtext("Relative growth rate", side = 2, outer = FALSE, line = 2.6, cex = cex_all)
 mtext("Titrated level / WT level of transporter", side = 1, outer = FALSE, line = 2.5, cex = cex_all)
 
