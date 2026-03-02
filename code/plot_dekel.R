@@ -164,8 +164,8 @@ for(is.reversible in c(1,0)){
     box()
     axis(1, cex.axis=cex_axis) 
     axis(2, las = 1, cex.axis=cex_axis) 
-    mtext(expression("LAC proteome fraction " * Phi["LAC"]), side=1, cex = cex_lab, line = 2.8)
-    mtext(expression("Growth rate relative to " * Phi["LAC"] * "=0"), side=2, cex = cex_lab, line = 2.4)
+    mtext(expression("LAC proteome fraction " * italic("\u03A6")["LAC"]), side=1, cex = cex_lab, line = 2.8)
+    mtext(expression("Growth rate relative to " * italic("\u03A6")["LAC"] * "=0"), side=2, cex = cex_lab, line = 2.4)
     cols_lines = c("grey15", "grey60")
     abline(v=plotted_phis, col = cols_lines, lty=2)
     legend("bottomleft", legend = x_C2_vals, col = cols, pch = 16, title = expression("L"["ext"]))
@@ -194,14 +194,14 @@ for(is.reversible in c(1,0)){
       lines(mu_ref ~ x_C2, data = one_phi, col = cols_lines[pphi], lty = 2)
       points(mu_ref ~ x_C2, data = one_phi, col = point_cols, pch = 20, cex = 1.3)
       text(min(x_C2_vals), (one_phi[which.min(one_phi$x_C2), "mu_ref"]+0.055), 
-           bquote(Phi * " = " * .(plotted_phis[pphi])), cex = cex_all, adj=0)
+           bquote(italic("\u03A6")["LAC"] * " = " * .(plotted_phis[pphi])), cex = cex_all, adj=0)
     }
     
     points(dekel_conc, dekel_rel_mu, col = "grey50", pch = 24, cex = 1)
     
     axis(1, cex.axis=cex_axis) 
     axis(2, las = 1, cex.axis=cex_axis) 
-    mtext(expression("Growth rate relative to " * Phi["LAC"] * "=0"), side=2, cex = cex_lab, line = 2.4)
+    mtext(expression("Growth rate relative to " * italic("\u03A6")["LAC"] * "=0"), side=2, cex = cex_lab, line = 2.4)
     mtext(expression("L"["ext"] * " concentration"), side = 1, line = 2.8, cex = cex_lab)
     mtext(
       paste0("(", letters[2], ")"),
@@ -238,7 +238,7 @@ for(is.reversible in c(1,0)){
       for (i in length(plots):1) {
         lines(one_phi$x_C2, one_phi[[plots[i]]], col = colors[i], lty = i, lwd = 1.5)
       }
-      mtext(bquote(Phi * " = " * .(phi)), side=3, cex = 0.7, line = 0.3)
+      mtext(bquote(italic("\u03A6")["LAC"] * " = " * .(phi)), side=3, cex = 0.7, line = 0.3)
       
       if(p == 1){
         axis(2, las = 1, at = seq(ylim[1], ylim[2], 1), cex.axis=cex_axis_small) 

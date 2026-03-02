@@ -163,7 +163,7 @@ for(reaction in rev(variables)){
 }
 
 # Add one common x and y label
-mtext(expression("Proteome fraction of under-/overexpressed protein relative to optimum " * Phi * "/" * Phi^"*"),
+mtext(expression("Proteome fraction of under-/overexpressed protein relative to optimum " * italic("\u03A6") * "/" * italic("\u03A6")^"\u204E"),
       side = 1, line = 4.4, outer = TRUE, cex = cex_labels)
 mtext("Protein assessed for costs and benefits",
       side = 2, line = 4.3, outer = TRUE, cex = cex_labels)

@@ -48,8 +48,9 @@ plot_composition <- function(proteome, target_phi,
   if(legend){
     leg_text <- gsub("c\\.|p\\.", "", colnames(proteome))
     par(xpd=NA)
-    legend(0.5, 1.52, legend = leg_text, fill = rev(colors), bty = "n", 
-           cex = 0.9, ncol = 5, xjust = 0.5)
+    x_pos <- ifelse(length(leg_text) > 8, -0.12, 0.05)
+    legend(x_pos, 1.52, legend = leg_text, fill = rev(colors), bty = "n", 
+           cex = 0.9, ncol = 5, xjust = 0)
     par(xpd=FALSE)
   }
 }
@@ -63,8 +64,8 @@ for(modelname in c("M9_IDLE", "M9_IDLE_rev")){
   
   png(here("figures", paste0(modelname, ".png")), 
       type="cairo", units="cm",
-      width=18, height=5.5, res=300)
-  par(mfcol=c(1,3), mar = c(3.7,0.8,3.8,0.3), oma = c(0,1.5,0,0))
+      width=18.5, height=5.5, res=300)
+  par(mfcol=c(1,3), mar = c(3.7,0.8,3.8,0.6), oma = c(0,1.5,0,0))
   
   proteome <- data[, grep("p\\.", colnames(data))]
   biomass <- data[, grep("c\\.", colnames(data))]
@@ -102,7 +103,7 @@ for(modelname in c("M9_IDLE", "M9_IDLE_rev")){
                    legend=TRUE)
   mtext("Biomass composition", side = 3, cex = cex_lab, line = title_line)
 
-  mtext(bquote("Idle protein proteome fraction " * Phi["IDLE"]), side = 1,
+  mtext(bquote("Idle protein proteome fraction " * italic("\u03A6")["IDLE"]), side = 1,
         outer = TRUE, cex = cex_lab, line = -1.1, adj = 0.52)
     
   dev.off()

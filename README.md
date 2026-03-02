@@ -17,9 +17,9 @@ We further analyze how these costs depend on environmental conditions, including
 ```text
 ├── code/
 │ └── Models/
-├── data
+├── data/
 │ └── proteomics/
-├── figures
+├── figures/
 ├── README.md
 └── LICENCE
 ```

@@ -1,7 +1,7 @@
 library(here)
 library(RColorBrewer)
 
-relative_phi <- FALSE
+relative_phi <- TRUE
 models_to_plot <- c("M8", "M8_rev", "M9_Q", "M9_Q_rev", "B", "B_rev")
 
 cex_lab <- 0.75
@@ -75,8 +75,8 @@ for(modelname in models_to_plot){
     suffix <- ifelse(relative_phi, "_rel", "_abs")
     png(here("figures", paste0(modelname, "_", rxn, suffix, ".png")),
         type="cairo", units="cm",
-        width=18, height=5.5, res=300)
-    par(mfcol=c(1,3), mar = c(3.7,0.8,3.8,0.3), oma = c(0,1.5,0,0))
+        width=18.5, height=5.5, res=300)
+    par(mfcol=c(1,3), mar = c(3.7,0.8,3.8,0.6), oma = c(0,1.5,0,0))
     
     one_prot <- data[data$reaction == rxn, ]
     one_prot <- one_prot[order(one_prot$phi), ]
@@ -139,9 +139,9 @@ for(modelname in models_to_plot){
                      legend = plot_legend)
     mtext("Biomass composition", side = 3, cex = cex_lab, line = title_line)
 
-    xlabel <- expression("Proteome fraction " * Phi)
+    xlabel <- expression("Proteome fraction " * italic("\u03A6"))
     if(relative_phi){
-      xlabel <- expression("Proteome fraction relative to optimum " * Phi * "/" * Phi^"*")
+      xlabel <- expression("Proteome fraction relative to optimum " * italic("\u03A6") * "/" * italic("\u03A6")^"\u204E")
     }
     mtext(xlabel, side = 1,
           outer = TRUE, cex = cex_lab, line = -1.2, adj = 0.51)

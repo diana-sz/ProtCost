@@ -62,8 +62,8 @@ for(modelname in c("B", "B_rev")){
     suffix <- ifelse(relative_phi, "_rel", "_abs")
     png(here("figures", paste0(modelname, "_", rxn, suffix, "_log.png")), 
         type="cairo", units="cm",
-        width=20, height=5.5, res=300)
-    par(mfcol=c(1,3), mar = c(3.7,2,3.8,0.5))
+        width=18.5, height=5.5, res=300)
+    par(mfcol=c(1,3), mar = c(3.7,0.8,3.8,0.6), oma = c(0,1.5,0,0))
     
     one_prot <- data[data$reaction == rxn, ]
     one_prot <- one_prot[order(one_prot$phi), ]
@@ -116,9 +116,9 @@ for(modelname in c("B", "B_rev")){
                      legend=plot_legend)
     mtext("Biomass composition", side = 3, cex = cex_lab, line = title_line)
 
-    xlabel <- expression("Proteome fraction " * Phi)
+    xlabel <- expression("Proteome fraction " * italic("\u03A6"))
     if(relative_phi){
-      xlabel <- expression("Proteome fraction relative to optimum " * Phi * "/" * Phi^"*")
+      xlabel <- expression("Proteome fraction relative to optimum " * italic("\u03A6") * "/" * italic("\u03A6")^"\u204E")
     }
     
     mtext(xlabel, side = 1,

@@ -4,7 +4,7 @@ library(here)
 
 cex_all <- 1
 
-modelname <- "M8_inh"
+modelname <- "M8_inh_rev"
 opt_data <- read.csv(here("data", paste0(modelname, ".csv")), row.names = 1)
 opt_data <- opt_data[opt_data$convergence == 4, ]
 
@@ -45,7 +45,7 @@ axis(2, las = 2)
 box()
 
 
-mtext(expression("Ribosomal proteome fraction " * Phi["R"]), 
+mtext(expression("Ribosomal proteome fraction " * italic("\u03A6")["R"]), 
       side = 2, outer = FALSE, line = 2.6, cex = cex_all)
 mtext(bquote("Growth rate" ~ "[" * h^-1 * "]"), side = 1, outer = FALSE, line = 2.5, cex = cex_all)
 
