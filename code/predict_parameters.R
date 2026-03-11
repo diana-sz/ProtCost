@@ -8,7 +8,7 @@ library(xtable)
 modelname <- "M8"
 rescale_kcats <- TRUE
 predict.parameters <- 3  # saturation parameter used in 'initialize_model.R'
-is.reversible <- 1
+is.reversible <- 0
 
 source(here("code", "initialize_model.R"))
 

@@ -6,7 +6,7 @@ ylim <- c(0, 0.45)
 xlab_line <- 2.15
 cex_all <- 0.97
 
-for(modelname in c("M10_IDLE2_rev")){
+for(modelname in c("M10_IDLE2")){
   data <- read.csv(here("data", paste0(modelname, ".csv")))
   data <- data[data$convergence == 4, ]
 

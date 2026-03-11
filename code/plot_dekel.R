@@ -73,7 +73,7 @@ plot_composition <- function(proteome, target_phi,
 }
 
 
-for(is.reversible in c(1,0)){
+for(is.reversible in c(0)){
   for(modelname in models){
     
     source(here("code", "initialize_model.R"))

@@ -57,10 +57,10 @@ if(rescale_kcats){
 
   # scale kcats so that mu=1
   print(paste0("Initial mu = ", mu_opt))
+  n = 0
   if(abs(mu_opt - mu_data) > tol){
     print(paste0(" -> scaling kcats to mu = ", mu_data))
     
-    n = 0
     while(abs(mu_opt - mu_data) > tol){
       n = n+1
       

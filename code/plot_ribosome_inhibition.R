@@ -4,7 +4,7 @@ library(here)
 
 cex_all <- 1
 
-modelname <- "M8_inh_rev"
+modelname <- "M8_inh"
 opt_data <- read.csv(here("data", paste0(modelname, ".csv")), row.names = 1)
 opt_data <- opt_data[opt_data$convergence == 4, ]
 

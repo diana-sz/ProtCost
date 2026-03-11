@@ -8,7 +8,7 @@ predict.parameters <- 0
 phis_to_test <- seq(0.1, 0.4, 0.1)
 idle1_fractions <- seq(0, 1, 0.2)
 
-for (is.reversible in c(1, 0)) {
+for (is.reversible in c(0)) {
   modelname <- "M10_IDLE2"
   
   source(here("code", "initialize_model.R"))

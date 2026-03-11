@@ -29,7 +29,7 @@ experimental <- data.frame(
   )
 )
 
-modelnames <- c("M9_alt_trans", "M9_alt_trans_rev")
+modelnames <- c("M9_alt_trans")
 xlim <- c(0, 3)
 ylim <- c(0, 1.1)
 
@@ -71,9 +71,7 @@ for(modelname in modelnames){
     pch = point_shapes,
     col = point_colors,
     cex = cex_points,
-    axes = FALSE
-    #main = "Simulations"
-  )
+    axes = FALSE)
 
   mtext("Relative growth rate", side = 2, outer = FALSE, line = 2.6, cex = cex_all)
   mtext(expression("TS proteome fraction relative to optimum " * italic("\u03A6") * "/" * italic("\u03A6")^"\u204E"), 

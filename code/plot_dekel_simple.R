@@ -69,7 +69,7 @@ plot_composition <- function(proteome, target_phi, colors = NULL,
   }
 }
 
-for(is.reversible in c(1,0)){
+for(is.reversible in c(0)){
   modelname <- "M9_dekel"
   source(here("code", "initialize_model.R"))
   

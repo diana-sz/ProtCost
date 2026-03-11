@@ -27,8 +27,11 @@ plot_composition <- function(proteome, target_phi, colors,
        ylab = ylab, 
        main = main,
        log = "x",
-       cex.lab = cex_lab)
-  
+       cex.lab = cex_lab,
+       axes=FALSE)
+  axis(1)
+  axis(2, labels=FALSE)
+
   # Bottom line (start from 0)
   y_prev <- rep(0, length(target_phi))
   
@@ -42,6 +45,8 @@ plot_composition <- function(proteome, target_phi, colors,
       border = NA
     )
   }
+  
+  box()
   
   # Add legend
   if(legend){
@@ -94,8 +99,13 @@ for(modelname in c("B", "B_rev")){
          cex = 0.6,
          pch = 20,
          xlab = NA,
-         ylab = NA)
+         ylab = NA,
+         axes = FALSE)
     text(ifelse(relative_phi, 3.2, 0.6), 0.2, rxn, cex=cex_lab*1.5)
+    axis(2, las = 2)
+    axis(1)
+    box()
+    
     mtext(bquote("Growth rate"), side = 3, cex = cex_lab, line = title_line)
     abline(v = plotted_phi[which.max(mu)], lty = 2, col = "grey70")
     

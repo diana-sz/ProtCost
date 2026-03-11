@@ -9,7 +9,7 @@ predict.parameters <- 0
 phis_to_test <- seq(0, 0.4, 0.0005)
 efflux_kcats <- c(0.1, 1, 10, 100)
 
-for(is.reversible in c(0,1)){
+for(is.reversible in c(0)){
   
   modelname <- "M10fuel_efflux"
   source(here("code", "initialize_model.R"))

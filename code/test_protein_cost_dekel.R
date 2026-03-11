@@ -6,17 +6,14 @@ rm(list=ls(all=TRUE))
 
 library(here)
 
-directory <- paste0(here(), "/code")
-setwd(directory) 
-
-phis_to_test <- c(seq(0, 0.5, 0.005))
+phis_to_test <- seq(0, 0.5, 0.005) # 0.005))
 predict.parameters <- 0
-primary_c_source <- 0.5
-modelname_orig <- "M9_dekel" # "M10_dekel_efflux" M9_dekel
+primary_c_source <- 0.25
+modelname_orig <- "M10_dekel_efflux" # "M10_dekel_efflux" M9_dekel
 
 alt_concentrations <- c(0.001, 0.01, 0.05, 0.1, 0.2, 1, 10)
 
-for(is.reversible in c(1,0)){
+for(is.reversible in c(0)){
   results_list <- list()
   
   for (x_C2 in alt_concentrations){
@@ -29,7 +26,7 @@ for(is.reversible in c(1,0)){
     a_cond[1,1] <- primary_c_source
     a_cond[3,1] <- x_C2 # alternative carbon source
     n_conditions <- 1
-    
+
     source(here("code", "GBA_solver.R"))
     
     mu_orig <- mu_opt
@@ -41,7 +38,7 @@ for(is.reversible in c(1,0)){
       min_phi[alt_ind] <- fraction
       max_phi[alt_ind] <- fraction+1e-6
       
-      source("solver_loop.R")
+      source(here("code", "solver_loop.R"))
       
       fs <- q_opt[1, ]
       results_list[[length(results_list) + 1]] <- data.frame(
