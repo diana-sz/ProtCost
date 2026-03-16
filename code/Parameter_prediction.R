@@ -22,7 +22,7 @@ sat[1] <- 1
 
 # Estimates now kcatf based on ...
 b0 <- M%*%q0_alt
-kcatf <- round(q0_alt/(b0[p]*phi_data*sat), rounding)
+kcatf <- round(mu_data*q0_alt/(b0[p]*phi_data*sat), rounding)
 
 # if some kcat was rounded to zero
 kcatf[kcatf == 0] <- 10

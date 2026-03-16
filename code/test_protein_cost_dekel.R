@@ -6,12 +6,12 @@ rm(list=ls(all=TRUE))
 
 library(here)
 
-phis_to_test <- seq(0, 0.5, 0.005) # 0.005))
+phis_to_test <- seq(0, 0.5, 0.005)
 predict.parameters <- 0
-primary_c_source <- 0.25
+primary_c_source <- 0.22
 modelname_orig <- "M10_dekel_efflux" # "M10_dekel_efflux" M9_dekel
 
-alt_concentrations <- c(0.001, 0.01, 0.05, 0.1, 0.2, 1, 10)
+alt_concentrations <- c(0.001, 0.01, 0.05, 0.1, 0.2, 1, 16.28)
 
 for(is.reversible in c(0)){
   results_list <- list()

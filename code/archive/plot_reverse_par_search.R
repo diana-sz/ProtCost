@@ -22,7 +22,7 @@ names(colors) <- tested_kcat_factors
 for(reaction in unique(all_data$reaction)){
   one_prot <- all_data[all_data$reaction == reaction,]
 
-  plot(NA, xlim = c(0,1), ylim = c(0,1), xlab = NA, ylab = NA)
+  plot(NA, xlim = c(0,max(one_prot$phi)), ylim = c(0,1), xlab = NA, ylab = NA)
   
   points(one_prot$phi, one_prot$mu, col = colors[one_prot$factor], pch = 19)
   

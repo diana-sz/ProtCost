@@ -75,6 +75,8 @@ Scripts for generating figures from simulation outputs:
 - `plot_protein_cost.R`
 - `plot_protein_cost_log.R`
 - `plot_proteomics_ecocyc.R`
+- `plot_ribosome_inhibition.R`
+- `plot_validation.R`
 
 ### Helper scripts
 

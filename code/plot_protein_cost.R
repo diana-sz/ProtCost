@@ -1,8 +1,8 @@
 library(here)
 library(RColorBrewer)
 
-relative_phi <- TRUE
-models_to_plot <- c("M8", "M8_rev", "M9_Q", "M9_Q_rev", "B", "B_rev")
+relative_phi <- FALSE
+models_to_plot <- c("M8", "M8_rev", "M9_Q", "B", "B_rev")
 
 cex_lab <- 0.75
 xlim <- c(0, ifelse(relative_phi, 5, 1))
