@@ -50,12 +50,12 @@ if(is.reversible){
 KI[KI == 0] <- Inf
 
 
+# scale kcats up or down until the predicted growth matches the experimental
 if(rescale_kcats){
   tol <- 0.02
   n_conditions <- 1
   source(here("code", "GBA_solver.R"))
 
-  # scale kcats so that mu=1
   print(paste0("Initial mu = ", mu_opt))
   n = 0
   if(abs(mu_opt - mu_data) > tol){
@@ -73,7 +73,7 @@ if(rescale_kcats){
       kcatb <- round(kcatf/5, rounding)
       kcatb[kcatb == 0] <- 1
       kcatb <- is.reversible*rev*kcatb
-      kcatb[r] <- 0 # ribosome is irreversible
+      kcatb[r] <- 0 # ribosome is always irreversible
 
       source(here("code", "GBA_solver.R"))
       print(paste0("mu after ", n, " rounds = ", mu_opt))

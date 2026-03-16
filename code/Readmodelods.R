@@ -6,7 +6,7 @@ odsfile <- here("code", "Models", paste0(modelname,".ods"))
 
 sheets <- list_ods_sheets(odsfile)
 
-nsheets    <- length(sheets)
+nsheets <- length(sheets)
 
 # Position of parameters
 posM          <- (1:nsheets)[sheets == "M"]
@@ -14,9 +14,7 @@ posK          <- (1:nsheets)[sheets == "K"]
 posKI         <- (1:nsheets)[sheets == "KI"]
 posKA         <- (1:nsheets)[sheets == "KA"]
 poskcat       <- (1:nsheets)[sheets == "kcat"]
-posq          <- (1:nsheets)[sheets == "q"]
 posphi        <- (1:nsheets)[sheets == "phi"]
-posrmw        <- (1:nsheets)[sheets == "rmw"]
 posminphi     <- (1:nsheets)[sheets == "min_phi"]
 posmaxphi     <- (1:nsheets)[sheets == "max_phi"]
 posminf       <- (1:nsheets)[sheets == "min_q"]
@@ -26,13 +24,6 @@ posmaxc       <- (1:nsheets)[sheets == "max_c"]
 posribcomp    <- (1:nsheets)[sheets == "ribcomp"]
 posconditions <- (1:nsheets)[sheets == "conditions"]
 posbiomass    <- (1:nsheets)[sheets == "biomass"]
-
-# Reads q0, qT, T ##############################################################
-
-#q0  <- as.numeric(read_ods(odsfile, sheet= posq)[1,-1])
-if (length(posq) > 0) { 
-  dq0 <- as.numeric(read_ods(odsfile, sheet= posq)[1,-1]) 
-}
 
 
 # Mass fraction matrix Mtotal including external reactants #####################
@@ -96,9 +87,6 @@ kcatb <- as.numeric(read_ods(odsfile, sheet= poskcat)[2,-1])
 
 if (length(posphi) > 0) exp_data <- as.matrix(read_ods(odsfile, sheet= posphi))
 
-# reactant molecular weights ###################################################
-
-if (length(posrmw) > 0) rmw <- as.matrix(read_ods(odsfile, sheet= posrmw)[,-1])
 
 # reads ribosome composition constraint ########################################
 
