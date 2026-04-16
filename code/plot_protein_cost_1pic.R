@@ -1,13 +1,14 @@
 library(here)
 library(RColorBrewer)
 
-relative_phi <- FALSE
-models_to_plot <- c("M8", "M8_rev", "M9_Q", "B", "B_rev")
+relative_phi <- TRUE
+models_to_plot <- c("M8", "M8_rev", "M9_Q")#, "B", "B_rev")
 
 cex_lab <- 0.75
 xlim <- c(0, ifelse(relative_phi, 5, 1))
 ylim <- c(0, 1)
 title_line <- 0.4
+axis_label_line <- 2.4
 
 reaction_names <- list("TS" = "Transporter",
                        "ADPS" = "ADP synthesis",
@@ -34,8 +35,8 @@ plot_composition <- function(proteome, target_phi,
   # Base plot (empty)
   plot(NA, xlim = xlim, ylim = ylim, xlab = xlab, ylab = ylab, main = main,
        cex.lab = cex_lab, axes=FALSE)
-  axis(1)
-  axis(2, labels=FALSE)
+  axis(1, labels = axis_labels)
+  axis(2, las = 2)
   
   # Bottom line (start from 0)
   y_prev <- rep(0, length(target_phi))
@@ -59,8 +60,8 @@ plot_composition <- function(proteome, target_phi,
     par(xpd=NA)
     n <- length(leg_text)
     ncol_legend <- ifelse(n <= 3, n, ceiling(n / 2))
-    legend(0, 1.52, legend = leg_text, fill = rev(colors), bty = "n", 
-           cex = 0.9, ncol = ncol_legend, xjust = 0)
+    legend(-0.03*max(target_phi), 1.48, legend = leg_text, fill = rev(colors), bty = "n", 
+           cex = 0.95, ncol = ncol_legend, xjust = 0)
     par(xpd=FALSE)
   }
 }
@@ -70,14 +71,16 @@ for(modelname in models_to_plot){
   data <- read.csv(here("data", paste0(modelname, "_protein_cost.csv")))
   data <- data[data$convergence == 4, ]
   print(paste(modelname, max(data$mu)))
-
+  n_rxns <- 8 #length(unique(data$reaction))
+  
+  suffix <- ifelse(relative_phi, "_rel", "_abs")
+  png(here("figures", paste0(modelname, suffix, ".png")),
+      type="cairo", units="cm",
+      width=22.5, height=3.5*n_rxns, res=300)
+  par(mfrow=c(n_rxns, 3), mar = c(0.8,4.5,0.8,0.5), oma = c(3.3,1,3,0))
+  
   for(rxn in unique(data$reaction)){
-    suffix <- ifelse(relative_phi, "_rel", "_abs")
-    png(here("figures", paste0(modelname, "_", rxn, suffix, ".png")),
-        type="cairo", units="cm",
-        width=19, height=5.5, res=300)
-    par(mfcol=c(1,3), mar = c(3.7,0.8,3.8,0.6), oma = c(0,2.5,0,0))
-    
+    if(rxn == "Q"){next}
     one_prot <- data[data$reaction == rxn, ]
     one_prot <- one_prot[order(one_prot$phi), ]
     proteome <- one_prot[, grep("p\\.", colnames(one_prot))]
@@ -110,16 +113,22 @@ for(modelname in models_to_plot){
          pch = 20,
          axes = FALSE,
          xlab = NA, ylab = NA)
-    text(ifelse(relative_phi, 3.2, 0.7), 0.25, rxn, cex=cex_lab*1.4)
-    text(ifelse(relative_phi, 3.2, 0.7), 0.1, reaction_names[[rxn]], cex=cex_lab*1.2)
+    text(ifelse(relative_phi, 2.65, 0.7), 0.25, rxn, cex=cex_lab*1.4)
+    text(ifelse(relative_phi, 2.65, 0.7), 0.1, reaction_names[[rxn]], cex=cex_lab*1.2)
     axis(2, las = 2)
-    axis(1)
+    
+    axis_labels <- rxn == "R"
+    axis(1, labels = axis_labels)
+  
     box()
     
-    mtext(bquote("Normalized growth rate"), side = 3, cex = cex_lab, line = title_line)
-    
-    mtext(bquote("Fraction"), side = 2, cex = cex_lab, line = 2.4)
-    
+    if(rxn == "NTS"){
+      #mtext(bquote("Normalized growth rate"), side = 3, cex = cex_lab, line = title_line)
+    # }
+    # if(rxn == "NTS"){
+      mtext(bquote("Growth rate relative to optimum " * mu / mu^"\u204E"), 
+            side = 2, cex = cex_lab, line = axis_label_line, at = -0.2)
+    }
     
     abline(v = plotted_phi_mu[which.max(mu)], lty = 2, col = "grey70")
     
@@ -133,7 +142,13 @@ for(modelname in models_to_plot){
                      xlim = xlim, ylim =ylim,
                      cex_lab = cex_lab,
                      legend = plot_legend)
-    mtext("Proteome composition", side = 3, cex = cex_lab, line = title_line)
+    
+    if(rxn == "NTS"){
+      #mtext("Proteome composition", side = 3, cex = cex_lab, line = title_line)
+    # }
+    # if(rxn == "NTS"){
+      mtext("Proteome mass fraction", side = 2, cex = cex_lab, line = axis_label_line, at = -0.2)
+    }
 
     colors <- rev(brewer.pal(ncol(biomass), "RdBu"))
     plot_composition(biomass, plotted_phi, colors, main="", 
@@ -141,16 +156,21 @@ for(modelname in models_to_plot){
                      xlim = xlim, ylim =ylim,
                      cex_lab = cex_lab,
                      legend = plot_legend)
-    mtext("Biomass composition", side = 3, cex = cex_lab, line = title_line)
+    
+    if(rxn == "NTS"){
+      #mtext("Biomass composition", side = 3, cex = cex_lab, line = title_line)
+    # }
+    # if(rxn == "NTS"){
+      mtext("Biomass fraction", side = 2, cex = cex_lab, line = axis_label_line, at = -0.2)
+    }
 
     xlabel <- expression("Proteome fraction " * italic("\u03A6"))
     if(relative_phi){
       xlabel <- expression("Proteome fraction relative to optimum " * italic("\u03A6") * "/" * italic("\u03A6")^"\u204E")
     }
     mtext(xlabel, side = 1,
-          outer = TRUE, cex = cex_lab, line = -1.2, adj = 0.51)
-    
-    dev.off()
+          outer = TRUE, cex = cex_lab, line = 1.65, adj = 0.52)
   }
+  dev.off()
 }
 

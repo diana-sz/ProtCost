@@ -67,6 +67,6 @@ for(is.reversible in c(0)){
   }
   
   results <- do.call(rbind, results_list)
-  write.csv(results, here("data", paste0(modelname, ".csv")), , row.names = FALSE)
+  write.csv(results, here("data", paste0(modelname, ".csv")), row.names = FALSE)
 }
 

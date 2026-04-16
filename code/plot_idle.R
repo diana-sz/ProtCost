@@ -26,7 +26,7 @@ plot_composition <- function(proteome, target_phi,
   plot(NA, xlim = xlim, ylim = ylim, xlab = xlab, ylab = ylab, main = main,
        cex.lab = cex_lab, axes=FALSE)
   axis(1)
-  axis(2, labels=FALSE)
+  axis(2, las = 2) #, labels=FALSE)
   
   # Bottom line (start from 0)
   y_prev <- rep(0, length(target_phi))
@@ -48,8 +48,8 @@ plot_composition <- function(proteome, target_phi,
   if(legend){
     leg_text <- gsub("c\\.|p\\.", "", colnames(proteome))
     par(xpd=NA)
-    x_pos <- ifelse(length(leg_text) > 8, -0.12, 0.05)
-    legend(x_pos, 1.52, legend = leg_text, fill = rev(colors), bty = "n", 
+    x_pos <- ifelse(length(leg_text) > 8, -0.25, -0.05)
+    legend(x_pos, 1.45, legend = leg_text, fill = rev(colors), bty = "n", 
            cex = 0.9, ncol = 5, xjust = 0)
     par(xpd=FALSE)
   }
@@ -64,8 +64,8 @@ for(modelname in c("M9_IDLE")){
   
   png(here("figures", paste0(modelname, ".png")), 
       type="cairo", units="cm",
-      width=18.5, height=5.5, res=300)
-  par(mfcol=c(1,3), mar = c(3.7,0.8,3.8,0.6), oma = c(0,1.5,0,0))
+      width=19, height=5.5, res=300)
+  par(mfcol=c(1,3), mar = c(0.8,3.9,0.8,0.5), oma = c(3.2,1,2.5,0))
   
   proteome <- data[, grep("p\\.", colnames(data))]
   biomass <- data[, grep("c\\.", colnames(data))]
@@ -81,7 +81,9 @@ for(modelname in c("M9_IDLE")){
        axes = FALSE,
        xlab = NA,
        ylab=NA)
-  mtext(bquote("Normalized growth rate"), side = 3, cex = cex_lab, line = title_line)
+  #mtext(bquote("Normalized growth rate"), side = 3, cex = cex_lab, line = title_line)
+  mtext(bquote("Growth rate relative to optimum " * mu / mu^"\u204E"), side = 2, cex = cex_lab*0.9, line = 2.3)
+  
   axis(2, las = 2)
   axis(1)
   box()
@@ -93,7 +95,9 @@ for(modelname in c("M9_IDLE")){
                    xlim = xlim, ylim = ylim,
                    cex_lab=cex_lab,
                    legend=TRUE)
-  mtext("Proteome composition", side = 3, cex = cex_lab, line = title_line)
+  #mtext("Proteome composition", side = 3, cex = cex_lab, line = title_line)
+  mtext("Proteome mass fraction", side = 2, cex = cex_lab*0.9, line = 2.3)
+  
     
   bio_colors <- rev(brewer.pal(ncol(biomass), "RdBu"))
   plot_composition(biomass, plotted_phi, bio_colors, main="", 
@@ -101,10 +105,11 @@ for(modelname in c("M9_IDLE")){
                    xlim = xlim, ylim = ylim,
                    cex_lab=cex_lab,
                    legend=TRUE)
-  mtext("Biomass composition", side = 3, cex = cex_lab, line = title_line)
-
-  mtext(bquote("Idle protein proteome fraction " * italic("\u03A6")["IDLE"]), side = 1,
-        outer = TRUE, cex = cex_lab, line = -1.1, adj = 0.52)
+  #mtext("Biomass composition", side = 3, cex = cex_lab, line = title_line)
+  mtext("Biomass fraction", side = 2, cex = cex_lab*0.9, line = 2.3)
+  
+  mtext(bquote("Proteome fraction of idle protein " * italic("\u03A6")["IDLE"]), side = 1,
+        outer = TRUE, cex = cex_lab, line = 1.8, adj = 0.52)
     
   dev.off()
 }
