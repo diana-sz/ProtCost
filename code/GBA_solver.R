@@ -22,33 +22,6 @@ b <- function(q) M%*%q
 # proteome fractions
 phi <- function(q) (tau(a,rho*b(q))*v(q))/(ci(q)[p])
 
-# # Now special functions only if there is a "rRNA" in the model, for ribosome composition
-# if ("rRNA" %in% i_reactant) rprna <- function(q) {
-#   
-#   rRNA <- ci(q)[grep("rRNA",i_reactant)] 
-# 
-#   # rRNA bound to rProtein
-#   brRNA <- rRNA*(rRNA/(rRNA + KA[grep("rRNA",reactant),r]) )
-#   
-#   # ribosome protein concentration
-#   rp <- prot(q)[r]
-#   
-#   # ratio between ribosomal protein and ribosomal rna (rP/(rP + brRNA))
-#   return( rp/(rp + rRNA) ) 
-# 
-# }
-# 
-# if ("rRNase" %in% reaction) {
-#   # extra constraint on rRNA degradation
-#   j_rRNAse <- grep("rRNase", reaction) # column on this reaction, input
-#   i_rRNA   <- grep("rRNA", i_reactant) # row of this 
-#   Km       <- K[i_rRNA + n_a,j_rRNAse]  # Km of this reaction
-#   KI_rP    <- 100  # "inhibition constant" 
-#   v_rRNAse <- function(q) kcatf[j_rRNAse]*prot(q)[j_rRNAse]*( ci(q)[i_rRNA]/(Km + ci(q)[i_rRNA] ) )*( KI_rP/(KI_rP + phi(q)[r]*ci(q)[p])  )
-#   
-#   extra_ineq <- function(q) v_rRNAse(q) - v(q)[j_rRNAse]
-#   
-# }
 
 # Optimization #################################################################
 
