@@ -4,6 +4,8 @@ phi_data <- exp_data[-1]
 cm0 <-  as.numeric(rho_cond[1]*M%*%q0_alt)[-p]
 esat <- predict.parameters
 rounding <- 1
+kcat_ratio <- 3
+default_kcat <- 10
 
 # Estimates Km values assuming typical ratio Km = cm/esat for substrates and 
 
@@ -25,14 +27,14 @@ b0 <- M%*%q0_alt
 kcatf <- round(mu_data*q0_alt/(b0[p]*phi_data*sat), rounding)
 
 # if some kcat was rounded to zero
-kcatf[kcatf == 0] <- 10
-kcatf[kcatf == Inf] <- 10
-kcatf[is.nan(kcatf)] <- 10
+kcatf[kcatf == 0] <- default_kcat
+kcatf[kcatf == Inf] <- default_kcat
+kcatf[is.nan(kcatf)] <- default_kcat
 
 
 # estimating kcatb
-kcatb <- round(kcatf/5, rounding)
-kcatb[kcatb == 0] <- 1
+kcatb <- round(kcatf/kcat_ratio, rounding)
+kcatb[kcatb == 0] <- default_kcat/kcat_ratio
 kcatb <- is.reversible*rev*kcatb
 # ribosome is irreversible
 kcatb[r] <- 0
@@ -70,7 +72,7 @@ if(rescale_kcats){
         kcatf <- round(kcatf*0.95, rounding)
       }
       
-      kcatb <- round(kcatf/5, rounding)
+      kcatb <- round(kcatf/kcat_ratio, rounding)
       kcatb[kcatb == 0] <- 1
       kcatb <- is.reversible*rev*kcatb
       kcatb[r] <- 0 # ribosome is always irreversible

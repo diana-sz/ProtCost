@@ -46,14 +46,13 @@ process_reaction <- function(reaction_name, opt_phi, q0_initial) {
   
   
   # step size below optimum higher than above (the curves are steeper)
-  stepsize <- 0.0001
+  stepsize <- 0.001 #0.0001
   if(grepl("B", modelname)){
     stepsize <- 0.005
   }
   below <- seq(round(opt_phi, 4), 0, by = -stepsize)
-  if(opt_phi/stepsize < 1000){
-    below <- seq(round(opt_phi, 4), 0, length.out = 1000)
-
+  if(opt_phi/stepsize < 500){ #1000
+    below <- seq(round(opt_phi, 4), 0, length.out = 500)
   }
   above <- seq(round(opt_phi, 4), 1, by = stepsize)
   
@@ -117,7 +116,6 @@ process_reaction <- function(reaction_name, opt_phi, q0_initial) {
       phi = fraction,
       rel_phi = fraction/opt_phi,
       mu = mu_opt,
-      mu_norm = mu_opt / mu_orig,
       convergence = res$convergence,
       t(c(
         setNames(qs, paste0("f.", reaction)),

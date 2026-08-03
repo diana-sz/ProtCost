@@ -7,11 +7,15 @@ library(here)
 
 predict.parameters <- 0
 modelname_orig <- "M8_inh" 
-
 inh_conc <- c(0.00001, 10^seq(-0.55, 1, by = 0.22))
-s_conc <- 10^seq(0.7, -1.1, by = -0.3)
 
-for(is.reversible in c(0)){
+for(is.reversible in c(0,1)){
+  s_conc <- 10^seq(0.7, -1.1, by = -0.3)
+  #if(is.reversible){
+    s_conc <- 10^seq(0.7, -1, by = -0.25)
+  #}
+  
+  
   results_list <- list()
   
   for (x_c in s_conc){

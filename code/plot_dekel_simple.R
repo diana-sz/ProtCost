@@ -5,12 +5,13 @@ library(RColorBrewer)
 library(here)
 
 predict.parameters <- 0
-plotted_phis <- c(0.04, 0.5)
+plotted_phis <- c(0.04, 0.3)
 phi_xlim <- 0.5
 cex_lab <- 0.8
 cex_axis <- 1.1
 letters_line <- 1.25
 ylim <- c(-3, 1)
+cols_lines = c("grey15", "grey70")  # dashed lines
 
 # dekel experimental data
 dekel_conc <- c(0.0001, 0.001, 0.01, 0.1, 0.312, 0.6, 1, 3.875, 8.273, 12.09, 16.28)
@@ -69,7 +70,7 @@ plot_composition <- function(proteome, target_phi, colors = NULL,
   }
 }
 
-modelname <- "M9_dekel"
+modelname <- "M9_dekel_rev"
 opt_data <- read.csv(here("data", paste0(modelname, ".csv")))
 opt_data <- subset(opt_data, convergence == 4 & phi <= phi_xlim)
 
@@ -110,7 +111,7 @@ axis(1, cex.axis=cex_axis)
 axis(2, las = 1, cex.axis=cex_axis) 
 mtext(expression("LAC proteome fraction " *  italic("\u03A6")["LAC"]), side=1, cex = cex_lab, line = 2.8)
 mtext(expression("Growth rate relative to " * italic("\u03A6")["LAC"] * "=0"), side=2, cex = cex_lab, line = 2.4)
-cols_lines = c("grey15", "grey60")
+
 abline(v=plotted_phis, col = cols_lines, lty=2)
 legend("bottomleft", legend = x_C2_vals, col = cols, pch = 16, title = expression("L"["ext"]))
 mtext(
@@ -128,7 +129,7 @@ plot(NA,
      log = "x",
      xlim = xlim,
      axes = FALSE,
-     ylim = c(min(opt_data[opt_data$phi %in% plotted_phis, "mu_ref"]), 1.15))
+     ylim = c(min(opt_data[opt_data$phi %in% plotted_phis, "mu_ref"]), 1.25))
 box()
 
 for(pphi in seq_along(plotted_phis)){

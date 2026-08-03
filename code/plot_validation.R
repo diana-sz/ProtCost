@@ -104,7 +104,7 @@ for (n in seq_along(filelist)) {
   plot_and_fit(
     sectors,
     opt_data$mu,
-    ylim = c(0, 0.6),
+    ylim = c(0, 0.65),
     xlim = c(0, max(opt_data$mu)),
     show_yaxis = (n == 1),
     legend = (n == 1)
@@ -128,7 +128,7 @@ for (n in seq_along(filelist)) {
   
 }
 
-mtext(bquote("Growth rate"~ mu ~ (h^-1)),
+mtext(bquote("Growth rate" ~ "[" * h^-1 * "]"),
       side = 1, outer = TRUE, line = 0, cex = cex_all)
 mtext("Proteome fraction / ratio",
       side = 2, outer = TRUE, line = -0.2, cex = cex_all)

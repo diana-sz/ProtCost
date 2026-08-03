@@ -29,7 +29,7 @@ experimental <- data.frame(
   )
 )
 
-modelnames <- c("M9_alt_trans")
+modelnames <- c("M9_alt_trans", "M9_alt_trans_rev")
 xlim <- c(0, 3)
 ylim <- c(0, 1.1)
 
@@ -84,7 +84,7 @@ for(modelname in modelnames){
   # Add legend
   legend(
     0.9, 0, yjust = 0,
-    legend = kcat_vals,
+    legend = round(kcat_vals),
     col = palette_colors,
     pch = 15,
     cex = cex_points,

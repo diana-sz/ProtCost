@@ -6,7 +6,7 @@ library(here)
 
 models <- c("M9_dekel", "M10_dekel_efflux")
 predict.parameters <- 0
-plotted_phis <- c(0.04, 0.5)
+plotted_phis <- c(0.04, 0.3)
 phi_xlim <- 0.5
 cex_all <- 0.9
 ylim <- c(-3, 1)
@@ -187,7 +187,7 @@ for(modelname in models){
        log = "x",
        xlim = xlim,
        axes = FALSE,
-       ylim = c(min(opt_data[opt_data$phi %in% plotted_phis, "mu_ref"]), 1.15)) #max(opt_data$mu_ref)))
+       ylim = c(min(opt_data[opt_data$phi %in% plotted_phis, "mu_ref"]), 1.2)) #max(opt_data$mu_ref)))
   box()
   
   for(pphi in seq_along(plotted_phis)){

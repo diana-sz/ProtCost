@@ -1,10 +1,19 @@
 library(here)
 library(RColorBrewer)
+library(dplyr)
 
 cex_lab <- 0.75
-xlim <- c(0, 1)
-ylim <- c(0, 1)
+ylim <- c(0, 1.05)
 title_line <- 0.4
+
+scott <- read.csv(here("data", "scott_4B.csv"))
+for(m in unique(scott$medium)){
+  idx <- scott$medium == m
+  one_cond <- scott[idx,]
+  one_cond$mu <- one_cond$mu / mean(one_cond$mu[one_cond$b_gal < 1])  # no values at exactly zero
+  scott$mu[idx] <- one_cond$mu
+}
+scott$b_gal <- scott$b_gal/100
 
 plot_composition <- function(proteome, target_phi,
                              colors,
@@ -57,10 +66,13 @@ plot_composition <- function(proteome, target_phi,
 
 rxn <- "IDLE"
 
-for(modelname in c("M9_IDLE")){
+for(modelname in c("M9_IDLE", "M10_Q_IDLE", "M10_Q_IDLE_extreme")){
   data <- read.csv(here("data", paste0(modelname, ".csv")), row.names = 1)
   data <- data[data$convergence == 4, ]
   data <- data[order(data$phi), ]
+  max_x <- ifelse(grepl("M9", modelname), 1, 0.45)
+  xlim <- c(0, max_x)
+  
   
   png(here("figures", paste0(modelname, ".png")), 
       type="cairo", units="cm",
@@ -68,6 +80,12 @@ for(modelname in c("M9_IDLE")){
   par(mfcol=c(1,3), mar = c(0.8,3.9,0.8,0.5), oma = c(3.2,1,2.5,0))
   
   proteome <- data[, grep("p\\.", colnames(data))]
+  
+  if("p.Q" %in% colnames(proteome)){
+    proteome <- proteome %>%
+      relocate("p.Q", .after = last_col())
+  }
+
   biomass <- data[, grep("c\\.", colnames(data))]
   biomass <- biomass[, -grep("x_", colnames(biomass))]
   mu <- data$mu/max(data$mu)
@@ -75,12 +93,14 @@ for(modelname in c("M9_IDLE")){
     
   plot(plotted_phi, mu,
        xlim = xlim,
-       ylim = c(0, max(mu)),
+       ylim = ylim,
        type = "l",
        lwd = 3,
        axes = FALSE,
        xlab = NA,
        ylab=NA)
+  
+  points(scott$b_gal, scott$mu, col = "grey50", pch = 24)
   #mtext(bquote("Normalized growth rate"), side = 3, cex = cex_lab, line = title_line)
   mtext(bquote("Growth rate relative to optimum " * mu / mu^"\u204E"), side = 2, cex = cex_lab*0.9, line = 2.3)
   
@@ -88,13 +108,16 @@ for(modelname in c("M9_IDLE")){
   axis(1)
   box()
 
-  colors <- brewer.pal(ncol(proteome), "PuBu")
+  colors <- brewer.pal(9, "PuBu")
   colors[c(2,3,5)] <- c("#E2F1AF", "#A8577E", "#30011E")
+  
+  if("p.Q" %in% colnames(proteome)){
+    colors <- c("grey80", colors)}
   plot_composition(proteome, plotted_phi, colors, main="", 
                    ylab = NA, xlab = NA,
                    xlim = xlim, ylim = ylim,
-                   cex_lab=cex_lab,
-                   legend=TRUE)
+                   cex_lab = cex_lab,
+                   legend = TRUE)
   #mtext("Proteome composition", side = 3, cex = cex_lab, line = title_line)
   mtext("Proteome mass fraction", side = 2, cex = cex_lab*0.9, line = 2.3)
   

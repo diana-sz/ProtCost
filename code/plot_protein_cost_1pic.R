@@ -70,6 +70,12 @@ plot_composition <- function(proteome, target_phi,
 for(modelname in models_to_plot){
   data <- read.csv(here("data", paste0(modelname, "_protein_cost.csv")))
   data <- data[data$convergence == 4, ]
+  
+  if(modelname == "M8_rev"){
+    data_irrev <- read.csv(here("data", "M8_protein_cost.csv"))
+    data_irrev <- data_irrev[data_irrev$convergence == 4, ]
+  }
+  
   print(paste(modelname, max(data$mu)))
   n_rxns <- 8 #length(unique(data$reaction))
   
@@ -92,7 +98,7 @@ for(modelname in models_to_plot){
     
     biomass <- one_prot[, grep("c\\.", colnames(one_prot))]
     biomass <- biomass[, -grep("x_", colnames(biomass))]
-    mu <- one_prot$mu_norm
+    mu <- one_prot$mu/max(one_prot$mu)
     one_prot$rel_phi <- one_prot$phi/one_prot$phi[which.max(one_prot$mu)]
     
     plotted_phi <- one_prot$phi
@@ -113,6 +119,20 @@ for(modelname in models_to_plot){
          pch = 20,
          axes = FALSE,
          xlab = NA, ylab = NA)
+    
+    if(modelname == "M8_rev"){
+      one_prot_irrev <- data_irrev[data_irrev$reaction == rxn, ]
+      one_prot_irrev <- one_prot_irrev[order(one_prot_irrev$phi), ]
+      mu_irrev <- one_prot_irrev$mu/max(one_prot_irrev$mu)
+      plotted_phi_mu_irr <- one_prot_irrev$phi/one_prot_irrev$phi[which.max(one_prot_irrev$mu)]
+      if(relative_phi & (rxn %in% c("TS", "ATPS", "ADPS", "NTS", "AAS"))){
+        plotted_phi_mu_irr <- c(0, plotted_phi_mu_irr) # 0 added for visualisation
+        mu_irrev <- c(0, mu_irrev)
+        lines(plotted_phi_mu_irr, mu_irrev, col = "grey70")
+      }
+
+      
+    }
     text(ifelse(relative_phi, 2.65, 0.7), 0.25, rxn, cex=cex_lab*1.4)
     text(ifelse(relative_phi, 2.65, 0.7), 0.1, reaction_names[[rxn]], cex=cex_lab*1.2)
     axis(2, las = 2)
@@ -130,7 +150,9 @@ for(modelname in models_to_plot){
             side = 2, cex = cex_lab, line = axis_label_line, at = -0.2)
     }
     
-    abline(v = plotted_phi_mu[which.max(mu)], lty = 2, col = "grey70")
+    opt_phi <- plotted_phi_mu[which.max(mu)]
+    abline(v = opt_phi, lty = 2, col = "grey70")
+    if(rxn == "ADPS"){print(opt_phi)}
     
     colors <- brewer.pal(ncol(proteome), "PuBu")
     if(grepl("M", modelname)){

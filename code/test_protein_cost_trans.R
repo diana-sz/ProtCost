@@ -6,9 +6,9 @@ rm(list=ls(all=TRUE))
 library(here)
 
 predict.parameters <- 0
-phis_to_test <- seq(0.001, 0.5, 0.005)
+phis_to_test <- seq(0.0001, 0.3, 0.005)
 
-for(is.reversible in c(0)){
+for(is.reversible in c(0,1)){
   modelname <- "M9_alt_trans"
   
   source(here("code", "initialize_model.R"))
