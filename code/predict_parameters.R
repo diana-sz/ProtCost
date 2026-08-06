@@ -5,7 +5,7 @@ rm(list=ls(all=TRUE))
 library(here)
 library(xtable)
 
-modelname <- "M9_Q"
+modelname <- "M8" # M9_Q
 rescale_kcats <- TRUE
 predict.parameters <- 3  # saturation parameter used in 'initialize_model.R'
 is.reversible <- 1

@@ -12,6 +12,9 @@ We study growth costs associated with:
 
 We further analyze how these costs depend on environmental conditions, including external substrate concentrations and the availability of alternative metabolic routes.
 
+The used R packages are specified in the file `renv.lock`. To recreate the environment, run `renv::restore()`.
+
+
 ## Repository structure
 
 ```text
@@ -21,7 +24,8 @@ We further analyze how these costs depend on environmental conditions, including
 │ └── proteomics/
 ├── figures/
 ├── README.md
-└── LICENCE
+├── LICENCE
+└── renv.lock
 ```
 
 ### Main analysis scripts (`code/`)
@@ -47,11 +51,8 @@ We further analyze how these costs depend on environmental conditions, including
 - `test_protein_cost_dekel.R`  
   Analyze the cost of LAC protein expression across environmental conditions.
 
-- `test_protein_cost_idle.R`  
+- `test_protein_cost_idle_Q.R`  
   Compute growth costs associated with a single idle protein.
-
-- `test_protein_cost_idle2.R`  
-  Analyze tradeoffs between two idle proteins.
 
 - `test_protein_cost_trans.R`  
   Evaluate the impact of adding an alternative transporter on the burden of an existing transporter.
@@ -71,7 +72,6 @@ Scripts for generating figures from simulation outputs:
 - `plot_efflux.R`
 - `plot_experimental_costs.R`
 - `plot_idle.R`
-- `plot_idle2.R`
 - `plot_protein_cost_1pic.R`
 - `plot_protein_cost_1picB.R`
 - `plot_proteomics_ecocyc.R`
@@ -103,8 +103,8 @@ The following GBA models are provided as `.ods` files:
 - `M9_alt_trans.ods` — alternative transporter TS2
 - `M9_dekel.ods` — alternative substrate utilization (lactose) by LAC proteins
 - `M10_dekel_efflux.ods` — lactose utilization with efflux
-- `M9_IDLE.ods` — model with one idle protein
-- `M10_IDLE2.ods` — model with two idle proteins
+- `M9_IDLE.ods` — model with an idle protein
+- `M10_Q_IDLE.ods` — model with an idle protein + Q sector
 - `M9_Q.ods` — constant Q sector
 - `M10_fuel_efflux.ods` — toxic compound (F) production with efflux pump
 - `B.ods` — minimal model with three reactions

@@ -7,7 +7,7 @@ cex_all <- 0.97
 cex_points <- 0.95
 phi_xlim <- 0.4
 
-modelnames <- c("M10fuel_efflux")
+modelnames <- c("M10fuel_efflux", "M10fuel_efflux_rev")
 
 for (modelname in modelnames) {
   

@@ -4,7 +4,7 @@ phi_data <- exp_data[-1]
 cm0 <-  as.numeric(rho_cond[1]*M%*%q0_alt)[-p]
 esat <- predict.parameters
 rounding <- 1
-kcat_ratio <- 3
+kcat_ratio <- 5
 default_kcat <- 10
 
 # Estimates Km values assuming typical ratio Km = cm/esat for substrates and 

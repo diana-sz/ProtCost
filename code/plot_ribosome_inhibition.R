@@ -6,8 +6,6 @@ cex_all <- 1.1
 modelnames <- c("M8_inh",
                 "M8_inh_rev")
 
-
-
 png(here("figures", "M8_inh_ribosome_inhibition.png"), 
     type="cairo", units="cm", res = 300,
     width = 18, height = 8)
@@ -20,7 +18,10 @@ for (n in seq_along(modelnames)) {
   
   modelname <- modelnames[n]
   opt_data <- read.csv(here("data", paste0(modelname, ".csv")), row.names = 1)
+  
+  # filter out results that did not converge / do not grow
   opt_data <- opt_data[opt_data$convergence == 4, ]
+  opt_data <- opt_data[opt_data$mu > 1e-6, ]
   
   opt_data$phiR <- opt_data$p.R/rowSums(opt_data[, grep("p\\.", colnames(opt_data))])
   palette_colors <- brewer.pal(length(unique(opt_data$x_C)), "Paired")
@@ -30,7 +31,6 @@ for (n in seq_along(modelnames)) {
   for(x_c in unique(opt_data$x_C)){
     one_w <- opt_data[opt_data$x_C == x_c, ]
     
-    if(all(one_w$mu < 1e-6)) next
     if(nrow(one_w) < 3) next
 
     plot(phiR ~ mu, data=one_w, col = one_w$color,

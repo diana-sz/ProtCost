@@ -1,7 +1,7 @@
 library(here)
 
 modelname <- "M8"
-is.reversible <- 0
+is.reversible <- 1
 predict.parameters <- 0
 
 source(here("code", "uni_colors.R"))
@@ -84,7 +84,7 @@ variables <- unique(results$variable)
 n_prot <- length(unique(tested_proteins))
 n_rxn  <- length(variables)
 
-png(here("figures", paste0(modelname, is.reversible, "_cost_benefit.png")), 
+png(here("figures", paste0(modelname, "_cost_benefit.png")), 
     type="cairo", units="cm",
     width=22, height=22, res=300)
 

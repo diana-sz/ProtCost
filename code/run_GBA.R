@@ -5,7 +5,7 @@ library(here)
 predict.parameters <- 0
 
 for(is.reversible in c(1,0)){
-  modelname <- "M8"
+  modelname <- "M10_Q_IDLE"
 
   source(here("code", "initialize_model.R"))
   

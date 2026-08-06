@@ -81,7 +81,7 @@ for(modelname in models_to_plot){
     
     biomass <- one_prot[, grep("c\\.", colnames(one_prot))]
     biomass <- biomass[, -grep("x_", colnames(biomass))]
-    mu <- one_prot$mu_norm
+    mu <- one_prot$mu/max(one_prot$mu)
     one_prot$rel_phi <- one_prot$phi/one_prot$phi[which.max(one_prot$mu)]
     
     plotted_phi <- one_prot$phi

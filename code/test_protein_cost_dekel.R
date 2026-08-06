@@ -8,12 +8,12 @@ library(here)
 
 phis_to_test <- seq(0, 0.5, 0.005)
 predict.parameters <- 0
-primary_c_source <- 0.48  #0.22
-modelname_orig <- "M9_dekel" # "M10_dekel_efflux" M9_dekel
+primary_c_source <- 0.58
+modelname_orig <- "M10_dekel_efflux" # "M10_dekel_efflux" M9_dekel
 
 alt_concentrations <- c(0.0001, 0.01, 0.05, 0.1, 0.2, 1, 16.28)
 
-for(is.reversible in c(0,1)){
+for(is.reversible in c(1)){
   results_list <- list()
   
   for (x_C2 in alt_concentrations){
@@ -30,8 +30,7 @@ for(is.reversible in c(0,1)){
     source(here("code", "GBA_solver.R"))
     
     mu_orig <- mu_opt
-    #p_opt <- prot(q_opt[1,])
-    
+
     for (fraction in phis_to_test){
       print(paste("LAC=", x_C2, "fraction=", fraction))
       

@@ -2,7 +2,7 @@ library(here)
 library(RColorBrewer)
 
 relative_phi <- TRUE
-models_to_plot <- c("M8", "M8_rev", "M9_Q")#, "B", "B_rev")
+models_to_plot <- c("M8", "M8_rev", "M9_Q", "M9_Q_rev")
 
 cex_lab <- 0.75
 xlim <- c(0, ifelse(relative_phi, 5, 1))
@@ -152,8 +152,7 @@ for(modelname in models_to_plot){
     
     opt_phi <- plotted_phi_mu[which.max(mu)]
     abline(v = opt_phi, lty = 2, col = "grey70")
-    if(rxn == "ADPS"){print(opt_phi)}
-    
+
     colors <- brewer.pal(ncol(proteome), "PuBu")
     if(grepl("M", modelname)){
       colors[c(2,4)] <- c( "#A8577E", "#30011E") # add some contrasting colors

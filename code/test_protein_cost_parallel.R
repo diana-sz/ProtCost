@@ -10,7 +10,7 @@ library(here)
 # --- read model and get initial solution --- ####
 is.reversible <- 0
 predict.parameters <- 0
-modelname <- "M9_Q" # "M8" "M9_Q" "B"
+modelname <- "M8" # "M8" "M9_Q" "B"
 max_cores <- 9
 
 # Solver function ####

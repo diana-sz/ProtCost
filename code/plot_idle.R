@@ -66,7 +66,7 @@ plot_composition <- function(proteome, target_phi,
 
 rxn <- "IDLE"
 
-for(modelname in c("M9_IDLE", "M10_Q_IDLE", "M10_Q_IDLE_extreme")){
+for(modelname in c("M9_IDLE_rev", "M10_Q_IDLE_rev", "M10_Q_IDLE_extreme")){
   data <- read.csv(here("data", paste0(modelname, ".csv")), row.names = 1)
   data <- data[data$convergence == 4, ]
   data <- data[order(data$phi), ]

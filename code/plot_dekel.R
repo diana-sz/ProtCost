@@ -4,7 +4,7 @@
 library(RColorBrewer)
 library(here)
 
-models <- c("M9_dekel", "M10_dekel_efflux")
+models <- c("M9_dekel", "M10_dekel_efflux", "M9_dekel_rev", "M10_dekel_efflux_rev")
 predict.parameters <- 0
 plotted_phis <- c(0.04, 0.3)
 phi_xlim <- 0.5
@@ -73,14 +73,13 @@ plot_composition <- function(proteome, target_phi,
 }
 
 
-for(modelname in models){
-  is.reversible <- ifelse(grepl("rev", modelname), 1, 0)
-  file_suffix <- ifelse(grepl("_sat", modelname), "_sat", "")
-  modelname <- gsub("_sat", "", modelname)
+for(model in models){
+  is.reversible <- ifelse(grepl("rev", model), 1, 0)
+  modelname <- gsub("_rev", "", model)
   
   source(here("code", "initialize_model.R"))
   
-  opt_data <- read.csv(here("data", paste0(modelname, file_suffix, ".csv")))
+  opt_data <- read.csv(here("data", paste0(modelname, ".csv")))
   opt_data <- subset(opt_data, convergence == 4 & phi <= phi_xlim)
   
   row <- 1
@@ -144,7 +143,7 @@ for(modelname in models){
   
   opt_data$mu_ref <- opt_data$mu / max(opt_data[opt_data$phi == 0, "mu"])
   
-  png(here("figures", paste0(modelname, file_suffix, ".png")),
+  png(here("figures", paste0(model, ".png")),
       type="cairo", units="cm",
       width=26, height=8, res=300)
   
@@ -187,7 +186,7 @@ for(modelname in models){
        log = "x",
        xlim = xlim,
        axes = FALSE,
-       ylim = c(min(opt_data[opt_data$phi %in% plotted_phis, "mu_ref"]), 1.2)) #max(opt_data$mu_ref)))
+       ylim = c(min(opt_data[opt_data$phi %in% plotted_phis, "mu_ref"]), 1.3)) #max(opt_data$mu_ref)))
   box()
   
   for(pphi in seq_along(plotted_phis)){
