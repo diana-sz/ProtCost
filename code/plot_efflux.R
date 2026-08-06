@@ -77,7 +77,7 @@ for (modelname in modelnames) {
   axis(1, cex.axis = cex_all)
   axis(2, las=2, cex.axis = cex_all) #, at = seq(0, 0.25, 0.05), labels = c(0.0, NA, 0.1, NA, 0.2, NA))
 
-  mtext(expression("Proteome fraction pump " * italic("\u03A6")["EP"]), side = 2, outer = FALSE, line = 2.7, cex = cex_all)
+  mtext(expression("Proteome fraction pump " * italic("\u03A6")["EF"]), side = 2, outer = FALSE, line = 2.7, cex = cex_all)
   mtext(expression("Proteome fraction fuel reaction " * italic("\u03A6")["FP"]), side = 1, outer = FALSE, line = 2.3, cex = cex_all)
   
   dev.off()
