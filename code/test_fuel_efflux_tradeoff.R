@@ -6,7 +6,7 @@ rm(list=ls(all=TRUE))
 library(here)
 
 predict.parameters <- 0
-phis_to_test <- seq(0, 0.4, 0.0005)
+phis_to_test <- seq(0, 0.4, 0.001)
 efflux_kcats <- c(0.1, 1, 10, 100)
 
 for(is.reversible in c(1,0)){

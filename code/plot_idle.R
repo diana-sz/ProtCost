@@ -6,7 +6,7 @@ cex_lab <- 0.75
 ylim <- c(0, 1.05)
 title_line <- 0.4
 
-scott <- read.csv(here("data", "scott_4B.csv"))
+scott <- read.csv(here("data", "experimental", "scott_4B.csv"))
 for(m in unique(scott$medium)){
   idx <- scott$medium == m
   one_cond <- scott[idx,]
@@ -66,7 +66,7 @@ plot_composition <- function(proteome, target_phi,
 
 rxn <- "IDLE"
 
-for(modelname in c("M9_IDLE_rev", "M10_Q_IDLE_rev", "M10_Q_IDLE_extreme")){
+for(modelname in c("M9_IDLE_rev", "M10_Q_IDLE_rev")){
   data <- read.csv(here("data", paste0(modelname, ".csv")), row.names = 1)
   data <- data[data$convergence == 4, ]
   data <- data[order(data$phi), ]
@@ -100,7 +100,9 @@ for(modelname in c("M9_IDLE_rev", "M10_Q_IDLE_rev", "M10_Q_IDLE_extreme")){
        xlab = NA,
        ylab=NA)
   
-  points(scott$b_gal, scott$mu, col = "grey50", pch = 24)
+  if("p.Q" %in% colnames(proteome)){
+    points(scott$b_gal, scott$mu, col = "grey50", pch = 24)
+  }
   #mtext(bquote("Normalized growth rate"), side = 3, cex = cex_lab, line = title_line)
   mtext(bquote("Growth rate relative to optimum " * mu / mu^"\u204E"), side = 2, cex = cex_lab*0.9, line = 2.3)
   

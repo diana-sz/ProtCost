@@ -104,7 +104,7 @@ for (n in seq_along(filelist)) {
   plot_and_fit(
     sectors,
     opt_data$mu,
-    ylim = c(0, 0.65),
+    ylim = c(0, 0.7),
     xlim = c(0, max(opt_data$mu)),
     show_yaxis = (n == 1),
     legend = (n == 1)
@@ -120,10 +120,10 @@ for (n in seq_along(filelist)) {
     font = 2
   )
   
-  labels <- c("0.0", "", "0.2", "", "0.4", "", "0.6")
+  labels <- c("0.0", "", "0.2", "", "0.4", "", "0.6", "")
   if (n == 2) labels <- FALSE
   axis(1)
-  axis(2, las = 2, at = c(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6), labels = labels)
+  axis(2, las = 2, at = c(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7), labels = labels)
   box()
   
 }

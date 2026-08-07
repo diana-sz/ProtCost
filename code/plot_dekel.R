@@ -186,7 +186,7 @@ for(model in models){
        log = "x",
        xlim = xlim,
        axes = FALSE,
-       ylim = c(min(opt_data[opt_data$phi %in% plotted_phis, "mu_ref"]), 1.3)) #max(opt_data$mu_ref)))
+       ylim = c(0.65, 1.15)) #max(opt_data$mu_ref)))
   box()
   
   for(pphi in seq_along(plotted_phis)){

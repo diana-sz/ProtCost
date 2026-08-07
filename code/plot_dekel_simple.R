@@ -129,7 +129,7 @@ plot(NA,
      log = "x",
      xlim = xlim,
      axes = FALSE,
-     ylim = c(min(opt_data[opt_data$phi %in% plotted_phis, "mu_ref"]), 1.2))
+     ylim = c(min(opt_data[opt_data$phi %in% plotted_phis, "mu_ref"]), 1.15))
 box()
 
 for(pphi in seq_along(plotted_phis)){

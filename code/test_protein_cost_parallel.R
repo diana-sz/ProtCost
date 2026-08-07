@@ -8,7 +8,7 @@ library(here)
 
 
 # --- read model and get initial solution --- ####
-is.reversible <- 0
+is.reversible <- 1
 predict.parameters <- 0
 modelname <- "M8" # "M8" "M9_Q" "B"
 max_cores <- 9
