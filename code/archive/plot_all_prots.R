@@ -5,8 +5,8 @@ library(here)
 filelist <- c("M8_GBA.csv",
               "M8_rev_GBA.csv")
 
-cex_all <- 1.1
-colors <- brewer.pal(8, "Paired")[c(2,6)]
+cex_all <- 1.05
+colors <- brewer.pal(8, "Paired")[c(2,6,7)]
 
 plot_and_fit <- function(data, growth_rates, ylim, xlim,
                          show_yaxis = FALSE,
@@ -69,20 +69,38 @@ plot_and_fit <- function(data, growth_rates, ylim, xlim,
 }
 
 png(
-  here("figures", "M8_RP_ratio.png"),
+  here("figures", "M8_prot_laws.png"),
   type = "cairo",
   units = "cm",
-  width = 18,
+  width = 19,
   height = 8,
   res = 300
 )
 
-par(mfrow=c(1,2), oma = c(1.5,1.5,0.5,0))
+par(mfrow=c(2,4), oma = c(2.5,2.5,0,0))
+
+sectors_to_plot <- list(
+  "1" = c(
+    TS = "p.TS",
+    AAS = "p.AAS"
+  ),
+  "2" = c(
+    ATPS = "p.ATPS",
+    NTS = "p.NTS"
+  ),
+  "3" = c(
+    ADPS = "p.ADPS",
+    DNAP = "p.DNAP"
+  ),
+  "4" = c(
+    R = "p.R",
+    RNAP = "p.RNAP"
+  )
+)
 
 
 for (n in seq_along(filelist)) {
-  left <- ifelse (n == 1, 2.5, 1)
-  par(mar = c(2.5, left, 1, 3.5-left))
+  par(mar = c(1.3, 1.2, 2.2, 2))
   
   filename <- filelist[n]
   modelname <- strsplit(filename, "_GBA.csv")[[1]][1]
@@ -94,43 +112,48 @@ for (n in seq_along(filelist)) {
   p_opt <- opt_data[, grep("p.", colnames(opt_data))]
   phi_opt <- p_opt / opt_data[, "P"]
   
-  rnas <- rowSums(concentrations[, grep("RNA", colnames(concentrations)), drop = FALSE])
-  
-  sectors <- list(
-    "Translation" = phi_opt$p.R,
-    "RNA/protein ratio" = rnas / opt_data[, "P"]
-  )
-  
-  plot_and_fit(
-    sectors,
-    opt_data$mu,
-    ylim = c(0, 0.7),
-    xlim = c(0, max(opt_data$mu)),
-    show_yaxis = (n == 1),
-    legend = (n == 1)
-  )
-  
   label <- ifelse(grepl("rev", filename), "reversible", "irreversible")
-  mtext(
-    paste0("(", letters[n], ") ", label),
-    side = 3,
-    adj = 0.5,
-    line = 0.35,
-    cex = cex_all,
-    font = 2
-  )
   
-  labels <- c("0.0", "", "0.2", "", "0.4", "", "0.6", "")
-  if (n == 2) labels <- FALSE
-  axis(1)
-  axis(2, las = 2, at = c(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7), labels = labels)
+  for (s in names(sectors_to_plot)){
+    sector_names <- sectors_to_plot[[s]]
+    sectors <- list()
+    ylim <- 0
+    for (name in names(sector_names)){
+      sectors[name] = phi_opt[sector_names[[name]]]
+      ylim <- max(c(max(phi_opt[sector_names[[name]]]), ylim))
+    }
+    
+    
+    plot_and_fit(
+      sectors,
+      opt_data$mu,
+      ylim = c(0, ylim*1.1),
+      xlim = c(0, 1.1),
+      show_yaxis = TRUE,
+      legend = (n == 1)
+    )
+
+  axis(1, cex.axis = 0.85, padj=-1)
+  axis(2, las = 2, cex.axis = 0.85, hadj=0.85)
   box()
   
+  }
+  
+  mtext(
+    label,
+    side = 3,
+    outer = FALSE,
+    line = 0.5,
+    cex = cex_all,
+    at = -1.75
+  )
 }
 
+
 mtext(bquote("Growth rate" ~ "[" * h^-1 * "]"),
-      side = 1, outer = TRUE, line = 0, cex = cex_all)
-mtext("Proteome fraction / ratio",
-      side = 2, outer = TRUE, line = -0.2, cex = cex_all)
+      side = 1, outer = TRUE, line = 1.3, cex = cex_all)
+mtext(expression("Proteome fraction " * italic("\u03A6")), 
+      side = 2, outer = TRUE, line = 1, cex = cex_all)
+
 
 dev.off()

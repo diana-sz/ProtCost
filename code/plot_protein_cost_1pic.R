@@ -26,7 +26,9 @@ plot_composition <- function(proteome, target_phi,
                              main = NA,
                              ylab = NA, xlab = NA,
                              legend = TRUE,
-                             cex_lab = 1) {
+                             cex_lab = 1,
+                             shade_gap = FALSE,
+                             shade_from = NULL) {
   
   # Cumulative sum by row (used for stacking)
   proteome <- proteome/rowSums(proteome)
@@ -37,6 +39,13 @@ plot_composition <- function(proteome, target_phi,
        cex.lab = cex_lab, axes=FALSE)
   axis(1, labels = axis_labels)
   axis(2, las = 2)
+  
+  # Shade region beyond the highest observed phi (only when the run
+  # stopped converging rather than actually reaching near-zero growth rate)
+  if(shade_gap && !is.null(shade_from) && shade_from < xlim[2]){
+    rect(shade_from, par("usr")[3], xlim[2], par("usr")[4],
+         col = "grey95", border = NA)
+  }
   
   # Bottom line (start from 0)
   y_prev <- rep(0, length(target_phi))
@@ -111,14 +120,28 @@ for(modelname in models_to_plot){
       type <- "l"
     }
     
-    plot(plotted_phi_mu, mu,
+    plot(NA,
          xlim = xlim, ylim = c(0, max(mu)),
-         type = type,
-         lwd = 3,
-         cex = 0.6,
-         pch = 20,
          axes = FALSE,
          xlab = NA, ylab = NA)
+    
+    # Shade region beyond the highest observed phi, but only if the run
+    # stopped converging rather than actually reaching near-zero growth rate.
+    # This decision is reused below for the composition panels too.
+    max_phi <- max(plotted_phi_mu, na.rm = TRUE)
+    mu_at_max_phi <- mu[which.max(plotted_phi_mu)]
+    growth_near_zero_threshold <- 0.1  # mu is normalized so max(mu) == 1
+    shade_gap <- max_phi < xlim[2] && mu_at_max_phi > growth_near_zero_threshold
+    if(shade_gap){
+      rect(max_phi, par("usr")[3], xlim[2], par("usr")[4],
+           col = "grey95", border = NA)
+    }
+    
+    points(plotted_phi_mu, mu,
+           type = type,
+           lwd = 3,
+           cex = 0.6,
+           pch = 20)
     
     if(modelname == "M8_rev"){
       one_prot_irrev <- data_irrev[data_irrev$reaction == rxn, ]
@@ -130,7 +153,7 @@ for(modelname in models_to_plot){
         mu_irrev <- c(0, mu_irrev)
         lines(plotted_phi_mu_irr, mu_irrev, col = "grey70")
       }
-
+      
       
     }
     text(ifelse(relative_phi, 2.65, 0.7), 0.25, rxn, cex=cex_lab*1.4)
@@ -139,20 +162,20 @@ for(modelname in models_to_plot){
     
     axis_labels <- rxn == "R"
     axis(1, labels = axis_labels)
-  
+    
     box()
     
     if(rxn == "NTS"){
       #mtext(bquote("Normalized growth rate"), side = 3, cex = cex_lab, line = title_line)
-    # }
-    # if(rxn == "NTS"){
+      # }
+      # if(rxn == "NTS"){
       mtext(bquote("Growth rate relative to optimum " * mu / mu^"\u204E"), 
             side = 2, cex = cex_lab, line = axis_label_line, at = -0.2)
     }
     
     opt_phi <- plotted_phi_mu[which.max(mu)]
     abline(v = opt_phi, lty = 2, col = "grey70")
-
+    
     colors <- brewer.pal(ncol(proteome), "PuBu")
     if(grepl("M", modelname)){
       colors[c(2,4)] <- c( "#A8577E", "#30011E") # add some contrasting colors
@@ -162,29 +185,33 @@ for(modelname in models_to_plot){
                      ylab = NA, xlab = NA,
                      xlim = xlim, ylim =ylim,
                      cex_lab = cex_lab,
-                     legend = plot_legend)
+                     legend = plot_legend,
+                     shade_gap = shade_gap,
+                     shade_from = max_phi)
     
     if(rxn == "NTS"){
       #mtext("Proteome composition", side = 3, cex = cex_lab, line = title_line)
-    # }
-    # if(rxn == "NTS"){
+      # }
+      # if(rxn == "NTS"){
       mtext("Proteome mass fraction", side = 2, cex = cex_lab, line = axis_label_line, at = -0.2)
     }
-
+    
     colors <- rev(brewer.pal(ncol(biomass), "RdBu"))
     plot_composition(biomass, plotted_phi, colors, main="", 
                      ylab = NA, xlab = NA,
                      xlim = xlim, ylim =ylim,
                      cex_lab = cex_lab,
-                     legend = plot_legend)
+                     legend = plot_legend,
+                     shade_gap = shade_gap,
+                     shade_from = max_phi)
     
     if(rxn == "NTS"){
       #mtext("Biomass composition", side = 3, cex = cex_lab, line = title_line)
-    # }
-    # if(rxn == "NTS"){
+      # }
+      # if(rxn == "NTS"){
       mtext("Biomass fraction", side = 2, cex = cex_lab, line = axis_label_line, at = -0.2)
     }
-
+    
     xlabel <- expression("Proteome fraction " * italic("\u03A6"))
     if(relative_phi){
       xlabel <- expression("Proteome fraction relative to optimum " * italic("\u03A6") * "/" * italic("\u03A6")^"\u204E")
@@ -194,4 +221,3 @@ for(modelname in models_to_plot){
   }
   dev.off()
 }
-

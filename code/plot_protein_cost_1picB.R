@@ -119,9 +119,6 @@ for(modelname in models_to_plot){
     abline(v = plotted_phi_mu[which.max(mu)], lty = 2, col = "grey70")
     
     colors <- brewer.pal(ncol(proteome), "PuBu")
-    if(grepl("M", modelname)){
-      colors[c(2,4)] <- c( "#A8577E", "#30011E") # add some contrasting colors
-    }
     plot_legend <- ifelse(rxn == "TS", TRUE, FALSE)
     plot_composition(proteome, plotted_phi, colors, main="", 
                      ylab = NA, xlab = NA,

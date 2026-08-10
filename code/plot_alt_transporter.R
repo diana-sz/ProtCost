@@ -74,7 +74,7 @@ for(modelname in modelnames){
     axes = FALSE)
 
   mtext("Relative growth rate", side = 2, outer = FALSE, line = 2.6, cex = cex_all)
-  mtext(expression("TS proteome fraction relative to optimum " * italic("\u03A6") * "/" * italic("\u03A6")^"\u204E"), 
+  mtext(expression("TS1 proteome fraction relative to optimum " * italic("\u03A6") * "/" * italic("\u03A6")^"\u204E"), 
                    side = 1, outer = FALSE, line = 2.5, cex = cex_all, adj = 0.75)
   
   box()

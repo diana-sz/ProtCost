@@ -77,7 +77,7 @@ xlim <- c(0, 4)
 ylim <- c(-2.1,2.1)
 plots <- c("sum", "catalytic_cost", "saturation_value", "crowding_value")
 plot_names <- c("marginal value", "catalytic cost", "saturation value", "crowding value")
-colors <- c("black", uni_red, uni_green, uni_lila)
+colors <- c("black", uni_red, uni_blue, uni_lila)
 
 tested_proteins <- unique(results$tested_protein)
 variables <- unique(results$variable)
