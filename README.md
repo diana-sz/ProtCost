@@ -1,5 +1,7 @@
 # Growth cost of protein over- and underexpression in nonlinear resource allocation models
 
+bioRxiv: https://doi.org/10.64898/2026.04.21.719900
+
 ## Overview
 
 This repository contains R scripts and model files for analyzing the growth effects of protein over- and underexpression using Growth Balance Analysis (GBA). The framework explicitly accounts for nonlinear enzyme kinetics, molecular crowding, and cellular resource constraints.
@@ -59,6 +61,9 @@ The used R packages are specified in the file `renv.lock`. To recreate the envir
 
 - `test_ribosome_inhibition.R`  
   Reproduce ribosome inhibition growth laws following the framework of Terry Hwa.
+  
+- `toy_model_cobrak_rba.ipynb`
+  Compares GBA results with RBA and COBRA-k linear (ecFBA) and nonlinear optimization
 
 
 ### Plotting scripts
