@@ -35,7 +35,8 @@ opt_phis <- (p_opt / rho) / sum(p_opt / rho)
 mu_orig <- mu_opt
 
 # --- Parallel setup --- ####
-num_cores <- min(max_cores, detectCores() - 10)
+num_cores <- max(1, min(max_cores, detectCores() - 1))
+if (.Platform$OS.type == "windows") num_cores <- 1
 batch_size <- ifelse(length(reaction) >= num_cores, num_cores, length(reaction))
 reaction_batches <- split(reaction, ceiling(seq_along(reaction)/batch_size))
 
@@ -46,12 +47,12 @@ process_reaction <- function(reaction_name, opt_phi, q0_initial) {
   
   
   # step size below optimum higher than above (the curves are steeper)
-  stepsize <- 0.001 #0.0001
+  stepsize <- 0.001
   if(grepl("B", modelname)){
     stepsize <- 0.005
   }
   below <- seq(round(opt_phi, 4), 0, by = -stepsize)
-  if(opt_phi/stepsize < 500){ #1000
+  if(opt_phi/stepsize < 500){
     below <- seq(round(opt_phi, 4), 0, length.out = 500)
   }
   above <- seq(round(opt_phi, 4), 1, by = stepsize)
@@ -82,7 +83,6 @@ process_reaction <- function(reaction_name, opt_phi, q0_initial) {
     candidates <- list(
       list(q = q0_wt,  msg = "Solver did not converge - trying with initial FBA solution"),
       list(q = q0_alt, msg = "Solver did not converge - trying with alternative FBA solution")
-      #list(q = last_q0, msg = "Solver did not converge - trying with last solution")
     )
     
     for (cand in candidates) {
