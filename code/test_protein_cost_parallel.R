@@ -78,11 +78,6 @@ process_reaction <- function(reaction_name, opt_phi, q0_initial) {
       last_feasible_q0,
       "Solving with last feasible solution"
     )
-    
-    # draw Gaussian noise with mean 0, sd = sd_vec
-    # noise  <- rnorm(length(last_feasible_q0), mean = 0, sd = last_feasible_q0*0.02)
-    # perturbed_q0 <- last_feasible_q0 + noise
-    # perturbed_q0[perturbed_q0 < 0] <- 0
 
     candidates <- list(
       list(q = q0_wt,  msg = "Solver did not converge - trying with initial FBA solution"),

@@ -1,0 +1,612 @@
+{
+    "metabolites": {
+        "Cext": {
+            "log_min_conc": -13.815510557964274,
+            "log_max_conc": -2.8911602569569466,
+            "annotation": {},
+            "name": "Cext",
+            "formula": "",
+            "charge": 0,
+            "smiles": "",
+            "compartment": "",
+            "molar_mass": null
+        },
+        "S": {
+            "log_min_conc": -13.815510557964274,
+            "log_max_conc": -2.409845836565346,
+            "annotation": {},
+            "name": "S",
+            "formula": "",
+            "charge": 0,
+            "smiles": "",
+            "compartment": "",
+            "molar_mass": null
+        },
+        "Wext": {
+            "log_min_conc": -13.815510557964274,
+            "log_max_conc": -3.912023005428146,
+            "annotation": {},
+            "name": "Wext",
+            "formula": "",
+            "charge": 0,
+            "smiles": "",
+            "compartment": "",
+            "molar_mass": null
+        },
+        "AA": {
+            "log_min_conc": -13.815510557964274,
+            "log_max_conc": -3.912023005428146,
+            "annotation": {},
+            "name": "AA",
+            "formula": "",
+            "charge": 0,
+            "smiles": "",
+            "compartment": "",
+            "molar_mass": null
+        },
+        "NT": {
+            "log_min_conc": -13.815510557964274,
+            "log_max_conc": -3.912023005428146,
+            "annotation": {},
+            "name": "NT",
+            "formula": "",
+            "charge": 0,
+            "smiles": "",
+            "compartment": "",
+            "molar_mass": null
+        },
+        "ATP": {
+            "log_min_conc": -13.815510557964274,
+            "log_max_conc": -3.912023005428146,
+            "annotation": {},
+            "name": "ATP",
+            "formula": "",
+            "charge": 0,
+            "smiles": "",
+            "compartment": "",
+            "molar_mass": null
+        },
+        "ADP": {
+            "log_min_conc": -13.815510557964274,
+            "log_max_conc": -3.912023005428146,
+            "annotation": {},
+            "name": "ADP",
+            "formula": "",
+            "charge": 0,
+            "smiles": "",
+            "compartment": "",
+            "molar_mass": null
+        },
+        "P": {
+            "log_min_conc": -13.815510557964274,
+            "log_max_conc": -0.2640089097333808,
+            "annotation": {},
+            "name": "P",
+            "formula": "",
+            "charge": 0,
+            "smiles": "",
+            "compartment": "",
+            "molar_mass": null
+        },
+        "RNA": {
+            "log_min_conc": -13.815510557964274,
+            "log_max_conc": -1.491735256001335,
+            "annotation": {},
+            "name": "RNA",
+            "formula": "",
+            "charge": 0,
+            "smiles": "",
+            "compartment": "",
+            "molar_mass": null
+        },
+        "DNA": {
+            "log_min_conc": -13.815510557964274,
+            "log_max_conc": -3.5198835032936207,
+            "annotation": {},
+            "name": "DNA",
+            "formula": "",
+            "charge": 0,
+            "smiles": "",
+            "compartment": "",
+            "molar_mass": null
+        }
+    },
+    "reactions": {
+        "TS": {
+            "stoichiometries": {
+                "Cext": -1.0,
+                "S": 1.0
+            },
+            "min_flux": 0.0,
+            "max_flux": 1000.0,
+            "dG0": null,
+            "dG0_uncertainty": null,
+            "enzyme_reaction_data": {
+                "identifiers": [
+                    "E_TS"
+                ],
+                "k_cat": 33414.74245115453,
+                "k_cat_references": [],
+                "k_ms": {
+                    "Cext": 0.005550621669626998,
+                    "S": 0.08992007104795736
+                },
+                "k_m_references": {},
+                "k_is": {},
+                "k_i_references": {},
+                "k_as": {},
+                "k_a_references": {},
+                "hill_coefficients": {
+                    "kappa": {
+                        "Cext": 1.0,
+                        "S": 1.0
+                    },
+                    "iota": {},
+                    "alpha": {}
+                },
+                "hill_coefficient_references": {
+                    "kappa": {},
+                    "iota": {},
+                    "alpha": {}
+                },
+                "special_stoichiometries": {}
+            },
+            "annotation": {},
+            "name": "TS"
+        },
+        "ATPS": {
+            "stoichiometries": {
+                "ADP": -26.0,
+                "ATP": 26.0,
+                "Wext": 6.0,
+                "S": -12.862344582593245
+            },
+            "min_flux": 0.0,
+            "max_flux": 1000.0,
+            "dG0": null,
+            "dG0_uncertainty": null,
+            "enzyme_reaction_data": {
+                "identifiers": [
+                    "E_ATPS"
+                ],
+                "k_cat": 30484.131527443515,
+                "k_cat_references": [],
+                "k_ms": {
+                    "S": 0.02997335701598579,
+                    "ADP": 0.00047149794898392196,
+                    "ATP": 0.0037762098777700485,
+                    "Wext": 0.022722108611679163
+                },
+                "k_m_references": {},
+                "k_is": {},
+                "k_i_references": {},
+                "k_as": {},
+                "k_a_references": {},
+                "hill_coefficients": {
+                    "kappa": {
+                        "ADP": 0.038461538461538464,
+                        "ATP": 0.038461538461538464,
+                        "Wext": 0.16666666666666666,
+                        "S": 0.0777463232755645
+                    },
+                    "iota": {},
+                    "alpha": {}
+                },
+                "hill_coefficient_references": {
+                    "kappa": {},
+                    "iota": {},
+                    "alpha": {}
+                },
+                "special_stoichiometries": {}
+            },
+            "annotation": {},
+            "name": "ATPS"
+        },
+        "AAS": {
+            "stoichiometries": {
+                "AA": 1.0,
+                "S": -0.7050399644760214
+            },
+            "min_flux": 0.0,
+            "max_flux": 1000.0,
+            "dG0": null,
+            "dG0_uncertainty": null,
+            "enzyme_reaction_data": {
+                "identifiers": [
+                    "E_AAS"
+                ],
+                "k_cat": 28971.815462131945,
+                "k_cat_references": [],
+                "k_ms": {
+                    "S": 0.02997335701598579,
+                    "AA": 0.014958274287513777
+                },
+                "k_m_references": {},
+                "k_is": {},
+                "k_i_references": {},
+                "k_as": {},
+                "k_a_references": {},
+                "hill_coefficients": {
+                    "kappa": {
+                        "AA": 1.0,
+                        "S": 1.4183593134939378
+                    },
+                    "iota": {},
+                    "alpha": {}
+                },
+                "hill_coefficient_references": {
+                    "kappa": {},
+                    "iota": {},
+                    "alpha": {}
+                },
+                "special_stoichiometries": {}
+            },
+            "annotation": {},
+            "name": "AAS"
+        },
+        "NTS": {
+            "stoichiometries": {
+                "ATP": -5.0,
+                "NT": 1.0,
+                "ADP": 5.0,
+                "S": -0.5233681172291295
+            },
+            "min_flux": 0.0,
+            "max_flux": 1000.0,
+            "dG0": null,
+            "dG0_uncertainty": null,
+            "enzyme_reaction_data": {
+                "identifiers": [
+                    "E_NTS"
+                ],
+                "k_cat": 104994.55947035295,
+                "k_cat_references": [],
+                "k_ms": {
+                    "S": 0.02997335701598579,
+                    "ATP": 0.0011924873298221207,
+                    "NT": 0.003884368483460768,
+                    "ADP": 0.0014144938469517656
+                },
+                "k_m_references": {},
+                "k_is": {},
+                "k_i_references": {},
+                "k_as": {},
+                "k_a_references": {},
+                "hill_coefficients": {
+                    "kappa": {
+                        "ATP": 0.2,
+                        "NT": 1.0,
+                        "ADP": 0.2,
+                        "S": 1.9107010287411186
+                    },
+                    "iota": {},
+                    "alpha": {}
+                },
+                "hill_coefficient_references": {
+                    "kappa": {},
+                    "iota": {},
+                    "alpha": {}
+                },
+                "special_stoichiometries": {}
+            },
+            "annotation": {},
+            "name": "NTS"
+        },
+        "ADPS": {
+            "stoichiometries": {
+                "NT": -1.0,
+                "ADP": 1.0,
+                "S": 0.3605683836589697
+            },
+            "min_flux": 0.0,
+            "max_flux": 1000.0,
+            "dG0": null,
+            "dG0_uncertainty": null,
+            "enzyme_reaction_data": {
+                "identifiers": [
+                    "E_ADPS"
+                ],
+                "k_cat": 30968.638835507216,
+                "k_cat_references": [],
+                "k_ms": {
+                    "NT": 0.001226642678987611,
+                    "ADP": 0.0014144938469517656,
+                    "S": 0.08992007104795736
+                },
+                "k_m_references": {},
+                "k_is": {},
+                "k_i_references": {},
+                "k_as": {},
+                "k_a_references": {},
+                "hill_coefficients": {
+                    "kappa": {
+                        "NT": 1.0,
+                        "ADP": 1.0,
+                        "S": 2.773399014778326
+                    },
+                    "iota": {},
+                    "alpha": {}
+                },
+                "hill_coefficient_references": {
+                    "kappa": {},
+                    "iota": {},
+                    "alpha": {}
+                },
+                "special_stoichiometries": {}
+            },
+            "annotation": {},
+            "name": "ADPS"
+        },
+        "RNAP": {
+            "stoichiometries": {
+                "NT": -1.0,
+                "RNA": 1.0,
+                "S": 0.9710812611012433
+            },
+            "min_flux": 0.0,
+            "max_flux": 1000.0,
+            "dG0": null,
+            "dG0_uncertainty": null,
+            "enzyme_reaction_data": {
+                "identifiers": [
+                    "E_RNAP"
+                ],
+                "k_cat": 20411.334178353845,
+                "k_cat_references": [],
+                "k_ms": {
+                    "NT": 0.001226642678987611,
+                    "RNA": 1000000.0,
+                    "S": 1000000.0
+                },
+                "k_m_references": {},
+                "k_is": {},
+                "k_i_references": {},
+                "k_as": {},
+                "k_a_references": {},
+                "hill_coefficients": {
+                    "kappa": {
+                        "NT": 1.0,
+                        "RNA": 1.0,
+                        "S": 1.0297799371248928
+                    },
+                    "iota": {},
+                    "alpha": {}
+                },
+                "hill_coefficient_references": {
+                    "kappa": {},
+                    "iota": {},
+                    "alpha": {}
+                },
+                "special_stoichiometries": {}
+            },
+            "annotation": {},
+            "name": "RNAP"
+        },
+        "DNAP": {
+            "stoichiometries": {
+                "NT": -1.0,
+                "DNA": 1.0,
+                "S": 0.9710812611012433
+            },
+            "min_flux": 0.0,
+            "max_flux": 1000.0,
+            "dG0": null,
+            "dG0_uncertainty": null,
+            "enzyme_reaction_data": {
+                "identifiers": [
+                    "E_DNAP"
+                ],
+                "k_cat": 222431.20578975344,
+                "k_cat_references": [],
+                "k_ms": {
+                    "NT": 0.001226642678987611,
+                    "DNA": 1000000.0,
+                    "S": 1000000.0
+                },
+                "k_m_references": {},
+                "k_is": {},
+                "k_i_references": {},
+                "k_as": {},
+                "k_a_references": {},
+                "hill_coefficients": {
+                    "kappa": {
+                        "NT": 1.0,
+                        "DNA": 1.0,
+                        "S": 1.0297799371248928
+                    },
+                    "iota": {},
+                    "alpha": {}
+                },
+                "hill_coefficient_references": {
+                    "kappa": {},
+                    "iota": {},
+                    "alpha": {}
+                },
+                "special_stoichiometries": {}
+            },
+            "annotation": {},
+            "name": "DNAP"
+        },
+        "R": {
+            "stoichiometries": {
+                "AA": -1.0,
+                "ATP": -4.0,
+                "P": 1.0,
+                "ADP": 4.0,
+                "S": 1.853352575488454
+            },
+            "min_flux": 0.0,
+            "max_flux": 1000.0,
+            "dG0": null,
+            "dG0_uncertainty": null,
+            "enzyme_reaction_data": {
+                "identifiers": [
+                    "E_R"
+                ],
+                "k_cat": 41847.80475037624,
+                "k_cat_references": [],
+                "k_ms": {
+                    "AA": 0.004723665564478035,
+                    "ATP": 0.0011924873298221207,
+                    "P": 1000000.0,
+                    "ADP": 1000000.0,
+                    "S": 1000000.0
+                },
+                "k_m_references": {},
+                "k_is": {},
+                "k_i_references": {},
+                "k_as": {},
+                "k_a_references": {},
+                "hill_coefficients": {
+                    "kappa": {
+                        "AA": 1.0,
+                        "ATP": 0.25,
+                        "P": 1.0,
+                        "ADP": 0.25,
+                        "S": 0.5395627433363285
+                    },
+                    "iota": {},
+                    "alpha": {}
+                },
+                "hill_coefficient_references": {
+                    "kappa": {},
+                    "iota": {},
+                    "alpha": {}
+                },
+                "special_stoichiometries": {}
+            },
+            "annotation": {},
+            "name": "R"
+        },
+        "EX_Cext": {
+            "stoichiometries": {
+                "Cext": 1.0
+            },
+            "min_flux": 0.0,
+            "max_flux": 1000.0,
+            "dG0": null,
+            "dG0_uncertainty": null,
+            "enzyme_reaction_data": null,
+            "annotation": {},
+            "name": "Carbon source supply"
+        },
+        "EX_Wext": {
+            "stoichiometries": {
+                "Wext": -1.0
+            },
+            "min_flux": 0.0,
+            "max_flux": 1000.0,
+            "dG0": null,
+            "dG0_uncertainty": null,
+            "enzyme_reaction_data": null,
+            "annotation": {},
+            "name": "Waste removal"
+        },
+        "Biomass": {
+            "stoichiometries": {
+                "P": -4.128440366972477,
+                "RNA": -1.209459244406251,
+                "DNA": -0.1591393742639804,
+                "AA": -0.07872775940796725,
+                "NT": -0.020444044649793516,
+                "ATP": -0.019874788830368677,
+                "ADP": -0.007072469234758828,
+                "S": -0.4829040852575481
+            },
+            "min_flux": 0.0,
+            "max_flux": 10.0,
+            "dG0": null,
+            "dG0_uncertainty": null,
+            "enzyme_reaction_data": null,
+            "annotation": {},
+            "name": "Biomass"
+        }
+    },
+    "enzymes": {
+        "E_TS": {
+            "molecular_weight": 100.0,
+            "min_conc": null,
+            "max_conc": null,
+            "annotation": {},
+            "name": "TS protein",
+            "sequence": ""
+        },
+        "E_ATPS": {
+            "molecular_weight": 400.0,
+            "min_conc": null,
+            "max_conc": null,
+            "annotation": {},
+            "name": "ATPS protein",
+            "sequence": ""
+        },
+        "E_AAS": {
+            "molecular_weight": 400.0,
+            "min_conc": null,
+            "max_conc": null,
+            "annotation": {},
+            "name": "AAS protein",
+            "sequence": ""
+        },
+        "E_NTS": {
+            "molecular_weight": 400.0,
+            "min_conc": null,
+            "max_conc": null,
+            "annotation": {},
+            "name": "NTS protein",
+            "sequence": ""
+        },
+        "E_ADPS": {
+            "molecular_weight": 40.0,
+            "min_conc": null,
+            "max_conc": null,
+            "annotation": {},
+            "name": "ADPS protein",
+            "sequence": ""
+        },
+        "E_RNAP": {
+            "molecular_weight": 480.0,
+            "min_conc": null,
+            "max_conc": null,
+            "annotation": {},
+            "name": "RNAP protein",
+            "sequence": ""
+        },
+        "E_DNAP": {
+            "molecular_weight": 1000.0,
+            "min_conc": null,
+            "max_conc": null,
+            "annotation": {},
+            "name": "DNAP protein",
+            "sequence": ""
+        },
+        "E_R": {
+            "molecular_weight": 826.0,
+            "min_conc": null,
+            "max_conc": null,
+            "annotation": {},
+            "name": "R protein",
+            "sequence": ""
+        }
+    },
+    "max_prot_pool": 0.45,
+    "extra_linear_watches": {},
+    "extra_nonlinear_watches": {},
+    "extra_linear_constraints": [],
+    "extra_nonlinear_constraints": [],
+    "kinetic_ignored_metabolites": [],
+    "kinetic_ignored_metabolite_exceptions": [],
+    "R": 0.008314,
+    "T": 298.15,
+    "annotation": {},
+    "reac_enz_separator": "_ENZ_",
+    "fwd_suffix": "_FWD",
+    "rev_suffix": "_REV",
+    "max_conc_sum": Infinity,
+    "conc_sum_ignore_prefixes": [],
+    "conc_sum_include_suffixes": [],
+    "conc_sum_max_rel_error": 0.05,
+    "conc_sum_min_abs_error": 1e-06,
+    "include_mets_in_prot_pool": false,
+    "cell_density": 330,
+    "community_species_settings": {}
+}

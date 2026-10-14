@@ -2,7 +2,7 @@ library(here)
 library(RColorBrewer)
 
 relative_phi <- FALSE
-models_to_plot <- c("B", "B_rev")
+models_to_plot <- c("B_rev") #"B", 
 
 cex_lab <- 0.75
 xlim <- c(0, ifelse(relative_phi, 5, 1))
@@ -63,13 +63,13 @@ plot_composition <- function(proteome, target_phi,
 
 
 for(modelname in models_to_plot){
-  data <- read.csv(here("data", paste0(modelname, "_protein_cost.csv")))
+  data <- read.csv(here("data", paste0(modelname, "_protein_cost_rho.csv")))
   data <- data[data$convergence == 4, ]
   print(paste(modelname, max(data$mu)))
   n_rxns <- length(unique(data$reaction))
   
   suffix <- ifelse(relative_phi, "_rel", "_abs")
-  png(here("figures", paste0(modelname, suffix, ".png")),
+  png(here("figures", paste0(modelname, suffix, "_rho.png")),
       type="cairo", units="cm",
       width=22, height=3.5*n_rxns, res=300)
   par(mfrow=c(n_rxns, 3), mar = c(0.8,4.5,0.8,0.5), oma = c(3.3,0,1.5,0))
