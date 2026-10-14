@@ -1,4 +1,4 @@
-# Growth cost of protein over- and underexpression in nonlinear resource allocation models
+# Growth costs of protein allocation in models of growing cells
 
 bioRxiv: https://doi.org/10.64898/2026.04.21.719900
 
@@ -18,7 +18,7 @@ We further analyze how these costs depend on environmental conditions, including
 
 **R scripts.** R 4.6.1 and the packages specified in `renv.lock`. Open `prot_cost.Rproj` (the environment is activated by `.Rprofile`) and run `renv::restore()`
 
-**Python notebook.** `toy_model_cobrak_rba.ipynb` uses a separate Python environment, defined in `environment.yml`:
+**Python notebook.** `toy_model_cobrak_rba.ipynb` uses a separate Python environment, defined in `environment.yml` (Linux):
 
 ```bash
 conda env create -f environment.yml
