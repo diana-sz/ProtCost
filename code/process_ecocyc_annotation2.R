@@ -1,6 +1,6 @@
 library(here)
 
-ecocyc_annot <- read.table(here("data", "proteomics", "ecocyc_groups.txt"), 
+ecocyc_annot <- read.table(here("data", "experimental", "ecocyc_groups.txt"), 
                            sep = "\t", header=TRUE)
 
 protein_groups <- c("translation",
