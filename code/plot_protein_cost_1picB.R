@@ -2,7 +2,7 @@ library(here)
 library(RColorBrewer)
 
 relative_phi <- FALSE
-models_to_plot <- c("B_rev") #"B", 
+models_to_plot <- c("B_rev", "B")
 
 cex_lab <- 0.75
 xlim <- c(0, ifelse(relative_phi, 5, 1))

@@ -22,7 +22,7 @@ We further analyze how these costs depend on environmental conditions, including
 
 ```bash
 conda env create -f environment.yml
-conda activate protcost
+conda activate optenz
 ```
 The kinetic (nonlinear) optimization needs the IPOPT solver, which is installed by `environment.yml`. The linear optimization in COBRA-k requires CPLEX.
 
@@ -55,8 +55,6 @@ The kinetic (nonlinear) optimization needs the IPOPT solver, which is installed 
 
 The kinetic parameters of the base model were estimated once with `predict_parameters.R`. After this step, the model file must be updated manually. The other scripts use the parameters stored in the model files.
 
-`test_protein_cost_parallel.R` runs one reaction per core with `parallel::mclapply`. It works only on Linux and macOS, and the number of cores is set by `max_cores` and `detectCores()` in the script.
-
 ### Main analysis scripts (`code/`)
 
 - `predict_parameters.R`  
@@ -80,7 +78,7 @@ The kinetic parameters of the base model were estimated once with `predict_param
 - `test_protein_cost_dekel.R`  
   Analyze the cost of LAC protein expression across environmental conditions.
 
-- `test_protein_cost_idle_Q.R`, `test_protein_cost_idle`  
+- `test_protein_cost_idle_Q.R`, `test_protein_cost_idle.R`  
   Compute growth costs associated with a single idle protein (with or without Q sector).
 
 - `test_protein_cost_trans.R`  
@@ -152,14 +150,14 @@ Outputs of simulations. The file names contain the model name:
 - `_rev` in the name means reversible kinetics; without it the kinetics are irreversible
 - `toy_expression_scan_results_rev.json` — results of the notebook (growth rate for forced proteome fractions with COBRA-k LP, COBRA-k NLP and RBA)
 
-#### `data/proteomics/`
+#### `data/experimental/`
 Experimental data:
 
 - `Schmidt_proteomics_table_s6.csv`, `Schmidt_proteomics_table_s23.csv` — *Escherichia coli* proteomics from https://doi.org/10.1038/nbt.3418
 - `EV2-Samples-1.csv`, `EV3-Samples-2.csv`, `EV8-AbsoluteMassFractions-1.csv`, `EV9-AbsoluteMassFractions-2.csv` — *Escherichia coli* proteomics from https://doi.org/10.15252/msb.20209536
 - `ecocyc_groups.txt` — GO annotation from EcoCyc
 - `scott_4B.csv` — data from Scott et al. (2010) used in `plot_idle.R`
-- `biomass_calculation.xlsx` — calculation of the biomass composition
+- `biomass_calculation.csv` — calculation of the biomass composition
 
 Processed versions of the proteomics datasets are generated using the scripts in `process_proteomics.R`.
 
@@ -175,7 +173,7 @@ Processed versions of the proteomics datasets are generated using the scripts in
 | Fig. 4, Fig. S12 | `test_protein_cost_idle_Q.R`, `test_protein_cost_idle.R` | `plot_idle.R` | `M10_Q_IDLE_rev.png`, `M9_IDLE_rev.png` |
 | Fig. 5 | `test_fuel_efflux_tradeoff.R` | `plot_efflux.R` | `M10fuel_efflux_rev_mu.png`, `M10fuel_efflux_rev_pump.png` |
 | Fig. 6 | `test_protein_cost_trans.R` | `plot_alt_transporter.R` | `M9_alt_trans_rev.png`, `experimental_transporter.png` |
-| Fig. S2 | `test_protein_cost_parallel.R` (`modelname = "B"`) | `plot_protein_cost_1pic.R` (`B` and `B_rev` in `models_to_plot`) | `B_abs.png`, `B_rev_abs.png` |
+| Fig. S2 | `test_protein_cost_parallel.R` (`modelname = "B"`) | `plot_protein_cost_1picB.R` | `B_abs.png`, `B_rev_abs.png` |
 | Fig. S3 | `toy_model_cobrak_rba.ipynb` | in the notebook | `toy_expression_scan_rev.png` |
 | Fig. S4 | `run_GBA.R` | `plot_validation.R` | `M8_RP_ratio.png` |
 | Fig. S5 | `test_ribosome_inhibition.R` | `plot_ribosome_inhibition.R` | `M8_inh_ribosome_inhibition.png` |
