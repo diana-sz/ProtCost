@@ -22,15 +22,10 @@ b <- function(q) M%*%q
 # proteome fractions
 phi <- function(q) (tau(a,rho*b(q))*v(q))/(ci(q)[p])
 
-
 # Optimization #################################################################
 
 # equality constraints (density constraint)
 g <- function(q) s%*%q - 1
-
-# equality constraints if also constraint on ribosome composition
-
-if (ribcomp > 0 & "rRNA" %in% i_reactant) g <- function(q) c(s%*%q - 1, rprna(q) - ribcomp )
   
 # inequality constraints (min c, max c, min phi, max phi)
 
