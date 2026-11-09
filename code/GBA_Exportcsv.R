@@ -8,6 +8,8 @@ for (cond in 1:n_conditions) {
   
   q <- q_opt[cond,]
   
+  rho <- rho_cond[cond]
+  
   opt_state[cond,] <- c(conv[cond],as.numeric(mu(q)),as.numeric(a),as.numeric(ci(q)),
                         as.numeric(tau(a,ci(q))),as.numeric(v(q)),as.numeric(prot(q)),as.numeric(q) )
   
