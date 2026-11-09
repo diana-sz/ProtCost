@@ -21,7 +21,6 @@ posminf       <- (1:nsheets)[sheets == "min_q"]
 posmaxf       <- (1:nsheets)[sheets == "max_q"]
 posminc       <- (1:nsheets)[sheets == "min_c"]
 posmaxc       <- (1:nsheets)[sheets == "max_c"]
-posribcomp    <- (1:nsheets)[sheets == "ribcomp"]
 posconditions <- (1:nsheets)[sheets == "conditions"]
 posbiomass    <- (1:nsheets)[sheets == "biomass"]
 
@@ -88,15 +87,6 @@ kcatb <- as.numeric(read_ods(odsfile, sheet= poskcat)[2,-1])
 if (length(posphi) > 0) exp_data <- as.matrix(read_ods(odsfile, sheet= posphi))
 
 
-# reads ribosome composition constraint ########################################
-
-if (length(posribcomp) > 0) {
-  
-  ribcomp <- as.numeric(read_ods(odsfile, sheet= posribcomp)[1,1])
-  
-} else  ribcomp <- 0
-
-
 # reads biomass composition
 
 if (length(posbiomass) > 0){
@@ -110,7 +100,7 @@ if (length(posbiomass) > 0){
 
 # number of external reactants
 
-n_a <- length(grep("x_", reactant))
+n_a <- length(grep("^x_", reactant))
 
 # internal matrix M
 M <- Mtotal[-c(1:n_a),]
