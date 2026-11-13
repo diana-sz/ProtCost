@@ -1,10 +1,37 @@
 library(here)
-library(RColorBrewer)
+
+# Save each figure as TIF (journal submission) and PNG (Overleaf)
+open_figure <- function(file_name, width, height, format) {
+  if (format == "tif") {
+    tiff(here("figures", paste0(file_name, ".tif")),
+         type = "cairo", units = "cm", width = width, height = height,
+         res = 1000, compression = "lzw", family = "Helvetica")
+  } else {
+    png(here("figures", paste0(file_name, ".png")),
+        type = "cairo", units = "cm", width = width, height = height,
+        res = 600, family = "Helvetica")
+  }
+  par(family = "Helvetica")
+}
+
+# Bold panel letter in the top-left corner of the current panel.
+# A panel at the edge of the figure also includes the outer margin there,
+# except the left outer margin when outer_left = FALSE.
+add_panel_label <- function(label, cex = 1.2, outer_left = TRUE) {
+  left <- grconvertX(0, "nfc", "ndc")
+  top <- grconvertY(1, "nfc", "ndc")
+  if (outer_left && abs(left - grconvertX(0, "nic", "ndc")) < 1e-6) left <- 0
+  if (abs(top - grconvertY(1, "nic", "ndc")) < 1e-6) top <- 1
+  offset <- 0.02  # inches from the corner
+  x <- left + grconvertX(offset, "inches", "ndc")
+  y <- top - grconvertY(offset, "inches", "ndc")
+  text(grconvertX(x, "ndc", "user"), grconvertY(y, "ndc", "user"),
+       label, adj = c(0, 1), font = 2, cex = cex, xpd = NA)
+}
 
 source(here("code", "uni_colors.R"))
 
-colors <- c(uni_blue)
-colors <- brewer.pal(6, "Paired")[c(2,3,4,5)]
+colors <- c("#0072B2", "#D55E00", "#009E73", "#CC79A7")  # Okabe-Ito: blue, vermillion, bluish green, reddish purple
 cex_all <- 1.05
 
 # ATP synthase
@@ -130,63 +157,54 @@ exp_curves <- list(
   "Maltose"         = list(x = seq(0, 3,   length.out = 50),  y = maltose(seq(0, 3,   length.out = 50)))
 )
 
-                   
 
-png(here("figures", paste0("experimental_costs.png")),
-    type="cairo", units="cm", res = 300,
-    width=17, height=13)
 
-par(mfrow=c(2,2), oma = c(1,1,0.5,0))
-
-for(exp in unique(all_data$experiment)){
-  one_exp <- all_data[all_data$experiment == exp,]
-  left <- ifelse (exp %in% c(1,3), 2.5, 1)
-  par(mar = c(2.5, left, 1, 3.5-left))
+for (format in c("tif", "png")) {
+  open_figure("Appendix_Figure_S6", 17, 13, format)
   
-  conditions <- unique(one_exp$condition)
-  for(cond in seq_along(conditions)){
-    one_cond <- one_exp[one_exp$condition == conditions[cond],]
+  par(mfrow=c(2,2), oma = c(1,1.5,0.5,0))
+  
+  for(exp in unique(all_data$experiment)){
+    one_exp <- all_data[all_data$experiment == exp,]
+    left <- ifelse (exp %in% c(1,3), 2.5, 1)
+    par(mar = c(2.5, left, 1, 3.5-left))
     
-    if(cond == 1){
-      plot(
-        mu_rel ~ titrated_level, data = one_cond, 
-        axes = FALSE,
-        xlim = c(0, 4), ylim = c(0, cex_all),
-        pch = 19,
-        col = colors[cond],
-        cex = cex_all, cex.lab = cex_all, cex.axis = cex_all
-      )
-    }else{
-      points(one_cond$titrated_level, one_cond$mu_rel, 
-            pch = 19,
-            col = colors[cond],
-            cex = cex_all, )
+    conditions <- unique(one_exp$condition)
+    for(cond in seq_along(conditions)){
+      one_cond <- one_exp[one_exp$condition == conditions[cond],]
+      
+      if(cond == 1){
+        plot(
+          mu_rel ~ titrated_level, data = one_cond, 
+          axes = FALSE,
+          xlim = c(0, 4), ylim = c(0, cex_all),
+          pch = 19,
+          col = colors[cond],
+          cex = cex_all, cex.lab = cex_all, cex.axis = cex_all
+        )
+      }else{
+        points(one_cond$titrated_level, one_cond$mu_rel, 
+               pch = 19,
+               col = colors[cond],
+               cex = cex_all, )
+      }
+      
+      curve_info <- exp_curves[[conditions[cond]]]
+      lines(curve_info$x, curve_info$y, col = colors[cond], lwd = 1.5)
+      abline(v = 1, lty = 2, col = "grey70")
+      
+      labels <- if (exp %in% c(1,3)) c("0", "", "0.5", "", "1") else FALSE
+      axis(1, at = 0:4)
+      axis(2, at = c(0, 0.25, 0.5, 0.75, 1), labels = labels)
+      box()
     }
     
-    curve_info <- exp_curves[[conditions[cond]]]
-    lines(curve_info$x, curve_info$y, col = colors[cond], lwd = 1.5)
-    abline(v = 1, lty = 2, col = "grey70")
-    
-    mtext(
-      paste0("(", letters[exp], ")"),
-      side = 3,
-      adj = 0.5,
-      line = 0.35,
-      cex = cex_all,
-      font = 2
-    )
-
-    labels <- if (exp %in% c(1,3)) c("0", "", "0.5", "", "1") else FALSE
-    axis(1, at = 0:4)
-    axis(2, at = c(0, 0.25, 0.5, 0.75, 1), labels = labels)
-    box()
+    add_panel_label(LETTERS[exp], cex = cex_all, outer_left = FALSE)
+    legend("bottomright", legend = conditions, col = colors[1:length(conditions)], pch = 19, bty = "n", cex=cex_all)
   }
-
-  legend("bottomright", legend = conditions, col = colors[1:length(conditions)], pch = 19, bty = "n", cex=cex_all)
+  
+  mtext("Titrated level/wild type level", side = 1, outer = TRUE, line = -0.3, cex = cex_all)
+  mtext("Normalized growth rate", side = 2, outer = TRUE, line = 0.2, cex = cex_all)
+  
+  dev.off()
 }
-
-mtext("Titrated level/wild type level", side = 1, outer = TRUE, line = -0.3, cex = cex_all)
-mtext("Normalized growth rate", side = 2, outer = TRUE, line = -0.3, cex = cex_all)
-
-dev.off()
-

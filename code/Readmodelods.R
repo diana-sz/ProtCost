@@ -88,12 +88,10 @@ if (length(posphi) > 0) exp_data <- as.matrix(read_ods(odsfile, sheet= posphi))
 
 
 # reads biomass composition
-
 if (length(posbiomass) > 0){
   biomass_lb <- read_ods(odsfile, sheet= posbiomass)
   biomass_lb <- setNames(biomass_lb$mass_fraction, biomass_lb$metabolite)
 }
-
 
 
 # Definitions ##################################################################
@@ -109,6 +107,25 @@ M <- Mtotal[-c(1:n_a),]
 i_reactant <- as.vector(reactant[-c(1:n_a)])
 
 x_reactant <- as.vector(reactant[c(1:n_a)])
+
+# external reactants must be the first rows of M
+if (!all(grepl("^x_", x_reactant)))
+  stop("External reactants (x_) must be the first rows of sheet M")
+
+# match condition rows to external reactants by name
+if (length(posconditions) > 0) {
+  cond_names <- unlist(read_ods(odsfile, sheet = posconditions)[, 1])
+  if (cond_names[1] != "rho" || !setequal(cond_names[-1], x_reactant))
+    stop("Rows of sheet 'conditions' must be rho followed by the external reactants of M")
+  rownames(a_cond) <- cond_names[-1]
+  a_cond <- a_cond[x_reactant, , drop = FALSE]
+}
+
+if (length(posbiomass) > 0) {
+  if (!setequal(names(biomass_lb), i_reactant))
+    stop("Rows of sheet 'biomass' do not match the internal reactants of M")
+  biomass_lb <- biomass_lb[i_reactant]
+}
 
 # number of internal reactants
 p <- dim(M)[1]
@@ -137,7 +154,7 @@ if (length(posmaxc) > 0) {
   
   max_c <- as.numeric(as.matrix(read_ods(odsfile, sheet= posmaxc)[,2]))
   
-} else max_c <- rep(rho_cond[1],p)
+} else max_c <- NULL
 
 # bounds for minimal and maximal f #############################################
 if (length(posminf) > 0) {

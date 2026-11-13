@@ -37,6 +37,7 @@ for(is.reversible in c(0,1)){
         convergence = res$convergence,
         t(c(
           setNames(fs, paste0("f.", reaction)),
+          setNames(v(fs), paste0("v.", reaction)),
           setNames(prot(fs), paste0("p.", reaction)),
           setNames(c(a, ci(fs)), paste0("c.", reactant))
         ))

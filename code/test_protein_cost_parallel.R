@@ -10,7 +10,7 @@ library(here)
 # --- read model and get initial solution --- ####
 is.reversible <- 1
 predict.parameters <- 0
-modelname <- "M8" # "M8" "M9_Q" "B"
+modelname <- "M8" # "M8" "M9_Q" "toy"
 max_cores <- 9
 
 # Solver function ####
@@ -48,7 +48,7 @@ process_reaction <- function(reaction_name, opt_phi, q0_initial) {
   
   # step size below optimum higher than above (the curves are steeper)
   stepsize <- 0.001
-  if(grepl("B", modelname)){
+  if(grepl("toy", modelname)){
     stepsize <- 0.005
   }
   below <- seq(round(opt_phi, 4), 0, by = -stepsize)
@@ -99,7 +99,7 @@ process_reaction <- function(reaction_name, opt_phi, q0_initial) {
     }
     
     # do not save data if it does not converge to reduce final file size
-    if(res$convergence != 4){
+    if(!res$convergence == 4){
       next
     }
     

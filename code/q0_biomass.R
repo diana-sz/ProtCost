@@ -1,5 +1,6 @@
 # q0 ########################################################
-# estimates q0 by minimizing total protein at given mu_data 
+# estimates q0 by minimizing the sum of q under the biomass lower bounds
+
 a <- a_cond[,1]
 rho <- rho_cond[1]
 
@@ -12,7 +13,7 @@ initial_q <- function(lowerp) {
   q0 <- rep(0,r)
   
   # defining parameters
-  objective.fn <- rep(1,r)   # to minimize the sum q/kcat
+  objective.fn <- rep(1,r)   # to minimize the sum q
   
   const.mat <- rbind(M,s,diag(r)) # flux balance, density, non-negative q
   
@@ -54,8 +55,8 @@ q0 <- initial_q(biomass_lb[p])
 if (best_q0 == T) {
   
   # mu ############## (growth rate)
-  mu <- function(q) as.numeric( M[p,r]*q[r]/(tau(a,rho*b(q))%*%q)  )
-  
+  mu <- function(q) as.numeric( (M[p,] %*% q) / (tau(a, rho*b(q)) %*% q) )  
+ 
   # biomass fractions
   b <- function(q) M%*%q
   

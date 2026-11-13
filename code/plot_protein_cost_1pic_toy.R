@@ -1,0 +1,172 @@
+library(here)
+library(RColorBrewer)
+source(here("code", "uni_colors.R"))
+
+# Save each figure as TIF (journal submission) and PNG (Overleaf)
+open_figure <- function(file_name, width, height, format) {
+  if (format == "tif") {
+    tiff(here("figures", paste0(file_name, ".tif")),
+         type = "cairo", units = "cm", width = width, height = height,
+         res = 1000, compression = "lzw", family = "Helvetica")
+  } else {
+    png(here("figures", paste0(file_name, ".png")),
+        type = "cairo", units = "cm", width = width, height = height,
+        res = 300, family = "Helvetica")
+  }
+  par(family = "Helvetica")
+}
+
+relative_phi <- FALSE
+models_to_plot <- c("toy_rev", "toy")
+
+cex_lab <- 0.75
+xlim <- c(0, ifelse(relative_phi, 5, 1))
+ylim <- c(0, 1.03)
+title_line <- 0.4
+axis_label_line <- 2.4
+# Names of the figure files in the manuscript; other outputs keep their model name
+figure_names <- c(toy_abs = "Appendix_Figure_S2_irrev",
+                  toy_rev_abs = "Appendix_Figure_S2_rev")
+
+reaction_names <- list("TS" = "Transporter",
+                       "AAS" = "Amino acid synthesis",
+                       "R" = "Ribosome")
+
+
+plot_composition <- function(proteome, target_phi,
+                             colors,
+                             xlim, ylim,
+                             main = NA,
+                             ylab = NA, xlab = NA,
+                             legend = TRUE,
+                             cex_lab = 1) {
+  
+  # Cumulative sum by row (used for stacking)
+  proteome <- proteome/rowSums(proteome)
+  y_cum <- t(apply(proteome[ncol(proteome):1], 1, cumsum))
+  
+  # Base plot (empty)
+  plot(NA, xlim = xlim, ylim = ylim, xlab = xlab, ylab = ylab, main = main,
+       xaxs = "i", yaxs = "i",
+       cex.lab = cex_lab, axes=FALSE)
+  axis(1, labels = axis_labels)
+  axis(2, las = 2)
+  
+  # Bottom line (start from 0)
+  y_prev <- rep(0, length(target_phi))
+  
+  # Draw polygons for each protein group
+  for (i in ncol(proteome):1) {
+    y_top <- y_cum[, i]
+    polygon(
+      c(target_phi, rev(target_phi)),
+      c(y_prev, rev(y_top)),
+      col = colors[i],
+      border = NA
+    )
+  }
+  
+  box()
+  
+  # Add legend
+  if(legend){
+    leg_text <- gsub("c\\.|p\\.", "", colnames(proteome))
+    par(xpd=NA)
+    n <- length(leg_text)
+    ncol_legend <- ifelse(n <= 3, n, ceiling(n / 2))
+    legend(0, 1.35, legend = leg_text, fill = rev(colors), bty = "n", 
+           cex = 1, ncol = ncol_legend, xjust = 0)
+    par(xpd=FALSE)
+  }
+}
+
+
+for(modelname in models_to_plot){
+  data <- read.csv(here("data", paste0(modelname, "_protein_cost.csv")))
+  data <- data[data$convergence == 4, ]
+  print(paste(modelname, max(data$mu)))
+  n_rxns <- length(unique(data$reaction))
+  
+  suffix <- ifelse(relative_phi, "_rel", "_abs")
+  file_name <- paste0(modelname, suffix)
+  if (file_name %in% names(figure_names)) file_name <- figure_names[[file_name]]
+  for (format in c("tif", "png")) {
+    open_figure(file_name, 22, 3.5*n_rxns, format)
+    par(mfrow=c(n_rxns, 3), mar = c(0.8,4.5,0.8,0.5), oma = c(3.3,0,1.5,0))
+  
+    for(rxn in unique(data$reaction)){
+      one_prot <- data[data$reaction == rxn, ]
+      one_prot <- one_prot[order(one_prot$phi), ]
+      proteome <- one_prot[, grep("p\\.", colnames(one_prot))]
+    
+      biomass <- one_prot[, grep("c\\.", colnames(one_prot))]
+      biomass <- biomass[, -grep("x_", colnames(biomass))]
+      mu <- one_prot$mu/max(one_prot$mu)
+      one_prot$rel_phi <- one_prot$phi/one_prot$phi[which.max(one_prot$mu)]
+    
+      plotted_phi <- one_prot$phi
+      plotted_phi_mu <- plotted_phi
+      if(relative_phi){
+        plotted_phi_mu <- c(0, one_prot$rel_phi) # 0 added for visualisation
+        plotted_phi <- one_prot$rel_phi
+        mu <- c(0, mu)
+      }
+    
+      plot(plotted_phi_mu, mu,
+           xaxs = "i", yaxs = "i",
+           xlim = xlim, ylim = ylim,
+           col = uni_wine,
+           type = "l",
+           lwd = 4,
+           axes = FALSE,
+           xlab = NA, ylab = NA)
+      text(ifelse(relative_phi, 2.7, 0.65), 0.25, rxn, cex=cex_lab*1.4)
+      text(ifelse(relative_phi, 2.7, 0.65), 0.1, reaction_names[[rxn]], cex=cex_lab*1.2)
+      axis(2, las = 2)
+    
+      axis_labels <- rxn == "R"
+      axis(1, labels = axis_labels)
+  
+      box()
+    
+      if(rxn == "AAS"){
+        mtext(bquote("Growth rate relative to optimum " * mu / mu^"\u204E"), 
+              side = 2, cex = cex_lab, line = axis_label_line)
+      }
+    
+      abline(v = plotted_phi_mu[which.max(mu)], lty = 2, col = "grey70")
+    
+      colors <- brewer.pal(ncol(proteome), "PuBu")
+      plot_legend <- ifelse(rxn == "TS", TRUE, FALSE)
+      plot_composition(proteome, plotted_phi, colors, main="", 
+                       ylab = NA, xlab = NA,
+                       xlim = xlim, ylim =ylim,
+                       cex_lab = cex_lab,
+                       legend = plot_legend)
+    
+      if(rxn == "AAS"){
+        mtext("Proteome mass fraction", side = 2, cex = cex_lab, line = axis_label_line)
+      }
+
+      colors <- rev(brewer.pal(ncol(biomass), "RdBu"))
+      plot_composition(biomass, plotted_phi, colors, main="", 
+                       ylab = NA, xlab = NA,
+                       xlim = xlim, ylim =ylim,
+                       cex_lab = cex_lab,
+                       legend = plot_legend)
+    
+      if(rxn == "AAS"){
+        mtext("Biomass fraction", side = 2, cex = cex_lab*1.1, line = axis_label_line)
+      }
+
+      xlabel <- expression("Proteome fraction " * italic("\u03D5"))
+      if(relative_phi){
+        xlabel <- expression("Proteome fraction relative to optimum " * italic("\u03D5") * "/" * italic("\u03D5")^"\u204E")
+      }
+      mtext(xlabel, side = 1,
+            outer = TRUE, cex = cex_lab, line = 1.65, adj = 0.52)
+    }
+    dev.off()
+  }
+}
+

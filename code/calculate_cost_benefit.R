@@ -18,7 +18,6 @@ rho <- rho_cond[1]
 a  <- a_cond[,1]
 
 vs <- opt_data[row, grep("v\\.", colnames(opt_data))]
-fs <- opt_data[row, grep("f\\.", colnames(opt_data))]
 
 cint <- opt_data[row, which(colnames(opt_data)=="S"):which(colnames(opt_data)=="P")]
 fint <- cint/rho

@@ -2,11 +2,10 @@ library(nloptr)
 # Functions ####################################################################
 
 # mu ############## (growth rate)
-mu <- function(q) as.numeric( (M[p,r]*q[r]/(tau(a,rho*b(q))%*%q) ) )
+mu <- function(q) as.numeric( (M[p,] %*% q) / (tau(a, rho*b(q)) %*% q) )
 
 # negative mu (for minimization)
-negative_mu <- function(q) -as.numeric(M[p,r]*q[r]/(tau(a,rho*b(q))%*%q)) 
-
+negative_mu <- function(q) -as.numeric( (M[p,] %*% q) / (tau(a, rho*b(q)) %*% q) )
 # fluxes
 v <- function(q) as.vector(mu(q))*rho*q
 
@@ -29,7 +28,10 @@ g <- function(q) s%*%q - 1
   
 # inequality constraints (min c, max c, min phi, max phi)
 
-h <- function(q) c( ci(q) - min_c, max_c - ci(q), phi(q) - min_phi, max_phi - phi(q))
+h <- function(q) {
+  upper_c <- if (is.null(max_c)) rep(rho, p) else max_c
+  c( ci(q) - min_c, upper_c - ci(q), phi(q) - min_phi, max_phi - phi(q))
+}
 
 # Indirect elasticities ########################################################
 

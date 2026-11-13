@@ -39,9 +39,9 @@ tau <- function(a,cint) {
     prodr <- prodr[prodr != 0]
     
     tauj[j] <- as.numeric( prod(1 + KA[,j]/ca)*prod(1 + ca/KI[,j])*( prod(1 + subr) + prod(1 + prodr) - 1 )
-      
-      /( kcatf[j]*prod(subr) - kcatb[j]*prod(prodr)  ) 
-      
+                           
+                           /( kcatf[j]*prod(subr) - kcatb[j]*prod(prodr)  ) 
+                           
     )
     
   }
@@ -103,10 +103,10 @@ dtau <- function(a,cint) {
       prodr1 <- prodr0 + 1
       
       # dtau A
-     
+      
       dtaujA[i] <-  -(KA[y,j]/(ca[y]^2))*prod(1 + KA[-y,j]/ca[-y])*prod(1 + ca/KI[,j]) + 
         
-                     prod(1 + KA[,j]/ca)*(1/KI[y,j])*prod(1 + ca[-y]/KI[-y,j])
+        prod(1 + KA[,j]/ca)*(1/KI[y,j])*prod(1 + ca[-y]/KI[-y,j])
       
       
       dtaujB[i] <-  prod(subr1)/KS[y,j] + prod(prodr1)/KP[y,j]
@@ -123,6 +123,5 @@ dtau <- function(a,cint) {
   dtauj
   
 }
-
 
 

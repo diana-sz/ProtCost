@@ -1,5 +1,19 @@
 library(here)
 
+# Save each figure as TIF (journal submission) and PNG (Overleaf)
+open_figure <- function(file_name, width, height, format) {
+  if (format == "tif") {
+    tiff(here("figures", paste0(file_name, ".tif")),
+         type = "cairo", units = "cm", width = width, height = height,
+         res = 1000, compression = "lzw", family = "Helvetica")
+  } else {
+    png(here("figures", paste0(file_name, ".png")),
+        type = "cairo", units = "cm", width = width, height = height,
+        res = 600, family = "Helvetica")
+  }
+  par(family = "Helvetica")
+}
+
 modelname <- "M8"
 is.reversible <- 1
 predict.parameters <- 0
@@ -77,95 +91,96 @@ xlim <- c(0, 4)
 ylim <- c(-2.1,2.1)
 plots <- c("sum", "catalytic_cost", "saturation_value", "crowding_value")
 plot_names <- c("marginal value", "catalytic cost", "saturation value", "crowding value")
-colors <- c("black", uni_red, uni_blue, uni_lila)
+colors <- c("black", uni_red, uni_blue, "#914ea3")
 
 tested_proteins <- unique(results$tested_protein)
 variables <- unique(results$variable)
 n_prot <- length(unique(tested_proteins))
 n_rxn  <- length(variables)
 
-png(here("figures", paste0(modelname, "_cost_benefit.png")), 
-    type="cairo", units="cm",
-    width=22, height=22, res=300)
+for (format in c("tif", "png")) {
+  open_figure("Appendix_Figure_S1", 22, 22, format)
 
-par(mfrow = c(n_rxn + 1, n_prot), mar = c(1.7,0,0,0.5), oma = c(5.2,5.7,0.5,0.5), xpd = FALSE)
+  par(mfrow = c(n_rxn + 1, n_prot), mar = c(1.7,0,0,0.5), oma = c(5.2,5.7,0.5,0.5), xpd = FALSE)
 
-# plot growth rates on top
-prot_idx <- 0
-for(protein in tested_proteins){
-  prot_idx <- prot_idx + 1
-  one_protein <- results[results$tested_protein == protein, ]
-  plot(one_protein$rel_phi, one_protein$growth_rate, 
-       axes = FALSE, 
-       pch = 19, cex = 0.55, # type = "l", lwd = 3
-       ylim = c(0, max(one_protein$growth_rate)*1.05), xlim = xlim)
-  abline(v=1, #one_protein$phi[which.max(one_protein$growth_rate)], 
-         col="grey70", lty=2)
-  if(prot_idx == 1){
-    axis(2, at = c(0, 0.5, 1))
-    mtext("Growth rate", side = 2, line = 2.5, cex = cex_labels)
-  }
-  box()
-}
-
-# plot cost-benefit curves
-par(mar = c(0,0,0.5,0.5))
-rxn_idx <- 0
-for(reaction in rev(variables)){
-  rxn_idx <- rxn_idx + 1
-  one_rxn <- results[results$variable == reaction, ]
-  
+  # plot growth rates on top
   prot_idx <- 0
-  for(prot in unique(one_rxn$tested_protein)){
+  for(protein in tested_proteins){
     prot_idx <- prot_idx + 1
-    one_prot <- one_rxn[one_rxn$tested_protein == prot, ]
-    
-    # plot background
-    plot(NA, xlim = xlim, ylim = ylim,
-         axes = FALSE, xlab = "", ylab = "")
-    abline(h=0)
-    abline(v=1,
-            # one_prot$phi[which.max(one_prot$growth_rate)], 
+    one_protein <- results[results$tested_protein == protein, ]
+
+    plot(c(0,one_protein$rel_phi), c(0, one_protein$growth_rate), # 0 added for visualisation
+         col = uni_wine,
+         axes = FALSE, 
+         type = "l", lwd = 3,
+         ylim = c(0, max(one_protein$growth_rate)*1.05), xlim = xlim)
+    abline(v=1, #one_protein$phi[which.max(one_protein$growth_rate)], 
            col="grey70", lty=2)
-    box()
-    
-    # add all curves
-    for(plot_idx in length(plots):1){
-      points(one_prot$rel_phi, one_prot[[plots[plot_idx]]],
-             pch = 19, col = colors[plot_idx], cex=0.55)
-      # lines(one_prot$phi, one_prot[[plots[plot_idx]]],
-      #        lwd = 1, col = colors[plot_idx])
-    }
-    
-    # only y-axis on first column
     if(prot_idx == 1){
-      axis(2, at = c(-2,-1,0,1,2))
-      mtext(gsub("v\\.", "", reaction), side = 2, line = 2.5, cex = 0.75)
+      axis(2, at = c(0, 0.5, 1))
+      mtext("Growth rate", side = 2, line = 2.5, cex = cex_labels)
     }
+    box()
+  }
+
+  # plot cost-benefit curves
+  par(mar = c(0,0,0.5,0.5))
+  rxn_idx <- 0
+  for(reaction in rev(variables)){
+    rxn_idx <- rxn_idx + 1
+    one_rxn <- results[results$variable == reaction, ]
+  
+    prot_idx <- 0
+    for(prot in unique(one_rxn$tested_protein)){
+      prot_idx <- prot_idx + 1
+      one_prot <- one_rxn[one_rxn$tested_protein == prot, ]
     
-    # only x-axis on last row
-    if(rxn_idx == n_prot){
-      axis(1)
-      mtext(prot, side = 1, line = 2.5, cex = 0.75)
-    }
+      # plot background
+      plot(NA, xlim = xlim, ylim = ylim,
+           axes = FALSE, xlab = "", ylab = "")
+      abline(h=0)
+      abline(v=1,
+              # one_prot$phi[which.max(one_prot$growth_rate)], 
+             col="grey70", lty=2)
+      box()
     
-    # add legend once in outer margin
-    if(rxn_idx == 1 & prot_idx == 1){
-      par(xpd = NA)  # allow legend outside plot region
-      legend(0, 3.6, horiz = TRUE,
-             legend = rev(plot_names), 
-             col = rev(colors), 
-             pch = 19, bty = "n", cex = 1.2)
-      par(xpd = FALSE)
+      # add all curves
+      for(plot_idx in length(plots):1){
+        lines(one_prot$rel_phi, one_prot[[plots[plot_idx]]],
+                col = colors[plot_idx], lwd = 3,#cex=0.55, pch = 19,
+              )
+      }
+    
+      # only y-axis on first column
+      if(prot_idx == 1){
+        axis(2, at = c(-2,-1,0,1,2))
+        mtext(gsub("v\\.", "", reaction), side = 2, line = 2.5, cex = 0.75)
+      }
+    
+      # only x-axis on last row
+      if(rxn_idx == n_prot){
+        axis(1)
+        mtext(prot, side = 1, line = 2.5, cex = 0.75)
+      }
+    
+      # add legend once in outer margin
+      if(rxn_idx == 1 & prot_idx == 1){
+        par(xpd = NA)  # allow legend outside plot region
+        legend(0, 3.6, horiz = TRUE,
+               legend = rev(plot_names), 
+               col = rev(colors), 
+               pch = 19, bty = "n", cex = 1.2)
+        par(xpd = FALSE)
       
+      }
     }
   }
+
+  # Add one common x and y label
+  mtext(expression("Proteome fraction of under-/overexpressed protein relative to optimum " * italic("\u03D5") * "/" * italic("\u03D5")^"\u204E"),
+        side = 1, line = 4.4, outer = TRUE, cex = cex_labels)
+  mtext("Protein assessed for costs and benefits",
+        side = 2, line = 4.3, outer = TRUE, cex = cex_labels)
+
+  dev.off()
 }
-
-# Add one common x and y label
-mtext(expression("Proteome fraction of under-/overexpressed protein relative to optimum " * italic("\u03A6") * "/" * italic("\u03A6")^"\u204E"),
-      side = 1, line = 4.4, outer = TRUE, cex = cex_labels)
-mtext("Protein assessed for costs and benefits",
-      side = 2, line = 4.3, outer = TRUE, cex = cex_labels)
-
-dev.off()
