@@ -230,9 +230,9 @@ for(modelname in models_to_plot){
         mtext("Biomass fraction", side = 2, cex = cex_lab, line = axis_label_line, at = -0.2)
       }
       
-      xlabel <- expression("Proteome fraction " * italic("\u03A6"))
+      xlabel <- expression("Proteome fraction " * italic("\u03D5"))
       if(relative_phi){
-        xlabel <- expression("Proteome fraction relative to optimum " * italic("\u03A6") * "/" * italic("\u03A6")^"\u204E")
+        xlabel <- expression("Proteome fraction relative to optimum " * italic("\u03D5") * "/" * italic("\u03D5")^"\u204E")
       }
       mtext(xlabel, side = 1,
             outer = TRUE, cex = cex_lab, line = 1.65, adj = 0.52)

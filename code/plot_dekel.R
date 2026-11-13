@@ -168,8 +168,6 @@ for(model in models){
   colors <- c("black", uni_red, uni_green, uni_lila)
   x_C2_vals <- sort(unique(opt_data$x_C2)) 
   cols <- setNames(viridisLite::magma(length(x_C2_vals), end = 0.9), x_C2_vals)
-  prot_vals <- sort(unique(opt_data$convergence)) 
-  shapes <- setNames((20+length(prot_vals)-1):20, prot_vals)
   xlim <- range(c(x_C2_vals, max(dekel_conc)))
   
   opt_data$mu_ref <- opt_data$mu / max(opt_data[opt_data$phi == 0, "mu"])
